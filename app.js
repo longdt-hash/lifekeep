@@ -266,6 +266,17 @@ class StorageManager {
     });
   }
 
+  async deleteItemOnly(id) {
+    await this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction('items', 'readwrite');
+      const itemStore = tx.objectStore('items');
+      const req = itemStore.delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+
   async getLogsForItem(itemId) {
     await this.ensureDb();
     return new Promise((resolve, reject) => {
@@ -901,8 +912,9 @@ const I18N = {
     hero_btn_notes: 'Ghi chú',
     hero_btn_jobs: 'Nhắc việc',
     hero_btn_finance: 'Tài chính',
-    hero_spending_title: 'TỔNG CHI TIÊU NĂM {year}',
-    hero_spending_metric: 'Chi {year} 🪙',
+    hero_spending_title: 'CHI TIÊU THÁNG {month}/{year}',
+    hero_spending_month_this: 'CHI TIÊU THÁNG NÀY (T{month}/{year})',
+    hero_spending_metric: 'Chi T{month} 🪙',
     hero_safe_title: 'Mọi việc & giấy tờ đều trong tầm kiểm soát!',
     hero_safe_badge: 'An toàn',
     hero_btn_add: '+ Thêm mới',
@@ -960,6 +972,7 @@ const I18N = {
     cat_home_name: 'Gia dụng & Nhà',
     cat_identity_name: 'Giấy tờ',
     cat_tech_name: 'Công nghệ',
+    cat_note_name: 'Ghi chú',
     cat_other_name: 'Khác',
 
     // Notes View
@@ -1027,7 +1040,7 @@ const I18N = {
     settings_backup_export: 'Xuất sao lưu (JSON)',
     settings_backup_import: 'Khôi phục dữ liệu (JSON)',
     settings_privacy_title: 'Bảo mật & Dữ liệu ngoại tuyến',
-    settings_privacy_desc: 'Toàn bộ dữ liệu của bạn được lưu an toàn 100% trong bộ nhớ trình duyệt điện thoại (IndexedDB). Khi mở mạng, app hỗ trợ đồng bộ độc lập cho từng tài khoản.',
+    settings_privacy_desc: 'Chúng tôi không lưu trữ dữ liệu cá nhân của bạn, dữ liệu được lưu trữ 100% trên máy cài phần mềm này. Mọi thông tin nhắc việc, chi tiêu tài chính, ảnh chụp và ghi chú đều nằm trực tiếp trong bộ nhớ thiết bị của bạn (IndexedDB), bảo đảm quyền riêng tư tuyệt đối.',
 
     // Home Finance Golden Card
     home_fin_title: 'Tài chính cá nhân',
@@ -1195,8 +1208,9 @@ const I18N = {
     hero_btn_notes: 'Notes',
     hero_btn_jobs: 'Tasks',
     hero_btn_finance: 'Finance',
-    hero_spending_title: 'TOTAL SPENDING IN {year}',
-    hero_spending_metric: 'Spent {year} 🪙',
+    hero_spending_title: 'SPENDING IN M{month}/{year}',
+    hero_spending_month_this: 'THIS MONTH\'S SPENDING (M{month}/{year})',
+    hero_spending_metric: 'Spent M{month} 🪙',
     hero_safe_title: 'All tasks and documents are under control!',
     hero_safe_badge: 'Safe',
     hero_btn_add: '+ Add New',
@@ -1254,6 +1268,7 @@ const I18N = {
     cat_home_name: 'Home & Living',
     cat_identity_name: 'Documents',
     cat_tech_name: 'Technology',
+    cat_note_name: 'Notes',
     cat_other_name: 'Other',
 
     // Notes View
@@ -1321,7 +1336,7 @@ const I18N = {
     settings_backup_export: 'Export Backup (JSON)',
     settings_backup_import: 'Restore Data (JSON)',
     settings_privacy_title: 'Privacy & Offline Data',
-    settings_privacy_desc: 'All your data is securely stored 100% in device storage (IndexedDB). Multi-account support works seamlessly offline and online.',
+    settings_privacy_desc: 'We do not store your personal data on any server; all data is stored 100% locally on this device. All your tasks, financial records, photos, and notes remain securely in your local storage (IndexedDB), guaranteeing complete privacy.',
 
     // Home Finance Golden Card
     home_fin_title: 'Personal Finance',
@@ -1523,8 +1538,11 @@ class LifeKeepApp {
     this.financeComparisonChart = null;
     this.financeDoughnutChart = null;
 
-    // Hero Selected Year
-    this.heroSelectedYear = parseInt(localStorage.getItem('lifekeep_hero_year')) || new Date().getFullYear();
+    // Hero Selected Month & Year (defaults to current month: YYYY-MM)
+    const nowInit = new Date();
+    const currentMonthKey = `${nowInit.getFullYear()}-${String(nowInit.getMonth() + 1).padStart(2, '0')}`;
+    this.heroSelectedMonth = localStorage.getItem('lifekeep_hero_month') || currentMonthKey;
+    this.heroSelectedYear = parseInt(localStorage.getItem('lifekeep_hero_year')) || nowInit.getFullYear();
 
     // Authentication State
     this.authMode = 'login'; // 'login' or 'register'
@@ -2911,13 +2929,95 @@ class LifeKeepApp {
     }
   }
 
+  setHeroMonth(monthKey) {
+    if (!monthKey) return;
+    this.heroSelectedMonth = monthKey;
+    localStorage.setItem('lifekeep_hero_month', this.heroSelectedMonth);
+    const parts = monthKey.split('-');
+    if (parts.length >= 1) {
+      this.heroSelectedYear = parseInt(parts[0], 10);
+      localStorage.setItem('lifekeep_hero_year', this.heroSelectedYear);
+    }
+    this.render();
+  }
+
   setHeroYear(year) {
     this.heroSelectedYear = parseInt(year);
     localStorage.setItem('lifekeep_hero_year', this.heroSelectedYear);
     this.render();
   }
 
-  async calculateMetrics(targetYear = this.heroSelectedYear || new Date().getFullYear()) {
+  getAvailableMonths() {
+    const monthKeys = new Set();
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const currentKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+    monthKeys.add(currentKey);
+
+    if (this.heroSelectedMonth) {
+      monthKeys.add(this.heroSelectedMonth);
+    }
+
+    // Add at least the past 12 months
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(currentYear, now.getMonth() - i, 1);
+      const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      monthKeys.add(k);
+    }
+
+    // Add months from transactions
+    if (this.transactions && this.transactions.length > 0) {
+      this.transactions.forEach(t => {
+        if (t.date) {
+          const d = new Date(t.date);
+          if (!isNaN(d.getTime())) {
+            monthKeys.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+          }
+        }
+      });
+    }
+
+    // Add months from allLogs
+    if (this.allLogs && this.allLogs.length > 0) {
+      this.allLogs.forEach(l => {
+        if (l.date) {
+          const d = new Date(l.date);
+          if (!isNaN(d.getTime())) {
+            monthKeys.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+          }
+        }
+      });
+    }
+
+    // Add months from items
+    if (this.items && this.items.length > 0) {
+      this.items.forEach(item => {
+        const dateStr = item.dueDate || item.createdAt;
+        if (dateStr) {
+          const d = new Date(dateStr);
+          if (!isNaN(d.getTime())) {
+            monthKeys.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+          }
+        }
+      });
+    }
+
+    // Sort descending (newest first)
+    const sorted = Array.from(monthKeys).sort().reverse();
+    return sorted.map(k => {
+      const [yStr, mStr] = k.split('-');
+      const y = parseInt(yStr, 10);
+      const m = parseInt(mStr, 10);
+      const isCurrent = (k === currentKey);
+      let label = this.currentLang === 'en' 
+        ? `Month ${m}/${y}${isCurrent ? ' (Current)' : ''}`
+        : `Tháng ${m}/${y}${isCurrent ? ' (Hiện tại)' : ''}`;
+      return { key: k, year: y, month: m, label, isCurrent };
+    });
+  }
+
+  async calculateMetrics(targetMonthKey = this.heroSelectedMonth) {
     let overdueCount = 0;
     let soonCount = 0;
     let safeCount = 0;
@@ -2930,34 +3030,75 @@ class LifeKeepApp {
     });
 
     await this.loadAllLogs();
-    const yearNum = Number(targetYear);
+
+    const now = new Date();
+    const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    let selectedKey = (typeof targetMonthKey === 'string' && targetMonthKey.includes('-')) 
+      ? targetMonthKey 
+      : (this.heroSelectedMonth || currentKey);
+
+    if (typeof targetMonthKey === 'number' || (typeof targetMonthKey === 'string' && !targetMonthKey.includes('-'))) {
+      const y = parseInt(targetMonthKey, 10) || now.getFullYear();
+      selectedKey = `${y}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    const [yStr, mStr] = selectedKey.split('-');
+    const yearNum = parseInt(yStr, 10) || now.getFullYear();
+    const monthNum = parseInt(mStr, 10) || (now.getMonth() + 1);
+
+    // Sum from allLogs matching target year and month
     let totalSpent = this.allLogs
-      .filter(l => new Date(l.date).getFullYear() === yearNum)
+      .filter(l => {
+        if (!l.date) return false;
+        const d = new Date(l.date);
+        return d.getFullYear() === yearNum && (d.getMonth() + 1) === monthNum;
+      })
       .reduce((sum, l) => sum + (Number(l.totalCost || l.cost) || 0), 0);
 
-    // Safeguard: include item cost if not already in logs and falls in targetYear
+    // Safeguard: include item cost if not already in logs and falls in target month
     this.items.forEach(item => {
-      const itemYear = item.dueDate ? new Date(item.dueDate).getFullYear() : (item.createdAt ? new Date(item.createdAt).getFullYear() : null);
-      if (itemYear === yearNum) {
-        const hasLog = this.allLogs.some(l => l.itemId === item.id);
-        if (!hasLog && item.cost > 0) {
-          totalSpent += Number(item.cost);
+      const itemDateStr = item.dueDate || item.createdAt;
+      if (itemDateStr) {
+        const d = new Date(itemDateStr);
+        if (d.getFullYear() === yearNum && (d.getMonth() + 1) === monthNum) {
+          const hasLog = this.allLogs.some(l => l.itemId === item.id);
+          if (!hasLog && item.cost > 0) {
+            totalSpent += Number(item.cost);
+          }
         }
       }
     });
 
-    // Include daily living expenses from transactions
+    // Include daily living expenses from transactions matching target year and month
     if (this.transactions && this.transactions.length > 0) {
       totalSpent += this.transactions
-        .filter(t => t.type === 'expense' && new Date(t.date).getFullYear() === yearNum)
+        .filter(t => {
+          if (t.type !== 'expense' || !t.date) return false;
+          const d = new Date(t.date);
+          return d.getFullYear() === yearNum && (d.getMonth() + 1) === monthNum;
+        })
         .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
     }
 
-    return { overdueCount, soonCount, safeCount, totalSpent, year: yearNum };
+    return { 
+      overdueCount, 
+      soonCount, 
+      safeCount, 
+      totalSpent, 
+      year: yearNum, 
+      month: monthNum, 
+      monthKey: selectedKey 
+    };
   }
 
   getCategoryMeta(cat) {
     switch (cat) {
+      case 'note':
+        return {
+          name: this.t('cat_note_name') || 'Ghi chú',
+          icon: '📝',
+          avatarBg: 'bg-amber-50 border-amber-200 text-amber-700 shadow-sm'
+        };
       case 'vehicle': 
         return { 
           name: this.t('cat_vehicle_name'), 
@@ -3037,23 +3178,49 @@ class LifeKeepApp {
   async render() {
     const listEl = document.getElementById('items-list');
     const emptyEl = document.getElementById('empty-state');
-    const activeYear = this.heroSelectedYear || new Date().getFullYear();
-    const metrics = await this.calculateMetrics(activeYear);
+    const activeMonth = this.heroSelectedMonth || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+    const metrics = await this.calculateMetrics(activeMonth);
 
-    // Update Hero Total Spending & Year Selector
+    const now = new Date();
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const isCurrentMonth = (metrics.monthKey === currentMonthKey);
+
+    // Update Hero Total Spending & Month Selector
+    const heroMonthLabel = document.getElementById('hero-month-label');
+    if (heroMonthLabel) {
+      if (isCurrentMonth) {
+        heroMonthLabel.textContent = this.t('hero_spending_month_this', { month: metrics.month, year: metrics.year });
+      } else {
+        heroMonthLabel.textContent = this.t('hero_spending_title', { month: metrics.month, year: metrics.year });
+      }
+    }
     const heroYearLabel = document.getElementById('hero-year-label');
-    if (heroYearLabel) heroYearLabel.textContent = this.t('hero_spending_title', { year: activeYear });
+    if (heroYearLabel) {
+      heroYearLabel.textContent = this.t('hero_spending_title', { month: metrics.month, year: metrics.year });
+    }
+
     const metricYearLabel = document.getElementById('metric-year-label');
-    if (metricYearLabel) metricYearLabel.textContent = this.t('hero_spending_metric', { year: activeYear });
+    if (metricYearLabel) {
+      metricYearLabel.textContent = this.t('hero_spending_metric', { month: metrics.month, year: metrics.year });
+    }
+
+    const heroMonthSelect = document.getElementById('hero-month-select');
+    if (heroMonthSelect) {
+      const availMonths = this.getAvailableMonths();
+      heroMonthSelect.innerHTML = availMonths.map(m => `
+        <option value="${m.key}" ${m.key === metrics.monthKey ? 'selected' : ''}>${m.label}</option>
+      `).join('');
+      heroMonthSelect.value = metrics.monthKey;
+    }
 
     const heroYearSelect = document.getElementById('hero-year-select');
     if (heroYearSelect) {
       const availYears = this.getAvailableYears();
       const yearPrefix = this.currentLang === 'en' ? 'Year ' : 'Năm ';
       heroYearSelect.innerHTML = availYears.map(y => `
-        <option value="${y}" ${y === activeYear ? 'selected' : ''}>${yearPrefix}${y}</option>
+        <option value="${y}" ${y === metrics.year ? 'selected' : ''}>${yearPrefix}${y}</option>
       `).join('');
-      heroYearSelect.value = String(activeYear);
+      heroYearSelect.value = String(metrics.year);
     }
 
     this.updateNotificationBadge();
@@ -3405,6 +3572,14 @@ class LifeKeepApp {
               ${this.escapeHtml(note.title || (this.currentLang === 'en' ? 'Untitled Note' : 'Ghi chú không tiêu đề'))}
             </h4>
             <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+              <button 
+                type="button" 
+                onclick="app.openCompleteNoteModal('${note.id}')" 
+                class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1 font-bold text-[11px] transition shadow-2xs cursor-pointer active:scale-95" 
+                title="Hoàn thành ghi chú"
+              >
+                <span>✓</span> <span>Xong</span>
+              </button>
               <button 
                 type="button" 
                 onclick="app.toggleNotePin('${note.id}')" 
@@ -3826,6 +4001,7 @@ class LifeKeepApp {
     const modal = document.getElementById('note-modal');
     const titleEl = document.getElementById('note-modal-title');
     const deleteBtn = document.getElementById('note-delete-btn');
+    const completeBtn = document.getElementById('note-complete-modal-btn');
     const now = new Date();
     const todayStr = now.toLocaleDateString('en-CA');
     const nowHM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
@@ -3835,6 +4011,7 @@ class LifeKeepApp {
     if (noteToEdit) {
       if (titleEl) titleEl.textContent = 'Chỉnh sửa ghi chú';
       if (deleteBtn) deleteBtn.classList.remove('hidden');
+      if (completeBtn) completeBtn.classList.remove('hidden');
       document.getElementById('input-note-id').value = noteToEdit.id;
       document.getElementById('input-note-title').value = noteToEdit.title || '';
       document.getElementById('input-note-content').value = noteToEdit.content || '';
@@ -3852,6 +4029,7 @@ class LifeKeepApp {
     } else {
       if (titleEl) titleEl.textContent = 'Ghi chú mới';
       if (deleteBtn) deleteBtn.classList.add('hidden');
+      if (completeBtn) completeBtn.classList.add('hidden');
       document.getElementById('input-note-id').value = '';
       document.getElementById('input-note-title').value = '';
       document.getElementById('input-note-content').value = '';
@@ -3882,6 +4060,130 @@ class LifeKeepApp {
       modal.classList.remove('flex');
     }
     this.editingNoteId = null;
+  }
+
+  openCompleteNoteModal(noteId) {
+    if (!noteId && this.editingNoteId) {
+      noteId = this.editingNoteId;
+    }
+    const note = this.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    this.completeNoteId = noteId;
+    const modal = document.getElementById('complete-note-modal');
+    const titleEl = document.getElementById('complete-note-preview-title');
+    const contentEl = document.getElementById('complete-note-preview-content');
+    const noteIdInput = document.getElementById('complete-note-id');
+
+    if (noteIdInput) noteIdInput.value = note.id;
+    if (titleEl) titleEl.textContent = note.title || 'Ghi chú';
+    if (contentEl) contentEl.textContent = note.content || '(Không có nội dung chi tiết)';
+
+    // Reset default radio to 'finish'
+    const finishRadio = document.querySelector('input[name="note-finish-choice"][value="finish"]');
+    if (finishRadio) finishRadio.checked = true;
+    this.toggleNoteRepeatCycle(false);
+
+    // Close note edit modal if open
+    this.closeNoteModal();
+
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  closeCompleteNoteModal() {
+    const modal = document.getElementById('complete-note-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    this.completeNoteId = null;
+  }
+
+  toggleNoteRepeatCycle(show) {
+    const container = document.getElementById('note-repeat-cycle-container');
+    if (container) {
+      if (show) {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+  }
+
+  async saveCompleteNote(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const noteId = document.getElementById('complete-note-id')?.value || this.completeNoteId;
+    const note = this.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    const choice = document.querySelector('input[name="note-finish-choice"]:checked')?.value || 'finish';
+
+    try {
+      const now = new Date();
+      const todayStr = now.toLocaleDateString('en-CA');
+
+      // Create log for History (Đã xong)
+      const log = {
+        id: 'log-note-' + Date.now(),
+        itemId: note.id,
+        itemName: note.title || 'Ghi chú',
+        category: 'note',
+        date: todayStr,
+        totalCost: 0,
+        subItems: [],
+        provider: '',
+        notes: note.content ? ('[Ghi chú hoàn thành]: ' + note.content) : 'Ghi chú đã hoàn thành',
+        photos: []
+      };
+
+      await this.storage.saveLog(log);
+
+      if (choice === 'finish') {
+        // Remove note from active notes
+        await this.storage.deleteNote(note.id);
+        await this.loadNotes();
+        await this.loadAllLogs();
+        this.closeCompleteNoteModal();
+        await this.render();
+        this.showToast('🎉 Đã hoàn thành ghi chú và lưu vào Nhật ký Đã xong!');
+      } else {
+        // Repeat cycle: calculate new dueDate
+        const cycleOption = document.querySelector('input[name="note-cycle-option"]:checked')?.value || '7d';
+        const baseDate = note.dueDate ? new Date(note.dueDate) : new Date();
+        const nextDate = new Date(baseDate.getTime());
+
+        if (cycleOption === '1d') {
+          nextDate.setDate(nextDate.getDate() + 1);
+        } else if (cycleOption === '7d') {
+          nextDate.setDate(nextDate.getDate() + 7);
+        } else if (cycleOption === '1m') {
+          nextDate.setMonth(nextDate.getMonth() + 1);
+        } else if (cycleOption === '3m') {
+          nextDate.setMonth(nextDate.getMonth() + 3);
+        } else if (cycleOption === '6m') {
+          nextDate.setMonth(nextDate.getMonth() + 6);
+        } else if (cycleOption === '1y') {
+          nextDate.setFullYear(nextDate.getFullYear() + 1);
+        }
+
+        note.dueDate = nextDate.toLocaleDateString('en-CA');
+        note.hasReminder = true;
+        note.updatedAt = new Date().toISOString();
+
+        await this.storage.saveNote(note);
+        await this.loadNotes();
+        await this.loadAllLogs();
+        this.closeCompleteNoteModal();
+        await this.render();
+        this.showToast('✅ Đã lưu vào Nhật ký & Lên lịch nhắc lại: ' + this.formatDateVN(note.dueDate));
+      }
+    } catch (err) {
+      console.error('Lỗi khi hoàn thành ghi chú:', err);
+      alert('Không thể lưu hoàn thành ghi chú: ' + (err.message || err));
+    }
   }
 
   async saveNoteFromForm(e) {
@@ -4401,6 +4703,10 @@ class LifeKeepApp {
       this.addSubItemRow('Chi phí chính', '');
     }
 
+    // Reset choice to repeat by default
+    const repeatRadio = document.getElementById('complete-action-repeat');
+    if (repeatRadio) repeatRadio.checked = true;
+
     this.calculateCompleteTotal();
     toggleModal('complete-modal');
   }
@@ -4536,23 +4842,35 @@ class LifeKeepApp {
         photos: this.completePhotoBase64 ? [this.completePhotoBase64] : []
       };
 
+      const actionType = document.querySelector('input[name="complete-action-type"]:checked')?.value || 'repeat';
+
       await this.storage.saveLog(log);
 
-      // Auto-advance due date by cycle
-      const cycle = item.cycleMonths || 6;
-      const nextDate = new Date(date);
-      nextDate.setMonth(nextDate.getMonth() + cycle);
-      item.dueDate = nextDate.toISOString().split('T')[0];
-      item.updatedAt = new Date().toISOString();
+      if (actionType === 'finish') {
+        // Xong hoàn toàn: Xóa việc khỏi danh sách việc cần làm nhưng GIỮ NGUYÊN log lịch sử trong Tab Đã xong
+        await this.storage.deleteItemOnly(item.id);
+        await this.loadItems();
+        await this.loadAllLogs();
 
-      await this.storage.saveItem(item);
-      await this.loadItems();
-      await this.loadAllLogs();
+        toggleModal('complete-modal');
+        await this.render();
+        this.showToast('🎉 Đã hoàn thành công việc và lưu vào Nhật ký Đã xong!');
+      } else {
+        // Auto-advance due date by cycle
+        const cycle = item.cycleMonths || 6;
+        const nextDate = new Date(date);
+        nextDate.setMonth(nextDate.getMonth() + cycle);
+        item.dueDate = nextDate.toISOString().split('T')[0];
+        item.updatedAt = new Date().toISOString();
 
-      toggleModal('complete-modal');
-      await this.render();
-      this.showToast('✅ Đã lưu vào Nhật ký bảo dưỡng!');
-      alert(`Đã lưu chi phí vào Nhật ký! Hạn lần tới tự động dời sang ngày: ${this.formatDateVN(item.dueDate)}`);
+        await this.storage.saveItem(item);
+        await this.loadItems();
+        await this.loadAllLogs();
+
+        toggleModal('complete-modal');
+        await this.render();
+        this.showToast('✅ Đã lưu vào Nhật ký & Lên lịch chu kỳ tiếp theo: ' + this.formatDateVN(item.dueDate));
+      }
     } catch (err) {
       console.error('Lỗi khi lưu hoàn thành:', err);
       alert('Không thể lưu hoàn thành: ' + (err.message || err));

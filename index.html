@@ -97,9 +97,6 @@
           <button onclick="app.forceUpdateApp()" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm cursor-pointer" title="Làm mới & Cập nhật Theme mới">
             <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
-          <button onclick="toggleModal('install-modal')" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm cursor-pointer" title="Cài lên điện thoại">
-            <svg class="w-4 h-4 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-          </button>
           <!-- Chuông gom toàn bộ thông báo (Thay thế nút bánh răng cài đặt) -->
           <div class="relative">
             <button id="btn-notification-bell" onclick="app.toggleNotificationCenter()" class="relative w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm active:scale-95 cursor-pointer" title="Trung tâm Thông báo & Nhắc việc">
@@ -113,15 +110,15 @@
         </div>
       </div>
 
-      <!-- Hero Total Balance Section with Interactive Year Dropdown -->
+      <!-- Hero Total Balance Section with Interactive Month Dropdown -->
       <div class="text-center my-3">
         <div class="relative inline-block mb-2 group">
           <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-[11px] font-bold text-white transition shadow-sm cursor-pointer active:scale-95">
-            <span id="hero-year-label">TỔNG CHI TIÊU NĂM 2026</span>
+            <span id="hero-month-label">CHI TIÊU THÁNG NÀY</span>
             <svg class="w-3.5 h-3.5 text-purple-200 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
           </div>
-          <select id="hero-year-select" onchange="app.setHeroYear(this.value)" title="Chọn năm chi tiêu" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-slate-800 font-bold">
-            <option value="2026">Năm 2026</option>
+          <select id="hero-month-select" onchange="app.setHeroMonth(this.value)" title="Chọn tháng chi tiêu" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-slate-800 font-bold">
+            <!-- Populated dynamically by app.js -->
           </select>
         </div>
         <div id="hero-total-balance" class="text-3xl sm:text-4xl font-black tracking-tight text-white">
@@ -134,16 +131,16 @@
 
       <!-- 3 Quick Action Circular Buttons (matching the mockup) -->
       <div class="flex items-center justify-center gap-7 mt-4 pt-1">
-        <!-- Action 1: Ghi chú -->
-        <button onclick="app.goToNotesTab()" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Xem & Soạn thảo Ghi chú" data-i18n-title="hero_btn_notes">
+        <!-- Action 1: Ghi chú (Bấm vào thêm ngay ghi chú mới) -->
+        <button onclick="app.openNoteModal(); app.switchViewTab('notes')" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Thêm Ghi chú mới" data-i18n-title="hero_btn_notes">
           <div class="w-12 h-12 rounded-full bg-white/20 group-hover:bg-white/30 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-md transition transform group-hover:scale-105 active:scale-95">
             <svg class="w-5 h-5 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
           </div>
           <span class="text-[11px] font-semibold text-white/95" data-i18n="hero_btn_notes">Ghi chú</span>
         </button>
 
-        <!-- Action 2: Nhắc việc -->
-        <button onclick="app.goToJobsTab()" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Xem & Quản lý Nhắc việc" data-i18n-title="hero_btn_jobs">
+        <!-- Action 2: Nhắc việc (Bấm vào thêm ngay nhắc việc mới) -->
+        <button onclick="app.openAddModal(); app.switchViewTab('pending')" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Thêm Nhắc việc mới" data-i18n-title="hero_btn_jobs">
           <div class="w-12 h-12 rounded-full bg-white/20 group-hover:bg-white/30 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-md transition transform group-hover:scale-105 active:scale-95">
             <svg class="w-5 h-5 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
@@ -664,10 +661,19 @@
             type="button" 
             id="note-delete-btn" 
             onclick="app.deleteCurrentEditingNote()" 
-            class="hidden py-3 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition border border-rose-200 flex items-center justify-center gap-1.5 shrink-0 cursor-pointer" 
+            class="hidden py-3 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition border border-rose-200 flex items-center justify-center gap-1.5 shrink-0 cursor-pointer" 
             title="Xóa ghi chú này"
           >
             <span>🗑️</span> <span data-i18n="btn_delete">Xóa</span>
+          </button>
+          <button 
+            type="button" 
+            id="note-complete-modal-btn" 
+            onclick="app.openCompleteNoteModal(app.editingNoteId)" 
+            class="hidden py-3 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-xl text-xs transition border border-emerald-300 flex items-center justify-center gap-1 shrink-0 cursor-pointer" 
+            title="Hoàn thành ghi chú này"
+          >
+            <span>✓</span> <span data-i18n="hero_btn_done">Xong</span>
           </button>
           <button 
             type="submit" 
@@ -678,6 +684,114 @@
           </button>
         </div>
 
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Hoàn thành Ghi chú (Xong hoặc Nhắc lại theo chu kỳ) -->
+  <div id="complete-note-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom text-slate-800">
+      
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-50 via-teal-50/50 to-transparent">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-lg font-bold">
+            ✓
+          </div>
+          <div>
+            <h2 class="font-bold text-base text-slate-900">Hoàn thành ghi chú</h2>
+            <p id="complete-note-preview-title" class="text-xs text-emerald-700 font-semibold mt-0.5 truncate max-w-xs"></p>
+          </div>
+        </div>
+        <button type="button" onclick="app.closeCompleteNoteModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">✕</button>
+      </div>
+
+      <form id="complete-note-form" onsubmit="app.saveCompleteNote(event)" class="p-5 overflow-y-auto space-y-4 text-xs flex-1">
+        <input type="hidden" id="complete-note-id" />
+
+        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-slate-600 text-xs leading-relaxed">
+          <p id="complete-note-preview-content" class="line-clamp-3 text-[11px] text-slate-500 italic"></p>
+        </div>
+
+        <!-- Choice: Nhắc lại theo chu kỳ hay Xong hẳn -->
+        <div class="space-y-2">
+          <label class="block text-slate-800 font-bold text-xs">
+            Sau khi lưu hoàn thành:
+          </label>
+          <div class="space-y-2">
+            <label class="flex items-start gap-3 p-3 rounded-2xl border border-emerald-300 bg-emerald-50/30 hover:bg-emerald-50/60 cursor-pointer transition shadow-2xs">
+              <input type="radio" name="note-finish-choice" value="finish" checked onchange="app.toggleNoteRepeatCycle(false)" class="mt-1 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
+                  <span>🏁</span> <span>Xong việc & Lưu vào Nhật ký (Đã xong)</span>
+                </span>
+                <span class="text-[11px] text-slate-600 mt-0.5 block">
+                  Đánh dấu ghi chú đã hoàn thành, chuyển vào tab Đã xong để lưu trữ lịch sử và gỡ khỏi danh sách ghi chú cần làm.
+                </span>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 hover:border-purple-300 bg-white cursor-pointer transition shadow-2xs">
+              <input type="radio" name="note-finish-choice" value="repeat" onchange="app.toggleNoteRepeatCycle(true)" class="mt-1 text-purple-600 focus:ring-purple-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-purple-950 flex items-center gap-1.5">
+                  <span>🔄</span> <span>Nhắc lại theo chu kỳ</span>
+                </span>
+                <span class="text-[11px] text-slate-500 mt-0.5 block">
+                  Lưu 1 mốc hoàn thành vào Nhật ký và tự động dời ngày hẹn ghi chú sang chu kỳ tiếp theo.
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Cycle Picker (shown only when 'repeat' is chosen) -->
+        <div id="note-repeat-cycle-container" class="hidden p-3.5 bg-purple-50 rounded-2xl border border-purple-200 space-y-2">
+          <label class="block text-purple-950 font-bold text-xs">
+            Chu kỳ nhắc lại tiếp theo:
+          </label>
+          <div class="grid grid-cols-3 gap-1.5 text-center text-xs">
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="1d" class="accent-purple-600" />
+              <span>+1 ngày</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="7d" checked class="accent-purple-600" />
+              <span>+1 tuần</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="1m" class="accent-purple-600" />
+              <span>+1 tháng</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="3m" class="accent-purple-600" />
+              <span>+3 tháng</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="6m" class="accent-purple-600" />
+              <span>+6 tháng</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="1y" class="accent-purple-600" />
+              <span>+1 năm</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center gap-2">
+          <button 
+            type="button" 
+            onclick="app.closeCompleteNoteModal()" 
+            class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+          >
+            Hủy
+          </button>
+          <button 
+            type="submit" 
+            class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-xs shadow-md shadow-emerald-600/30 transition active:scale-95"
+          >
+            Xác nhận hoàn thành
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -1771,9 +1885,9 @@
         </div>
         
         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <h3 class="font-bold text-sm text-slate-800" data-i18n="settings_privacy_title">🔒 Quyền riêng tư & Lưu trữ</h3>
+          <h3 class="font-bold text-sm text-slate-800" data-i18n="settings_privacy_title">🔒 Bảo mật & Dữ liệu ngoại tuyến</h3>
           <p class="text-slate-600 text-xs leading-relaxed" data-i18n="settings_privacy_desc">
-            Mọi thông tin giấy tờ, ngày bảo dưỡng và ảnh chụp đều được lưu <strong>trực tiếp trong bộ nhớ máy của bạn (IndexedDB)</strong>, hoàn toàn bảo mật và không bị tải lên bất kỳ máy chủ bên ngoài nào.
+            Chúng tôi không lưu trữ dữ liệu cá nhân của bạn, dữ liệu được lưu trữ 100% trên máy cài phần mềm này. Mọi thông tin nhắc việc, chi tiêu tài chính, ảnh chụp và ghi chú đều nằm trực tiếp trong bộ nhớ thiết bị của bạn (IndexedDB), bảo đảm quyền riêng tư tuyệt đối.
           </p>
         </div>
 
@@ -1889,9 +2003,32 @@
           <div id="complete-photo-preview"></div>
         </div>
 
+        <!-- Option: Lặp lại theo chu kỳ hay Xong hoàn toàn -->
+        <div class="p-3.5 bg-purple-50/80 rounded-2xl border border-purple-200 space-y-2">
+          <label class="block text-slate-800 font-bold text-xs">
+            Sau khi lưu hoàn thành:
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-start gap-2 p-2.5 rounded-xl border border-purple-300 bg-white cursor-pointer hover:bg-purple-50/50 transition shadow-2xs">
+              <input type="radio" name="complete-action-type" id="complete-action-repeat" value="repeat" checked class="mt-0.5 text-purple-600 focus:ring-purple-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-purple-950 block">🔄 Lặp lại định kỳ</span>
+                <span class="text-[10px] text-slate-500 block">Tự dời ngày theo chu kỳ</span>
+              </div>
+            </label>
+            <label class="flex items-start gap-2 p-2.5 rounded-xl border border-slate-200 bg-white cursor-pointer hover:bg-emerald-50/50 hover:border-emerald-300 transition shadow-2xs">
+              <input type="radio" name="complete-action-type" id="complete-action-finish" value="finish" class="mt-0.5 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-emerald-900 block">🏁 Xong hoàn toàn</span>
+                <span class="text-[10px] text-slate-500 block">Lưu vào Nhật ký (Đã xong)</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <div class="pt-2">
           <button type="submit" id="complete-submit-btn" class="w-full py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30">
-            Lưu vào Nhật ký & Tự động gia hạn
+            Xác nhận hoàn thành
           </button>
         </div>
       </form>
@@ -2682,7 +2819,7 @@
   </div>
 
   <!-- Scripts -->
-  <script src="./app.js?v=30"></script>
+  <script src="./app.js?v=31"></script>
   <script>
     // Modal toggle helper
     function toggleModal(modalId) {
@@ -2700,7 +2837,7 @@
     // Register Service Worker with auto-update and automatic reload on controller change
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=30')
+        navigator.serviceWorker.register('./sw.js?v=31')
           .then(reg => {
             reg.update();
             console.log('LifeKeep PWA Service Worker Registered & Updated!');
