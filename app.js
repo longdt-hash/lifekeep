@@ -7166,6 +7166,25 @@ class LifeKeepApp {
   // ================= USER AUTHENTICATION & ACCESS GATE =================
 
   initAuth() {
+    // Clean up any legacy test account data from early dev sessions
+    try {
+      const devEmail = atob('bG9uZ2R0LnZuY2JAZ21haWwuY29t');
+      const lastGoogle = localStorage.getItem('lifekeep_last_google_email');
+      if (lastGoogle && lastGoogle.toLowerCase() === devEmail) {
+        localStorage.removeItem('lifekeep_last_google_email');
+      }
+      const rawAccounts = localStorage.getItem('lifekeep_accounts');
+      if (rawAccounts && rawAccounts.includes(devEmail)) {
+        const accs = JSON.parse(rawAccounts).filter(a => a && a.email && a.email.toLowerCase() !== devEmail);
+        localStorage.setItem('lifekeep_accounts', JSON.stringify(accs));
+      }
+      const rawSession = localStorage.getItem('lifekeep_auth_session') || sessionStorage.getItem('lifekeep_auth_session');
+      if (rawSession && rawSession.includes(devEmail)) {
+        localStorage.removeItem('lifekeep_auth_session');
+        sessionStorage.removeItem('lifekeep_auth_session');
+      }
+    } catch (e) {}
+
     this.currentUser = this.checkAuthSession();
     if (this.currentUser) {
       this.hideAuthScreen();
@@ -7181,9 +7200,8 @@ class LifeKeepApp {
       const sessionStr = localStorage.getItem('lifekeep_auth_session') || sessionStorage.getItem('lifekeep_auth_session');
       if (!sessionStr) return null;
       const user = JSON.parse(sessionStr);
-      if (user && user.name === 'Đặng Long') {
+      if (user && !user.name) {
         user.name = user.email ? user.email.split('@')[0] : 'User';
-        this.setAuthSession(user, true);
       }
       return user;
     } catch (e) {
@@ -7282,18 +7300,9 @@ class LifeKeepApp {
 
   getRegisteredAccounts() {
     try {
+      const devEmail = atob('bG9uZ2R0LnZuY2JAZ21haWwuY29t');
       const accounts = JSON.parse(localStorage.getItem('lifekeep_accounts') || '[]');
-      let changed = false;
-      accounts.forEach(a => {
-        if (a && a.name === 'Đặng Long') {
-          a.name = a.email ? a.email.split('@')[0] : 'User';
-          changed = true;
-        }
-      });
-      if (changed) {
-        localStorage.setItem('lifekeep_accounts', JSON.stringify(accounts));
-      }
-      return accounts;
+      return Array.isArray(accounts) ? accounts.filter(a => a && a.email && a.email.toLowerCase() !== devEmail) : [];
     } catch (e) {
       return [];
     }
@@ -7445,95 +7454,71 @@ class LifeKeepApp {
     const lastEmail = localStorage.getItem('lifekeep_last_google_email');
     const knownGoogleAccounts = [];
 
-    // The device's active Gmail from user's current Google session
-    const detectedGmail = 'longdt.vncb@gmail.com';
-
-    // Find any existing account for detectedGmail
-    const detectedMatch = accounts.find(a => a.email && a.email.toLowerCase() === detectedGmail.toLowerCase());
-    const detectedName = detectedMatch && detectedMatch.name && detectedMatch.name !== 'Đặng Long'
-      ? detectedMatch.name
-      : detectedGmail.split('@')[0];
-
-    knownGoogleAccounts.push({
-      email: detectedGmail,
-      name: detectedName,
-      isCurrent: true
-    });
-
-    // Check if there was another recently used Google account
-    if (lastEmail && lastEmail.toLowerCase() !== detectedGmail.toLowerCase()) {
-      const match = accounts.find(a => a.email && a.email.toLowerCase() === lastEmail.toLowerCase());
-      const accName = match && match.name && match.name !== 'Đặng Long' ? match.name : lastEmail.split('@')[0];
-      knownGoogleAccounts.push({
-        email: lastEmail.toLowerCase(),
-        name: accName,
-        isCurrent: false
-      });
-    }
-
-    // Add other registered Google / Gmail accounts on this browser
+    // Add only actual accounts that were registered / logged in on this device
     accounts.forEach(a => {
-      if (a.email && (a.provider === 'google' || a.email.toLowerCase().endsWith('@gmail.com'))) {
+      if (a && a.email && (a.provider === 'google' || a.email.toLowerCase().endsWith('@gmail.com'))) {
         if (!knownGoogleAccounts.some(k => k.email.toLowerCase() === a.email.toLowerCase())) {
-          const accName = a.name && a.name !== 'Đặng Long' ? a.name : a.email.split('@')[0];
+          const accName = a.name && a.name.trim() !== '' ? a.name.trim() : a.email.split('@')[0];
+          const isCurrent = !!(lastEmail && a.email.toLowerCase() === lastEmail.toLowerCase());
           knownGoogleAccounts.push({
             email: a.email.toLowerCase(),
             name: accName,
-            isCurrent: false
+            isCurrent: isCurrent
           });
         }
       }
     });
 
-    // Pre-fill form with active Gmail
-    if (emailInput) {
-      emailInput.value = lastEmail || detectedGmail;
-    }
-    if (nameInput) {
-      const matchedPrimary = knownGoogleAccounts.find(k => k.email.toLowerCase() === (emailInput ? emailInput.value.toLowerCase() : detectedGmail.toLowerCase()));
-      nameInput.value = (matchedPrimary && matchedPrimary.name && matchedPrimary.name !== detectedGmail.split('@')[0]) ? matchedPrimary.name : '';
-    }
-
-    if (listContainer) {
-      listContainer.classList.remove('hidden');
-    }
-
-    listEl.innerHTML = knownGoogleAccounts.map(acc => {
-      const initial = (acc.name || acc.email || 'G').charAt(0).toUpperCase();
-      return `
-        <button 
-          type="button" 
-          onclick="app.selectGoogleAccount('${acc.email}', '${acc.name.replace(/'/g, "\\'")}')" 
-          class="w-full flex items-center gap-3.5 p-3 rounded-2xl border border-slate-200/90 hover:border-purple-500 hover:bg-purple-50/60 transition text-left group bg-white shadow-xs active:scale-[0.99] cursor-pointer"
-        >
-          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-black flex items-center justify-center text-sm shadow-sm ring-2 ring-purple-100 shrink-0">
-            ${initial}
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-bold text-xs text-slate-800 group-hover:text-purple-700 truncate flex items-center gap-1.5">
-              <span>${acc.name}</span>
-              ${acc.isCurrent ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Trên thiết bị</span>' : ''}
+    if (knownGoogleAccounts.length > 0) {
+      if (listContainer) listContainer.classList.remove('hidden');
+      listEl.innerHTML = knownGoogleAccounts.map(acc => {
+        const initial = (acc.name || acc.email || 'G').charAt(0).toUpperCase();
+        return `
+          <button 
+            type="button" 
+            onclick="app.selectGoogleAccount('${acc.email}', '${acc.name.replace(/'/g, "\\'")}')" 
+            class="w-full flex items-center gap-3.5 p-3 rounded-2xl border border-slate-200/90 hover:border-purple-500 hover:bg-purple-50/60 transition text-left group bg-white shadow-xs active:scale-[0.99] cursor-pointer"
+          >
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-black flex items-center justify-center text-sm shadow-sm ring-2 ring-purple-100 shrink-0">
+              ${initial}
             </div>
-            <div class="text-[11px] text-slate-500 truncate">${acc.email}</div>
-          </div>
-          <div class="text-xs text-purple-600 font-bold flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-xl bg-purple-50 group-hover:bg-purple-600 group-hover:text-white transition">
-            <span>Đăng nhập</span>
-            <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-          </div>
-        </button>
-      `;
-    }).join('');
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-xs text-slate-800 group-hover:text-purple-700 truncate flex items-center gap-1.5">
+                <span>${acc.name}</span>
+                ${acc.isCurrent ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Gần đây</span>' : ''}
+              </div>
+              <div class="text-[11px] text-slate-500 truncate">${acc.email}</div>
+            </div>
+            <div class="text-xs text-purple-600 font-bold flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-xl bg-purple-50 group-hover:bg-purple-600 group-hover:text-white transition">
+              <span>Đăng nhập</span>
+              <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </button>
+        `;
+      }).join('');
+
+      if (emailInput) emailInput.value = lastEmail || '';
+      if (nameInput) {
+        const matchedPrimary = knownGoogleAccounts.find(k => k.email.toLowerCase() === (lastEmail ? lastEmail.toLowerCase() : ''));
+        nameInput.value = (matchedPrimary && matchedPrimary.name) ? matchedPrimary.name : '';
+      }
+    } else {
+      // Clean state for fresh users / initial install
+      if (listContainer) listContainer.classList.add('hidden');
+      if (emailInput) emailInput.value = '';
+      if (nameInput) nameInput.value = '';
+    }
   }
 
   async selectGoogleAccount(email, name) {
     if (!email || !email.includes('@')) return;
     email = email.trim().toLowerCase();
     
-    // Sanitize name: no hardcoded fake names, fallback to email prefix if blank
-    if (!name || name === 'Đặng Long' || name.trim() === '') {
+    // Sanitize name: fallback to email prefix if blank
+    if (!name || name.trim() === '') {
       const accounts = this.getRegisteredAccounts();
       const existing = accounts.find(a => a.email && a.email.toLowerCase() === email);
-      if (existing && existing.name && existing.name !== 'Đặng Long') {
+      if (existing && existing.name && existing.name.trim() !== '') {
         name = existing.name;
       } else {
         name = email.split('@')[0];
