@@ -1,0 +1,14 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.lifekeep.assistant",
+    "sha256_cert_fingerprints": [
+      "87:81:0D:7C:A4:F8:9A:09:DA:63:2D:8E:EC:59:74:C0:4B:00:85:62:DF:08:E7:9F:2D:2B:E2:27:20:57:52:95",
+      "1B:DF:34:9B:64:62:DA:F2:F9:F7:1F:F0:69:D7:E2:19:25:16:7D:1F:0D:07:F9:28:D9:B8:73:02:9B:27:29:56",
+      "21:90:85:F7:26:81:92:52:9E:BE:43:4A:54:62:1F:CD:EF:E3:17:84:44:FD:DD:9D:AB:B2:9D:F7:F8:34:53:CE",
+      "8F:AB:F4:7F:FB:45:82:F4:8F:55:6B:F7:41:D8:6B:73:6E:E3:5E:5D:FA:82:DC:62:37:7E:99:9A:E9:58:04:3D",
+      "27:C9:BF:7D:7A:1C:56:43:23:A8:54:CD:8B:9E:05:B1:C7:10:42:0B:21:01:7C:07:86:01:EB:25:4C:3E:34:B5"
+    ]
+  }
+}]
