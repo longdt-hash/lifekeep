@@ -266,6 +266,17 @@ class StorageManager {
     });
   }
 
+  async deleteItemOnly(id) {
+    await this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction('items', 'readwrite');
+      const itemStore = tx.objectStore('items');
+      const req = itemStore.delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+
   async getLogsForItem(itemId) {
     await this.ensureDb();
     return new Promise((resolve, reject) => {
@@ -758,115 +769,6 @@ const PRESET_TEMPLATES = [
   }
 ];
 
-const PRESET_TEMPLATES_EN = [
-  {
-    name: "Car Inspection",
-    category: "vehicle",
-    cycleMonths: 12,
-    provider: "Motor Vehicle Inspection Center",
-    notes: "Bring original Vehicle Registration, valid Mandatory Insurance, check unpaid traffic fines before going.",
-    icon: "🚗",
-    subItems: [
-      { name: "Vehicle inspection fee", cost: 340000 },
-      { name: "Certification fee", cost: 90000 },
-      { name: "Road maintenance fee (1 year)", cost: 1560000 }
-    ]
-  },
-  {
-    name: "Mandatory Vehicle Insurance (Car / Motorcycle)",
-    category: "vehicle",
-    cycleMonths: 12,
-    provider: "Insurance Provider (Bao Viet / PVI / PTI)",
-    notes: "Save digital copy with QR code on phone for inspection.",
-    icon: "🛡️",
-    subItems: [
-      { name: "Mandatory Liability Insurance (incl. VAT)", cost: 480000 }
-    ]
-  },
-  {
-    name: "Oil Change & Routine Service",
-    category: "vehicle",
-    cycleMonths: 6,
-    provider: "Garage / Dealership",
-    notes: "Change engine oil every 5,000 km or 6 months. Check air filter and coolant.",
-    icon: "🔧",
-    subItems: [
-      { name: "Genuine engine oil", cost: 650000 },
-      { name: "New oil filter", cost: 120000 },
-      { name: "Service labor fee", cost: 150000 }
-    ]
-  },
-  {
-    name: "Air Conditioner Cleaning",
-    category: "home",
-    cycleMonths: 6,
-    provider: "AC Technician",
-    notes: "Clean filters and outdoor unit before hot season to save electricity and protect compressor.",
-    icon: "❄️",
-    subItems: [
-      { name: "Wash indoor & outdoor units", cost: 200000 },
-      { name: "R32 refrigerant top-up", cost: 100000 }
-    ]
-  },
-  {
-    name: "Water Filter Replacement (Stage 1, 2, 3)",
-    category: "home",
-    cycleMonths: 6,
-    provider: "Water Filter Dealer",
-    notes: "Stage 1 (PP 5 micron): 3-6 months. Stage 2 (OCB Carbon): 6-9 months. Stage 3 (PP 1 micron): 9-12 months.",
-    icon: "💧",
-    subItems: [
-      { name: "Water filter cartridge #1 (PP 5 micron)", cost: 80000 },
-      { name: "Water filter cartridge #2 (Activated Carbon)", cost: 100000 },
-      { name: "Water filter cartridge #3 (PP 1 micron)", cost: 120000 }
-    ]
-  },
-  {
-    name: "House / Apartment Rental Agreement",
-    category: "home",
-    cycleMonths: 12,
-    provider: "Landlord",
-    notes: "Notify 30-45 days in advance if renewing or terminating lease to retrieve deposit.",
-    icon: "🏠",
-    subItems: [
-      { name: "Periodic rent payment", cost: 8000000 }
-    ]
-  },
-  {
-    name: "Passport / National ID Renewal",
-    category: "identity",
-    cycleMonths: 120,
-    provider: "Immigration Department / Public Service Portal",
-    notes: "Renew passport 6 months prior to expiry as many countries reject passports with < 6 months validity.",
-    icon: "🛂",
-    subItems: [
-      { name: "Passport renewal official fee", cost: 160000 }
-    ]
-  },
-  {
-    name: "Personal Health Insurance",
-    category: "identity",
-    cycleMonths: 12,
-    provider: "Health Insurance Provider",
-    notes: "Pay renewal premium on time to avoid resetting waiting periods for specific conditions.",
-    icon: "🏥",
-    subItems: [
-      { name: "Annual health insurance renewal premium", cost: 3500000 }
-    ]
-  },
-  {
-    name: "Laptop / Phone Warranty",
-    category: "tech",
-    cycleMonths: 12,
-    provider: "Authorized Service Center",
-    notes: "Keep VAT invoice or warranty slip for authorized warranty service.",
-    icon: "💻",
-    subItems: [
-      { name: "Extended warranty / AppleCare renewal", cost: 1800000 }
-    ]
-  }
-];
-
 // Sample Initial Seed Data with cost and sub-items breakdown
 const INITIAL_SEED_ITEMS = [
   {
@@ -1010,8 +912,9 @@ const I18N = {
     hero_btn_notes: 'Ghi chú',
     hero_btn_jobs: 'Nhắc việc',
     hero_btn_finance: 'Tài chính',
-    hero_spending_title: 'TỔNG CHI TIÊU NĂM {year}',
-    hero_spending_metric: 'Chi {year} 🪙',
+    hero_spending_title: 'CHI TIÊU THÁNG {month}/{year}',
+    hero_spending_month_this: 'CHI TIÊU THÁNG NÀY (T{month}/{year})',
+    hero_spending_metric: 'Chi T{month} 🪙',
     hero_safe_title: 'Mọi việc & giấy tờ đều trong tầm kiểm soát!',
     hero_safe_badge: 'An toàn',
     hero_btn_add: '+ Thêm mới',
@@ -1069,6 +972,7 @@ const I18N = {
     cat_home_name: 'Gia dụng & Nhà',
     cat_identity_name: 'Giấy tờ',
     cat_tech_name: 'Công nghệ',
+    cat_note_name: 'Ghi chú',
     cat_other_name: 'Khác',
 
     // Notes View
@@ -1087,7 +991,6 @@ const I18N = {
     note_alarm_date: 'Ngày hẹn báo',
     note_alarm_time: 'Giờ báo',
     note_alarm_phone: 'Rung & Chuông điện thoại',
-    note_alarm_phone_desc: 'Đổ chuông & rung điện thoại khi đến ngày giờ hẹn',
 
     // Bottom Dock
     dock_home: 'Trang chủ',
@@ -1111,7 +1014,6 @@ const I18N = {
     notif_center_title: 'Trung tâm Thông báo',
     notif_center_subtitle: 'Tập trung toàn bộ việc đến hạn & ghi chú cần làm',
     notif_btn_test: '🔔 Thử chuông ngay',
-    notif_btn_test_title: 'Thử chuông & rung thiết bị',
     notif_tab_all: 'Tất cả',
     notif_tab_overdue: '🚨 Quá hạn',
     notif_tab_today: '⚠️ Hôm nay',
@@ -1138,7 +1040,7 @@ const I18N = {
     settings_backup_export: 'Xuất sao lưu (JSON)',
     settings_backup_import: 'Khôi phục dữ liệu (JSON)',
     settings_privacy_title: 'Bảo mật & Dữ liệu ngoại tuyến',
-    settings_privacy_desc: 'Toàn bộ dữ liệu của bạn được lưu an toàn 100% trong bộ nhớ trình duyệt điện thoại (IndexedDB). Khi mở mạng, app hỗ trợ đồng bộ độc lập cho từng tài khoản.',
+    settings_privacy_desc: 'Chúng tôi không lưu trữ dữ liệu cá nhân của bạn, dữ liệu được lưu trữ 100% trên máy cài phần mềm này. Mọi thông tin nhắc việc, chi tiêu tài chính, ảnh chụp và ghi chú đều nằm trực tiếp trong bộ nhớ thiết bị của bạn (IndexedDB), bảo đảm quyền riêng tư tuyệt đối.',
 
     // Home Finance Golden Card
     home_fin_title: 'Tài chính cá nhân',
@@ -1265,7 +1167,6 @@ const I18N = {
     cat_add_section: '+ Thêm danh mục mới:',
     cat_name_placeholder: 'Tên danh mục...',
     cat_select_icon: 'Chọn icon:',
-    cat_icon_title: 'Biểu tượng Emoji',
     cat_btn_add_action: '+ Thêm danh mục này',
     cat_expense_heading: 'Danh mục Chi tiêu:',
     cat_income_heading: 'Danh mục Thu nhập:',
@@ -1299,331 +1200,7 @@ const I18N = {
     tx_alert_invalid_amount: 'Vui lòng nhập số tiền hợp lệ!',
     budget_alert_invalid_amount: 'Vui lòng nhập số tiền ngân sách hợp lệ!',
     cat_alert_empty_name: 'Vui lòng nhập tên danh mục!',
-    cat_confirm_delete: 'Bạn có chắc muốn xóa danh mục tùy chỉnh này?',
-    // App & Title
-    app_page_title: 'LifeKeep - Trợ lý nhắc việc & tài chính, cá nhân',
-    header_user_greeting: 'Xin chào, Bạn',
-    header_account_title: 'Cài đặt & Tài khoản',
-    header_account_secure_title: 'Tài khoản bảo mật',
-    header_switch_lang_title: 'Đổi ngôn ngữ / Switch Language',
-    header_update_app_title: 'Làm mới & Cập nhật Theme mới',
-    header_install_app_title: 'Cài lên điện thoại',
-    header_notif_center_title: 'Trung tâm Thông báo & Nhắc việc',
-    select_year_title: 'Chọn năm chi tiêu',
-    banner_alarm_title: 'Bật chuông & rung nhắc việc',
-    banner_alarm_desc: 'Nhận báo thức ngay trên điện thoại khi đến hạn',
-    banner_alarm_btn: 'Bật ngay',
-    btn_add_first: '+ Thêm mục đầu tiên',
-
-    // Tasks (Item Modal & Presets)
-    task_modal_add: 'Thêm giấy tờ / Thiết bị mới',
-    task_modal_edit: 'Chỉnh sửa mục & Chi phí',
-    task_quick_presets: '⚡ Chọn nhanh mẫu thông dụng:',
-    task_name_label: 'Tên mục / Tài sản',
-    task_name_label_html: 'Tên mục / Tài sản <span class="text-rose-500">*</span>',
-    task_name_placeholder: 'Ví dụ: Đăng kiểm xe CX5, Máy lọc nước Karofi...',
-    task_category_label: 'Danh mục',
-    task_due_date_label: 'Ngày đến hạn',
-    task_due_date_label_html: 'Ngày đến hạn <span class="text-rose-500">*</span>',
-    task_due_time_label: 'Giờ thông báo',
-    task_time_badge: '⏰ Giờ nhắc',
-    task_cycle_label: 'Chu kỳ lặp lại (tháng)',
-    task_cycle_placeholder: 'Ví dụ: 6, 12, 24',
-    task_alarm_title: 'Chuông thông báo của thiết bị',
-    task_alarm_desc: 'Tự động nhận chuông cài trên máy, rung & hiện thông báo khi đến hạn (Không cần tải file)',
-    task_phone_label: 'Số hotline / Thợ quen',
-    task_phone_placeholder: '0908...',
-    task_provider_label: 'Đơn vị / Nơi làm',
-    task_provider_placeholder: 'Gara, Trung tâm, Thợ...',
-    task_subcosts_heading: 'Chi phí & Bóc tách các khoản con:',
-    task_subcosts_add_btn: '+ Thêm khoản con',
-    task_subcosts_desc: 'Điền số tiền hoặc bóc tách từng món con (ví dụ: Thay nhớt, lọc gió, tiền công...) để thống kê vào biểu đồ chi tiêu.',
-    task_total_cost_label: 'Tổng chi phí:',
-    task_notes_label: 'Ghi chú & Lưu ý',
-    task_notes_placeholder: 'Ví dụ: Vị trí cất sổ gốc, số hợp đồng, phụ kiện cần thay...',
-    task_reminders_label: '🔔 Nhắc nhở trước thời hạn:',
-    task_reminders_sub: 'Chọn các mốc báo trước',
-    remind_30_days: '30 ngày',
-    remind_7_days: '7 ngày',
-    remind_3_days: '3 ngày',
-    remind_1_day: '1 ngày',
-    remind_same_day: 'Đúng ngày',
-    task_save_template_cb: '⭐ Lưu mục này thành mẫu riêng (hiện trên thanh chọn nhanh)',
-    task_photos_label: 'Ảnh giấy tờ / Phiếu bảo hành',
-    photo_camera_btn: 'Chụp ảnh',
-    photo_camera_sub: 'Mở camera',
-    photo_file_btn: 'Chọn từ máy',
-    photo_file_sub: 'File / Bộ sưu tập',
-    btn_delete_item: 'Xóa mục',
-    btn_save_item: 'Lưu thông tin',
-    cat_opt_vehicle: '🚗 Phương tiện (Xe)',
-    cat_opt_home: '🏠 Gia dụng & Nhà',
-    cat_opt_identity: '🪪 Giấy tờ cá nhân',
-    cat_opt_tech: '💻 Đồ công nghệ',
-    cat_opt_other: '📌 Khác',
-    sub_cost_item_placeholder: 'Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)',
-    sub_cost_amount_placeholder: 'Số tiền ₫',
-    sub_cost_remove_title: 'Xóa khoản này',
-    sub_cost_main: 'Chi phí chính',
-    task_delete_confirm: 'Bạn có chắc chắn muốn xóa mục này không?',
-    task_delete_toast: '🗑️ Đã xóa mục!',
-    task_save_toast: '✅ Đã lưu thông tin thành công!',
-    template_delete_confirm: 'Bạn có chắc muốn xóa mẫu riêng này không?',
-    task_delete_template_title: 'Xóa mẫu riêng này',
-    task_edit_title_hover: 'Sửa thông tin & chi phí',
-    task_delete_title_hover: 'Xóa mục này',
-    task_complete_title_hover: 'Ghi nhận đã hoàn thành và bóc tách chi phí',
-    task_other_items_suffix: ' • +{count} khoản khác',
-
-    // Task Details Modal
-    detail_due_label: 'Hạn thực hiện:',
-    detail_cycle_label: 'Chu kỳ lặp:',
-    detail_time_alarm_label: 'Giờ & Chuông máy:',
-    detail_small_alarm_title: 'Bật/Tắt chuông báo của thiết bị',
-    detail_provider_label: 'Nơi thực hiện / Đơn vị:',
-    detail_cost_heading: 'Chi phí & Bóc tách chi phí con:',
-    detail_alarm_title: 'Chuông thông báo của máy',
-    detail_alarm_desc_default: 'Tự động nhận chuông cài trên thiết bị, không cần tải file',
-    detail_notes_label: 'Ghi chú & Hướng dẫn:',
-    detail_photos_label: 'Ảnh giấy tờ / Biên nhận:',
-    detail_history_label: 'Lịch sử bảo dưỡng / chi phí:',
-    detail_btn_complete: 'Ghi nhận bảo dưỡng & Chi phí',
-    detail_btn_edit_title: 'Sửa thông tin',
-    detail_btn_delete_title: 'Xóa',
-    detail_no_cycle: 'Không lặp định kỳ',
-    detail_months_cycle: '{months} tháng',
-    detail_no_provider: 'Chưa cập nhật',
-    detail_no_phone: 'Chưa có số',
-    detail_call_btn: '📞 Gọi {phone}',
-    detail_no_cost_set: 'Chưa điền chi phí cho mục này',
-    detail_fill_cost: 'Điền chi phí',
-    detail_total_package: 'Tổng chi phí',
-    detail_no_notes: 'Không có ghi chú thêm.',
-    detail_alarm_on: 'Đang bật 🔔',
-    detail_alarm_off: 'Đang tắt 🔕',
-    detail_alarm_desc_on: 'Chuông máy sẽ reo lúc {time} ngày {date}',
-    detail_alarm_desc_off: 'Chuông báo của thiết bị đang tắt cho mục này',
-
-    // Task Complete Modal
-    complete_modal_title: 'Ghi nhận hoàn thành & Chi phí',
-    complete_date_label: 'Ngày thực hiện',
-    complete_date_label_html: 'Ngày thực hiện <span class="text-rose-500">*</span>',
-    complete_provider_label: 'Gara / Thợ / Nơi làm',
-    complete_provider_placeholder: 'Gara Thành Phát, Thợ Tuấn...',
-    complete_subcosts_heading: 'Bóc tách các khoản chi phí con:',
-    complete_add_row_btn: '+ Thêm dòng',
-    complete_subcosts_desc: 'Ví dụ: Thay nhớt, Lọc dầu, Tiền công... để sau này tra cứu chi tiết từng món.',
-    complete_total_label: 'Tổng chi phí lần này:',
-    complete_notes_label: 'Ghi chú lần này (Km xe, bảo hành thợ...)',
-    complete_notes_placeholder: 'Ví dụ: Thay lúc 45.000km, thợ bảo hành 3 tháng...',
-    complete_photo_label: 'Ảnh hóa đơn / Biên nhận (Tùy chọn)',
-    complete_submit_btn: 'Lưu vào Nhật ký & Tự động gia hạn',
-    complete_cycle_text: ' (Chu kỳ: {cycle} tháng)',
-    complete_initial_oil: 'Thay dầu nhớt động cơ',
-    complete_initial_filter: 'Lọc nhớt / Tiền công',
-    complete_initial_clean: 'Vệ sinh / Thay thế linh kiện',
-    complete_initial_labor: 'Tiền công thợ',
-    complete_initial_main: 'Chi phí chính',
-    complete_toast_saved: '✅ Đã lưu vào Nhật ký bảo dưỡng!',
-    complete_alert_next_due: 'Đã lưu chi phí vào Nhật ký! Hạn lần tới tự động dời sang ngày: {date}',
-
-    // Log Detail Modal
-    log_detail_title_default: 'Chi tiết bảo dưỡng',
-    log_detail_date_label: 'Ngày thực hiện: {date}',
-    log_detail_total_label: 'Tổng số tiền đã chi:',
-    log_detail_provider_label: 'Nơi thực hiện:',
-    log_detail_subitems_label: 'Chi tiết các khoản chi con:',
-    log_detail_notes_label: 'Ghi chú lần này:',
-    log_detail_photo_label: 'Ảnh hóa đơn / Biên nhận:',
-    log_detail_delete_btn: 'Xóa lịch sử này',
-    log_detail_close_btn: 'Đóng chi tiết',
-    log_detail_no_provider: 'Chưa ghi nơi làm',
-    log_detail_no_notes: 'Không có ghi chú thêm.',
-    log_detail_no_photo: 'Không đính kèm ảnh hóa đơn.',
-    log_detail_total_package: 'Tổng chi phí trọn gói',
-    log_detail_tap_zoom: '🔍 Chạm để phóng to',
-    log_detail_fullscreen_hint: 'Chạm ảnh để xem toàn màn hình',
-    log_detail_zoom_btn: '🔍 Phóng to',
-
-    // Notes Section
-    note_card_untitled: 'Ghi chú không tiêu đề',
-    note_title_fallback: 'Ghi chú',
-    note_toast_saved: '📝 Đã lưu ghi chú thành công!',
-    note_toast_deleted: '🗑️ Đã xóa ghi chú!',
-    note_toast_pinned: '📌 Đã ghim ghi chú lên đầu!',
-    note_toast_unpinned: 'Đã bỏ ghim ghi chú',
-    note_confirm_delete: 'Bạn có chắc chắn muốn xóa ghi chú này không?',
-    note_alert_empty: 'Vui lòng nhập tiêu đề hoặc nội dung ghi chú!',
-    note_pin_title: 'Ghim lên đầu',
-    note_unpin_title: 'Bỏ ghim',
-    note_delete_title: 'Xóa ghi chú',
-    note_color_amber: 'Vàng chanh',
-    note_color_purple: 'Tím lavender',
-    note_color_emerald: 'Xanh mint',
-    note_color_sky: 'Xanh trời',
-    note_color_rose: 'Hồng phấn',
-    note_color_white: 'Trắng',
-
-    // Help & Guide Modal
-    help_modal_title: 'Hướng dẫn sử dụng LifeKeep',
-    help_step1_title: 'Thêm mới mục cần theo dõi (Nút +)',
-    help_step1_desc: 'Bấm <strong>nút dấu cộng (+) ở chính giữa</strong> thanh menu dưới cùng. Bạn có thể bấm chọn nhanh các mẫu thông dụng (<em>Đăng kiểm ô tô, Thay nhớt xe, Vệ sinh máy lạnh, Thay lõi lọc nước...</em>) để app tự động điền chu kỳ chuẩn, hoặc tự nhập tay theo nhu cầu.',
-    help_step2_title: 'Chụp ảnh giấy tờ & Hóa đơn',
-    help_step2_desc: 'Trong form thêm mục, bấm <strong>"Chụp ảnh hoặc chọn từ máy"</strong> để lưu ảnh cà vẹt xe, sổ đăng kiểm, biên nhận bảo dưỡng. Toàn bộ ảnh được lưu trữ an toàn ngay trong bộ nhớ thiết bị của bạn.',
-    help_step3_title: 'Đặt chuông nhắc nhở vào Lịch điện thoại',
-    help_step3_desc: 'Khi xem chi tiết bất kỳ mục nào, bấm nút <strong>"+ Đặt chuông"</strong> ở mục Lịch điện thoại. App sẽ tự động đồng bộ sự kiện vào ứng dụng <strong>Apple Calendar (iPhone)</strong> hoặc <strong>Google Calendar (Android)</strong> để reo chuông báo thức trước 7 ngày và 1 ngày, không bao giờ bị quên dù bạn không mở app!',
-    help_step4_title: 'Nút "Đã xong" & Tự nhảy chu kỳ',
-    help_step4_desc: 'Mỗi khi bạn đã hoàn thành bảo dưỡng (ví dụ: vừa đi thay nhớt máy xong), hãy bấm nút <strong>"✓ Đã xong"</strong> trên thẻ ➜ nhập số tiền đã chi. App sẽ tự động ghi nhật ký chi phí và <strong>tự nhảy ngày đến hạn tiếp theo</strong> (ví dụ +6 tháng) mà không cần tính toán bằng tay!',
-    help_step5_title: 'Tự tạo mẫu riêng & Sao lưu',
-    help_step5_desc: '• Khi thêm việc riêng, tích vào ô <em>"⭐ Lưu mục này thành mẫu riêng"</em> để dùng lại nhanh chóng.<br/>• Vào tab <strong>"Sao lưu"</strong> để tải file dự phòng JSON về máy, dễ dàng phục hồi dữ liệu khi bạn đổi điện thoại mới.',
-    help_handbook_title: '📚 Cẩm nang thủ tục & Chu kỳ thực tế:',
-    help_guide_car_title: '🚗 Quy trình Đăng kiểm ô tô (Bấm để xem)',
-    help_guide_car_1: 'Mang theo Đăng ký xe gốc, Bảo hiểm TNDS còn hạn.',
-    help_guide_car_2: 'Tra cứu phạt nguội tại csgt.vn trước khi đi, xe dính phạt nguội sẽ bị từ chối kiểm định.',
-    help_guide_car_3: 'Chu kỳ: xe mới 36 tháng; xe dưới 7 năm: 24 tháng; xe trên 7 năm: 12 tháng.',
-    help_guide_water_title: '💧 Chu kỳ chuẩn máy lọc nước RO (Bấm để xem)',
-    help_guide_water_1: 'Lõi số 1 (PP 5 micron): 3 – 6 tháng.',
-    help_guide_water_2: 'Lõi số 2 (Than OCB/GAC): 6 – 9 tháng.',
-    help_guide_water_3: 'Lõi số 3 (PP 1 micron): 9 – 12 tháng.',
-    help_guide_water_4: 'Màng RO: 24 – 36 tháng.',
-    help_guide_ins_title: '🛡️ Thủ tục bồi thường Bảo hiểm xe khi va chạm (Bấm để xem)',
-    help_guide_ins_1: 'Giữ nguyên hiện trường, gọi ngay Hotline bảo hiểm trước khi di chuyển xe.',
-    help_guide_ins_2: 'Chụp ảnh 4 góc xe, toàn cảnh hiện trường, vệt phanh, biển số đối phương.',
-    help_close_btn: 'Đã hiểu, đóng hướng dẫn',
-
-    // Finance & Analytics Charts
-    fin_chart_title_year: 'Diễn biến Thu & Chi năm {year}',
-    fin_chart_title_month: 'Diễn biến Tháng {month}/{year}',
-    fin_chart_title_all: 'Diễn biến So sánh các Năm',
-    fin_chart_title_default: 'Diễn biến Thu nhập & Chi tiêu',
-    fin_chart_income_label: 'Thu nhập',
-    fin_chart_expense_label: 'Chi tiêu',
-    fin_cat_vehicle_maint: 'Bảo dưỡng Xe',
-    fin_cat_home_maint: 'Gia dụng & Lọc nước',
-    fin_cat_id_maint: 'Giấy tờ & Bảo hiểm',
-    fin_cat_tech_maint: 'Đồ công nghệ',
-    fin_cat_other_maint: 'Chi tiêu khác',
-    fin_cat_other_fallback: 'Chi khác',
-    fin_doughnut_no_expense: 'Chưa có chi tiêu',
-    fin_breakdown_no_expense: 'Chưa phát sinh chi tiêu trong kỳ này.',
-    analytics_modal_title: 'Thống kê & Biểu đồ chi tiêu',
-    analytics_modal_subtitle: 'Phân tích chi phí bảo dưỡng & giấy tờ',
-    analytics_filter_label: 'Xem theo:',
-    analytics_period_all_year: 'Cả năm {year}',
-    analytics_period_this_month: 'Tháng {month}/{year} (Tháng này)',
-    analytics_period_month: 'Tháng {month}/{year}',
-    analytics_period_all: 'Tất cả từ trước đến nay',
-    analytics_total_period: 'Tổng chi tiêu trong kỳ:',
-    analytics_doughnut_title: 'Cơ cấu chi tiêu theo Danh mục',
-    analytics_barchart_title: 'Chi phí 12 tháng năm {year}',
-    analytics_close_btn: 'Đóng thống kê',
-
-    // Install PWA Modal
-    install_modal_title: 'Cài đặt & Mở trên điện thoại',
-    install_tab_wifi: 'Chung Wi-Fi (Khuyên dùng)',
-    install_tab_4g: 'Dùng 4G (Online)',
-    install_wifi_title: 'Kết nối trực tiếp máy tính qua Wi-Fi',
-    install_wifi_desc: 'Quét mã QR để mở trực tiếp từ máy tính (Điện thoại và máy tính cùng bắt Wi-Fi nhà):',
-    install_or_type: 'Hoặc gõ địa chỉ này vào Safari / Chrome trên điện thoại:',
-    install_change_ip: 'Đổi IP nếu cần:',
-    install_chip_wifi: 'Wi-Fi (.244)',
-    install_chip_lan: 'Dây LAN (.165)',
-    install_4g_title: 'Dùng khi đi ra ngoài / mạng 4G/5G',
-    install_4g_desc: 'Chạy file <strong>start_online.bat</strong> trên máy tính để lấy link HTTPS Cloudflare mới, sau đó dán vào ô dưới đây để tạo mã QR:',
-    install_4g_placeholder: 'Dán link https://xxx.trycloudflare.com vào đây...',
-    install_ios_title: '🍎 Dành cho iPhone (Safari):',
-    install_ios_1: 'Mở link trên bằng trình duyệt <strong>Safari</strong>.',
-    install_ios_2: 'Bấm nút <strong>Chia sẻ (Biểu tượng mũi tên hướng lên)</strong> ở thanh dưới cùng.',
-    install_ios_3: 'Cuộn xuống chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong>.',
-    install_android_title: '🤖 Dành cho Android (Chrome):',
-    install_android_1: 'Mở link trên bằng trình duyệt <strong>Google Chrome</strong>.',
-    install_android_2: 'Bấm vào <strong>menu 3 chấm (Góc trên bên phải)</strong>.',
-    install_android_3: 'Chọn <strong>"Cài đặt ứng dụng" (Install app)</strong> hoặc <strong>"Thêm vào Màn hình chính"</strong>.',
-
-    // Photo Viewer Modal
-    photo_viewer_title: 'Chi tiết hình ảnh',
-    photo_zoom_out_title: 'Thu nhỏ (-)',
-    photo_zoom_reset_title: 'Bấm để đặt lại 100%',
-    photo_zoom_in_title: 'Phóng to (+)',
-    photo_download_title: 'Tải ảnh về máy',
-    photo_download_btn: 'Tải về',
-    photo_close_title: 'Đóng (✕)',
-    photo_hint_desktop: 'Kéo chuột/chạm 2 ngón tay để thu phóng (pinch-to-zoom), cuộn chuột hoặc bấm nút +/-',
-    photo_hint_mobile: 'Dùng 2 ngón tay thu phóng (pinch-to-zoom)',
-    photo_close_bottom: 'Đóng lại ✕',
-
-    // Google Auth & Login
-    auth_welcome_title: 'Chào mừng trở lại',
-    auth_welcome_sub: 'Đăng nhập tài khoản để tiếp tục sử dụng',
-    auth_name_placeholder: 'Họ và tên của bạn',
-    auth_email_placeholder: 'Email hoặc Tên đăng nhập',
-    auth_pass_placeholder: 'Mật khẩu',
-    auth_pass_confirm_placeholder: 'Nhập lại mật khẩu',
-    auth_remember_me: 'Ghi nhớ đăng nhập',
-    auth_forgot_pass: 'Quên mật khẩu?',
-    auth_btn_login: 'Đăng nhập',
-    auth_or_continue: 'Hoặc tiếp tục với',
-    auth_btn_google: 'Tiếp tục với Google / Gmail',
-    auth_no_account: 'Chưa có tài khoản?',
-    auth_register_now: 'Đăng ký ngay',
-    gmail_modal_title: 'Đăng nhập qua Gmail',
-    gmail_modal_sub: 'Bảo mật dữ liệu LifeKeep bằng tài khoản Google',
-    gmail_device_accounts: 'Tài khoản Google trên thiết bị:',
-    gmail_or_other: 'Hoặc đăng nhập với Gmail khác',
-    gmail_address_label_html: 'Địa chỉ Gmail của bạn <span class="text-rose-500">*</span>',
-    gmail_address_placeholder: 'ví dụ: tenban@gmail.com',
-    gmail_name_label: 'Họ và tên hiển thị của bạn',
-    gmail_name_placeholder: 'Nhập họ tên của bạn (hoặc để trống)',
-    gmail_btn_signin: 'Đăng nhập qua Gmail này',
-    gmail_open_account: 'Mở trang tài khoản Google (accounts.google.com)',
-    gmail_add_account: 'Thêm tài khoản khác',
-    gmail_logout_all: 'Đăng xuất khỏi tất cả các tài khoản',
-    gmail_manage_account: 'Quản lý Tài khoản Google của bạn',
-    gmail_upgrade_ultra: 'Nâng cấp lên Google AI Ultra',
-    gmail_privacy: 'Chính sách quyền riêng tư',
-    gmail_terms: 'Điều khoản dịch vụ',
-    settings_edit_name_title: 'Đổi tên hiển thị',
-    settings_logout_title: 'Đăng xuất tài khoản',
-    nav_settings_title: 'Cài đặt & Tài khoản',
-    nav_badge_title: 'Tài khoản bảo mật',
-    btn_toggle_lang_title: 'Đổi ngôn ngữ / Switch Language',
-    btn_refresh_app_title: 'Làm mới & Cập nhật Theme mới',
-    btn_install_app_title: 'Cài lên điện thoại',
-    btn_notif_center_title: 'Trung tâm Thông báo & Nhắc việc',
-    hero_year_select_title: 'Chọn năm chi tiêu',
-    banner_alarm_title: 'Bật chuông & rung nhắc việc',
-    banner_alarm_desc: 'Nhận báo thức ngay trên điện thoại khi đến hạn',
-    banner_alarm_btn: 'Bật ngay',
-    home_fin_badge: 'Số dư gốc',
-    home_fin_starting_unset: '(Chưa cài đặt số dư gốc)',
-    home_fin_avail_formula: '(Gốc + Thu - Chi)',
-    home_metric_finance_title: 'Bấm để xem Quản lý Tài chính & Thu chi',
-    note_color_amber: 'Vàng chanh',
-    note_color_purple: 'Tím lavender',
-    note_color_emerald: 'Xanh mint',
-    note_color_sky: 'Xanh trời',
-    note_color_rose: 'Hồng phấn',
-    note_color_white: 'Trắng',
-    auth_toggle_pass_title: 'Hiện/Ẩn mật khẩu',
-    auth_create_account_title: 'Tạo tài khoản mới',
-    auth_create_account_sub: 'Đăng ký để bảo mật thông tin trên LifeKeep',
-    auth_btn_register: 'Đăng ký tài khoản',
-    auth_already_have_acc: 'Đã có tài khoản?',
-    auth_login_now: 'Đăng nhập ngay',
-    auth_err_empty: 'Vui lòng điền đầy đủ tài khoản và mật khẩu!',
-    auth_err_no_account: 'Chưa có tài khoản nào được tạo. Hãy nhấn "Đăng ký ngay" bên dưới hoặc Đăng nhập nhanh bằng Gmail!',
-    auth_err_wrong_pass: 'Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại.',
-    auth_err_name_empty: 'Vui lòng nhập họ và tên của bạn!',
-    auth_err_pass_short: 'Mật khẩu cần tối thiểu 4 ký tự!',
-    auth_err_pass_mismatch: 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại.',
-    auth_err_user_exists: 'Tài khoản hoặc Email này đã tồn tại! Vui lòng dùng tên khác.',
-    on_device: 'Trên thiết bị',
-    auth_confirm_logout: 'Bạn có chắc chắn muốn đăng xuất khỏi LifeKeep?',
-    auth_toast_logged_out: '🚪 Đã đăng xuất khỏi tài khoản!',
-    confirm_delete_custom_template: 'Bạn có chắc muốn xóa mẫu riêng này không?',
-    cat_icon_title: 'Biểu tượng Emoji',
-    install_lan_btn: 'Dây LAN (.165)',
-    task_save_btn: 'Lưu thông tin'
+    cat_confirm_delete: 'Bạn có chắc muốn xóa danh mục tùy chỉnh này?'
   },
   en: {
     // App & Header
@@ -1631,8 +1208,9 @@ const I18N = {
     hero_btn_notes: 'Notes',
     hero_btn_jobs: 'Tasks',
     hero_btn_finance: 'Finance',
-    hero_spending_title: 'TOTAL SPENDING IN {year}',
-    hero_spending_metric: 'Spent {year} 🪙',
+    hero_spending_title: 'SPENDING IN M{month}/{year}',
+    hero_spending_month_this: 'THIS MONTH\'S SPENDING (M{month}/{year})',
+    hero_spending_metric: 'Spent M{month} 🪙',
     hero_safe_title: 'All tasks and documents are under control!',
     hero_safe_badge: 'Safe',
     hero_btn_add: '+ Add New',
@@ -1690,6 +1268,7 @@ const I18N = {
     cat_home_name: 'Home & Living',
     cat_identity_name: 'Documents',
     cat_tech_name: 'Technology',
+    cat_note_name: 'Notes',
     cat_other_name: 'Other',
 
     // Notes View
@@ -1708,7 +1287,6 @@ const I18N = {
     note_alarm_date: 'Due Date',
     note_alarm_time: 'Due Time',
     note_alarm_phone: 'Ring & Phone Vibrate',
-    note_alarm_phone_desc: 'Ring & vibrate phone when scheduled date and time arrives',
 
     // Bottom Dock
     dock_home: 'Home',
@@ -1732,7 +1310,6 @@ const I18N = {
     notif_center_title: 'Notification Center',
     notif_center_subtitle: 'All due tasks & important notes in one place',
     notif_btn_test: '🔔 Test Ringtone',
-    notif_btn_test_title: 'Test alarm & vibrate device',
     notif_tab_all: 'All',
     notif_tab_overdue: '🚨 Overdue',
     notif_tab_today: '⚠️ Today',
@@ -1759,7 +1336,7 @@ const I18N = {
     settings_backup_export: 'Export Backup (JSON)',
     settings_backup_import: 'Restore Data (JSON)',
     settings_privacy_title: 'Privacy & Offline Data',
-    settings_privacy_desc: 'All your data is securely stored 100% in device storage (IndexedDB). Multi-account support works seamlessly offline and online.',
+    settings_privacy_desc: 'We do not store your personal data on any server; all data is stored 100% locally on this device. All your tasks, financial records, photos, and notes remain securely in your local storage (IndexedDB), guaranteeing complete privacy.',
 
     // Home Finance Golden Card
     home_fin_title: 'Personal Finance',
@@ -1886,7 +1463,6 @@ const I18N = {
     cat_add_section: '+ Add new category:',
     cat_name_placeholder: 'Category name...',
     cat_select_icon: 'Select icon:',
-    cat_icon_title: 'Emoji Icon',
     cat_btn_add_action: '+ Add this category',
     cat_expense_heading: 'Expense Categories:',
     cat_income_heading: 'Income Categories:',
@@ -1920,331 +1496,7 @@ const I18N = {
     tx_alert_invalid_amount: 'Please enter a valid amount!',
     budget_alert_invalid_amount: 'Please enter a valid budget amount!',
     cat_alert_empty_name: 'Please enter a category name!',
-    cat_confirm_delete: 'Are you sure you want to delete this custom category?',
-    // App & Title
-    app_page_title: 'LifeKeep - Personal Task & Finance Assistant',
-    header_user_greeting: 'Hello, Friend',
-    header_account_title: 'Settings & Account',
-    header_account_secure_title: 'Secured Account',
-    header_switch_lang_title: 'Switch Language',
-    header_update_app_title: 'Refresh & Update App',
-    header_install_app_title: 'Install on Phone',
-    header_notif_center_title: 'Notifications & Tasks',
-    select_year_title: 'Select spending year',
-    banner_alarm_title: 'Enable Task Alarms & Vibration',
-    banner_alarm_desc: 'Get alarms on your phone when items are due',
-    banner_alarm_btn: 'Enable Now',
-    btn_add_first: '+ Add first item',
-
-    // Tasks (Item Modal & Presets)
-    task_modal_add: 'Add New Task / Item',
-    task_modal_edit: 'Edit Task & Expenses',
-    task_quick_presets: '⚡ Quick presets:',
-    task_name_label: 'Item / Task Name',
-    task_name_label_html: 'Item / Task Name <span class="text-rose-500">*</span>',
-    task_name_placeholder: 'e.g., Car Inspection, RO Water Filter...',
-    task_category_label: 'Category',
-    task_due_date_label: 'Due Date',
-    task_due_date_label_html: 'Due Date <span class="text-rose-500">*</span>',
-    task_due_time_label: 'Reminder Time',
-    task_time_badge: '⏰ Alarm',
-    task_cycle_label: 'Repeat Cycle (months)',
-    task_cycle_placeholder: 'e.g., 6, 12, 24',
-    task_alarm_title: 'Device Notification Alarm',
-    task_alarm_desc: 'Uses built-in phone ringtone & vibration when due (Zero file download)',
-    task_phone_label: 'Hotline / Contact Phone',
-    task_phone_placeholder: 'Phone number...',
-    task_provider_label: 'Provider / Location',
-    task_provider_placeholder: 'Garage, Center, Technician...',
-    task_subcosts_heading: 'Itemized Sub-costs & Expenses:',
-    task_subcosts_add_btn: '+ Add Sub-cost',
-    task_subcosts_desc: 'Enter total or break down into items (e.g., Oil change, air filter, labor fee...) for expense analytics.',
-    task_total_cost_label: 'Total Cost:',
-    task_notes_label: 'Notes & Instructions',
-    task_notes_placeholder: 'e.g., Original doc location, contract number, parts to replace...',
-    task_reminders_label: '🔔 Advance Reminders:',
-    task_reminders_sub: 'Select advance alerts',
-    remind_30_days: '30 days',
-    remind_7_days: '7 days',
-    remind_3_days: '3 days',
-    remind_1_day: '1 day',
-    remind_same_day: 'On due day',
-    task_save_template_cb: '⭐ Save as custom template (shows on quick bar)',
-    task_photos_label: 'Photos of Documents / Warranty',
-    photo_camera_btn: 'Take Photo',
-    photo_camera_sub: 'Open camera',
-    photo_file_btn: 'Choose File',
-    photo_file_sub: 'From gallery',
-    btn_delete_item: 'Delete Task',
-    btn_save_item: 'Save Task',
-    cat_opt_vehicle: '🚗 Vehicles (Car / Bike)',
-    cat_opt_home: '🏠 Home & Living',
-    cat_opt_identity: '🪪 Personal Documents',
-    cat_opt_tech: '💻 Tech Devices',
-    cat_opt_other: '📌 Other',
-    sub_cost_item_placeholder: 'Sub-item name (e.g. Oil change, filter...)',
-    sub_cost_amount_placeholder: 'Amount ₫',
-    sub_cost_remove_title: 'Remove this item',
-    sub_cost_main: 'Main cost',
-    task_delete_confirm: 'Are you sure you want to delete this item?',
-    task_delete_toast: '🗑️ Item deleted!',
-    task_save_toast: '✅ Saved successfully!',
-    template_delete_confirm: 'Are you sure you want to delete this custom template?',
-    task_delete_template_title: 'Delete this custom template',
-    task_edit_title_hover: 'Edit details & costs',
-    task_delete_title_hover: 'Delete this item',
-    task_complete_title_hover: 'Mark as done and record expenses',
-    task_other_items_suffix: ' • +{count} others',
-
-    // Task Details Modal
-    detail_due_label: 'Due Date:',
-    detail_cycle_label: 'Cycle:',
-    detail_time_alarm_label: 'Time & Alarm:',
-    detail_small_alarm_title: 'Toggle device notification alarm',
-    detail_provider_label: 'Provider / Location:',
-    detail_cost_heading: 'Cost & Breakdown:',
-    detail_alarm_title: 'Device Notification Ringtone',
-    detail_alarm_desc_default: 'Uses device default ringtone, no download needed',
-    detail_notes_label: 'Notes & Instructions:',
-    detail_photos_label: 'Photos / Receipts:',
-    detail_history_label: 'Maintenance & Cost History:',
-    detail_btn_complete: 'Record Maintenance & Cost',
-    detail_btn_edit_title: 'Edit details',
-    detail_btn_delete_title: 'Delete',
-    detail_no_cycle: 'One-time (No cycle)',
-    detail_months_cycle: '{months} months',
-    detail_no_provider: 'Not specified',
-    detail_no_phone: 'No phone number',
-    detail_call_btn: '📞 Call {phone}',
-    detail_no_cost_set: 'No cost recorded for this item',
-    detail_fill_cost: 'Enter cost',
-    detail_total_package: 'Total Cost',
-    detail_no_notes: 'No additional notes.',
-    detail_alarm_on: 'Alarm ON 🔔',
-    detail_alarm_off: 'Alarm OFF 🔕',
-    detail_alarm_desc_on: 'Phone will alarm at {time} on {date}',
-    detail_alarm_desc_off: 'Device alarm is currently disabled for this item',
-
-    // Task Complete Modal
-    complete_modal_title: 'Record Completion & Cost',
-    complete_date_label: 'Completion Date',
-    complete_date_label_html: 'Completion Date <span class="text-rose-500">*</span>',
-    complete_provider_label: 'Garage / Provider',
-    complete_provider_placeholder: 'Service center, technician...',
-    complete_subcosts_heading: 'Itemized Sub-costs:',
-    complete_add_row_btn: '+ Add Row',
-    complete_subcosts_desc: 'e.g., Oil change, oil filter, labor... to keep detailed records.',
-    complete_total_label: 'Total Cost this time:',
-    complete_notes_label: 'Notes (Odometer, warranty...)',
-    complete_notes_placeholder: 'e.g., Done at 45,000 km, 3-month warranty...',
-    complete_photo_label: 'Receipt / Invoice Photo (Optional)',
-    complete_submit_btn: 'Save to History & Auto-Renew',
-    complete_cycle_text: ' (Cycle: {cycle} months)',
-    complete_initial_oil: 'Engine Oil Change',
-    complete_initial_filter: 'Oil Filter / Labor',
-    complete_initial_clean: 'Cleaning / Parts',
-    complete_initial_labor: 'Labor Fee',
-    complete_initial_main: 'Main Cost',
-    complete_toast_saved: '✅ Saved to Maintenance History!',
-    complete_alert_next_due: 'Expense saved to History! Next due date auto-advanced to: {date}',
-
-    // Log Detail Modal
-    log_detail_title_default: 'Maintenance Details',
-    log_detail_date_label: 'Date completed: {date}',
-    log_detail_total_label: 'Total Amount Spent:',
-    log_detail_provider_label: 'Provider / Location:',
-    log_detail_subitems_label: 'Itemized Cost Breakdown:',
-    log_detail_notes_label: 'Notes:',
-    log_detail_photo_label: 'Receipt / Invoice Photo:',
-    log_detail_delete_btn: 'Delete this record',
-    log_detail_close_btn: 'Close Details',
-    log_detail_no_provider: 'Not specified',
-    log_detail_no_notes: 'No additional notes.',
-    log_detail_no_photo: 'No receipt attached.',
-    log_detail_total_package: 'Total Package Cost',
-    log_detail_tap_zoom: '🔍 Tap to zoom',
-    log_detail_fullscreen_hint: 'Tap photo to view fullscreen',
-    log_detail_zoom_btn: '🔍 Zoom',
-
-    // Notes Section
-    note_card_untitled: 'Untitled Note',
-    note_title_fallback: 'Note',
-    note_toast_saved: '📝 Note saved successfully!',
-    note_toast_deleted: '🗑️ Note deleted!',
-    note_toast_pinned: '📌 Note pinned to top!',
-    note_toast_unpinned: 'Note unpinned',
-    note_confirm_delete: 'Are you sure you want to delete this note?',
-    note_alert_empty: 'Please enter a note title or content!',
-    note_pin_title: 'Pin to top',
-    note_unpin_title: 'Unpin',
-    note_delete_title: 'Delete note',
-    note_color_amber: 'Lemon Yellow',
-    note_color_purple: 'Lavender',
-    note_color_emerald: 'Mint Green',
-    note_color_sky: 'Sky Blue',
-    note_color_rose: 'Rose Pink',
-    note_color_white: 'White',
-
-    // Help & Guide Modal
-    help_modal_title: 'LifeKeep User Guide',
-    help_step1_title: 'Add New Tracking Item (+ Button)',
-    help_step1_desc: 'Tap the <strong>plus button (+) in the center</strong> of the bottom navigation bar. Choose from handy presets (<em>Car inspection, Oil change, AC cleaning, Water filter...</em>) to auto-fill standard cycles, or enter custom details.',
-    help_step2_title: 'Capture Documents & Receipts',
-    help_step2_desc: 'In the item form, tap <strong>"Take photo or choose file"</strong> to store vehicle registrations, warranty cards, or service receipts. All photos are securely saved on your device.',
-    help_step3_title: 'Set Device Ringtone & Alarms',
-    help_step3_desc: 'When viewing any item, toggle the alarm to ring right on your device. LifeKeep rings and vibrates on your phone when due, and can sync to <strong>Apple Calendar (iPhone)</strong> or <strong>Google Calendar (Android)</strong> so you never miss a deadline!',
-    help_step4_title: '"Done" Button & Auto-Renew',
-    help_step4_desc: 'Whenever you finish maintenance (e.g., just changed engine oil), tap <strong>"✓ Done"</strong> ➜ enter cost. LifeKeep logs the expense and <strong>automatically advances the next due date</strong> (e.g. +6 months) without manual calculation!',
-    help_step5_title: 'Custom Templates & Backup',
-    help_step5_desc: '• Check <em>"⭐ Save as custom template"</em> to reuse your own recurring items quickly.<br/>• Open the <strong>"Backup"</strong> tab to download a JSON backup file, easily restoring your data when switching phones.',
-    help_handbook_title: '📚 Practical Procedures & Cycles:',
-    help_guide_car_title: '🚗 Car Inspection Procedures (Tap to view)',
-    help_guide_car_1: 'Bring original Vehicle Registration and valid Mandatory Insurance.',
-    help_guide_car_2: 'Check unpaid traffic fines online before going; unresolved fines cause inspection rejection.',
-    help_guide_car_3: 'Cycle: New cars 36 months; under 7 years: 24 months; over 7 years: 12 months.',
-    help_guide_water_title: '💧 RO Water Filter Standard Cycles (Tap to view)',
-    help_guide_water_1: 'Filter #1 (PP 5 micron): 3 – 6 months.',
-    help_guide_water_2: 'Filter #2 (Carbon OCB/GAC): 6 – 9 months.',
-    help_guide_water_3: 'Filter #3 (PP 1 micron): 9 – 12 months.',
-    help_guide_water_4: 'RO Membrane: 24 – 36 months.',
-    help_guide_ins_title: '🛡️ Auto Insurance Claim Procedures (Tap to view)',
-    help_guide_ins_1: 'Keep the scene intact, immediately call insurance hotline before moving vehicles.',
-    help_guide_ins_2: 'Take photos of all 4 corners, full scene, skid marks, and other vehicle license plate.',
-    help_close_btn: 'Understood, Close Guide',
-
-    // Finance & Analytics Charts
-    fin_chart_title_year: 'Income & Expense Trend - Year {year}',
-    fin_chart_title_month: 'Trend for {month}/{year}',
-    fin_chart_title_all: 'Multi-Year Comparison Trend',
-    fin_chart_title_default: 'Income & Expense Trend',
-    fin_chart_income_label: 'Income',
-    fin_chart_expense_label: 'Expenses',
-    fin_cat_vehicle_maint: 'Vehicle Maintenance',
-    fin_cat_home_maint: 'Home & Water Filter',
-    fin_cat_id_maint: 'Documents & Insurance',
-    fin_cat_tech_maint: 'Tech Devices',
-    fin_cat_other_maint: 'Other Expenses',
-    fin_cat_other_fallback: 'Other Expense',
-    fin_doughnut_no_expense: 'No expenses yet',
-    fin_breakdown_no_expense: 'No expenses incurred in this period.',
-    analytics_modal_title: 'Expense Analytics & Charts',
-    analytics_modal_subtitle: 'Analysis of maintenance & document expenses',
-    analytics_filter_label: 'Filter by:',
-    analytics_period_all_year: 'Full Year {year}',
-    analytics_period_this_month: 'Month {month}/{year} (This Month)',
-    analytics_period_month: 'Month {month}/{year}',
-    analytics_period_all: 'All Time (Full History)',
-    analytics_total_period: 'Total spending in period:',
-    analytics_doughnut_title: 'Spending Structure by Category',
-    analytics_barchart_title: '12-Month Spending in {year}',
-    analytics_close_btn: 'Close Analytics',
-
-    // Install PWA Modal
-    install_modal_title: 'Install & Open on Mobile',
-    install_tab_wifi: 'Same Wi-Fi (Recommended)',
-    install_tab_4g: 'Use 4G / Cloudflare',
-    install_wifi_title: 'Direct Wi-Fi Connection to PC',
-    install_wifi_desc: 'Scan QR code to open from PC (Phone and computer on the same Wi-Fi):',
-    install_or_type: 'Or type this URL into Safari / Chrome on your phone:',
-    install_change_ip: 'Change IP if needed:',
-    install_chip_wifi: 'Wi-Fi (.244)',
-    install_chip_lan: 'LAN Cable (.165)',
-    install_4g_title: 'Use on Mobile Data (4G/5G)',
-    install_4g_desc: 'Run start_online.bat on computer to get a HTTPS Cloudflare tunnel link, then paste it below to generate a QR code:',
-    install_4g_placeholder: 'Paste https://xxx.trycloudflare.com link here...',
-    install_ios_title: '🍎 For iPhone (Safari):',
-    install_ios_1: 'Open the link above in <strong>Safari</strong> browser.',
-    install_ios_2: 'Tap the <strong>Share button (arrow pointing up)</strong> at the bottom bar.',
-    install_ios_3: 'Scroll down and select <strong>"Add to Home Screen"</strong>.',
-    install_android_title: '🤖 For Android (Chrome):',
-    install_android_1: 'Open the link above in <strong>Google Chrome</strong> browser.',
-    install_android_2: 'Tap the <strong>3-dot menu (top-right corner)</strong>.',
-    install_android_3: 'Select <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong>.',
-
-    // Photo Viewer Modal
-    photo_viewer_title: 'Photo Details',
-    photo_zoom_out_title: 'Zoom out (-)',
-    photo_zoom_reset_title: 'Reset to 100%',
-    photo_zoom_in_title: 'Zoom in (+)',
-    photo_download_title: 'Download photo',
-    photo_download_btn: 'Download',
-    photo_close_title: 'Close (✕)',
-    photo_hint_desktop: 'Drag or pinch-to-zoom, use mouse wheel or +/- buttons',
-    photo_hint_mobile: 'Pinch with 2 fingers to zoom',
-    photo_close_bottom: 'Close ✕',
-
-    // Google Auth & Login
-    auth_welcome_title: 'Welcome Back',
-    auth_welcome_sub: 'Sign in to access your data',
-    auth_name_placeholder: 'Your full name',
-    auth_email_placeholder: 'Email or Username',
-    auth_pass_placeholder: 'Password',
-    auth_pass_confirm_placeholder: 'Confirm password',
-    auth_remember_me: 'Remember me',
-    auth_forgot_pass: 'Forgot password?',
-    auth_btn_login: 'Sign In',
-    auth_or_continue: 'Or continue with',
-    auth_btn_google: 'Continue with Google / Gmail',
-    auth_no_account: "Don't have an account?",
-    auth_register_now: 'Register now',
-    gmail_modal_title: 'Sign in with Gmail',
-    gmail_modal_sub: 'Secure LifeKeep data with your Google account',
-    gmail_device_accounts: 'Google accounts on device:',
-    gmail_or_other: 'Or sign in with another Gmail',
-    gmail_address_label_html: 'Your Gmail address <span class="text-rose-500">*</span>',
-    gmail_address_placeholder: 'e.g. yourname@gmail.com',
-    gmail_name_label: 'Display name',
-    gmail_name_placeholder: 'Enter your name (or leave blank)',
-    gmail_btn_signin: 'Sign in with this Gmail',
-    gmail_open_account: 'Open Google Account (accounts.google.com)',
-    gmail_add_account: 'Add another account',
-    gmail_logout_all: 'Sign out of all accounts',
-    gmail_manage_account: 'Manage your Google Account',
-    gmail_upgrade_ultra: 'Upgrade to Google AI Ultra',
-    gmail_privacy: 'Privacy Policy',
-    gmail_terms: 'Terms of Service',
-    settings_edit_name_title: 'Edit display name',
-    settings_logout_title: 'Log out of account',
-    nav_settings_title: 'Settings & Account',
-    nav_badge_title: 'Secured Account',
-    btn_toggle_lang_title: 'Switch Language / Đổi ngôn ngữ',
-    btn_refresh_app_title: 'Refresh & Update App',
-    btn_install_app_title: 'Install to Phone',
-    btn_notif_center_title: 'Notification Center',
-    hero_year_select_title: 'Select Year',
-    banner_alarm_title: 'Enable Ringtone & Vibration',
-    banner_alarm_desc: 'Receive alarms on phone when items are due',
-    banner_alarm_btn: 'Enable Now',
-    home_fin_badge: 'Starting Balance',
-    home_fin_starting_unset: '(Starting balance not set)',
-    home_fin_avail_formula: '(Base + In - Out)',
-    home_metric_finance_title: 'Click to view Personal Finance',
-    note_color_amber: 'Amber Yellow',
-    note_color_purple: 'Lavender Purple',
-    note_color_emerald: 'Mint Green',
-    note_color_sky: 'Sky Blue',
-    note_color_rose: 'Rose Pink',
-    note_color_white: 'White',
-    auth_toggle_pass_title: 'Show/Hide Password',
-    auth_create_account_title: 'Create New Account',
-    auth_create_account_sub: 'Register to secure your data on LifeKeep',
-    auth_btn_register: 'Register Account',
-    auth_already_have_acc: 'Already have an account?',
-    auth_login_now: 'Log in now',
-    auth_err_empty: 'Please enter both username/email and password!',
-    auth_err_no_account: 'No account found. Click "Register now" below or Sign in with Gmail!',
-    auth_err_wrong_pass: 'Incorrect account or password! Please check again.',
-    auth_err_name_empty: 'Please enter your full name!',
-    auth_err_pass_short: 'Password must be at least 4 characters!',
-    auth_err_pass_mismatch: 'Passwords do not match! Please check again.',
-    auth_err_user_exists: 'Account or email already exists! Please use another.',
-    on_device: 'On device',
-    auth_confirm_logout: 'Are you sure you want to log out of LifeKeep?',
-    auth_toast_logged_out: '🚪 Logged out of account!',
-    confirm_delete_custom_template: 'Are you sure you want to delete this custom template?',
-    cat_icon_title: 'Emoji Icon',
-    install_lan_btn: 'LAN (.165)',
-    task_save_btn: 'Save Task'
+    cat_confirm_delete: 'Are you sure you want to delete this custom category?'
   }
 };
 
@@ -2286,8 +1538,11 @@ class LifeKeepApp {
     this.financeComparisonChart = null;
     this.financeDoughnutChart = null;
 
-    // Hero Selected Year
-    this.heroSelectedYear = parseInt(localStorage.getItem('lifekeep_hero_year')) || new Date().getFullYear();
+    // Hero Selected Month & Year (defaults to current month: YYYY-MM)
+    const nowInit = new Date();
+    const currentMonthKey = `${nowInit.getFullYear()}-${String(nowInit.getMonth() + 1).padStart(2, '0')}`;
+    this.heroSelectedMonth = localStorage.getItem('lifekeep_hero_month') || currentMonthKey;
+    this.heroSelectedYear = parseInt(localStorage.getItem('lifekeep_hero_year')) || nowInit.getFullYear();
 
     // Authentication State
     this.authMode = 'login'; // 'login' or 'register'
@@ -2347,9 +1602,6 @@ class LifeKeepApp {
   applyLanguage() {
     const isEn = this.currentLang === 'en';
 
-    // 0. Update page title
-    document.title = this.t('app_page_title') || 'LifeKeep';
-
     // 1. Update Header Button
     const flagEl = document.getElementById('header-lang-flag');
     const codeEl = document.getElementById('header-lang-code');
@@ -2395,10 +1647,7 @@ class LifeKeepApp {
     // 6. Update user greeting
     this.updateUserUI();
 
-    // 7. Refresh templates chips
-    this.renderTemplates();
-
-    // 8. Refresh lists & counters if already loaded
+    // 7. Refresh lists & counters if already loaded
     if (this.items && this.items.length !== undefined) {
       this.render();
       this.updateStartingBalanceDisplays();
@@ -2408,13 +1657,6 @@ class LifeKeepApp {
       if (document.getElementById('category-modal') && !document.getElementById('category-modal').classList.contains('hidden')) {
         this.renderCategoryLists();
       }
-      if (document.getElementById('analytics-modal') && !document.getElementById('analytics-modal').classList.contains('hidden')) {
-        this.populateAnalyticsPeriodOptions();
-        this.renderAnalytics();
-      }
-      if (document.getElementById('notification-center-modal') && !document.getElementById('notification-center-modal').classList.contains('hidden')) {
-        this.renderNotificationCenter();
-      }
       const budgetModal = document.getElementById('budget-modal');
       if (budgetModal && !budgetModal.classList.contains('hidden')) {
         const monthDisplay = document.getElementById('budget-month-display');
@@ -2423,14 +1665,6 @@ class LifeKeepApp {
           const targetMonth = this.financeSelectedMonth || (new Date().getMonth() + 1);
           monthDisplay.textContent = isEn ? `Month ${targetMonth}/${targetYear}` : `Tháng ${targetMonth}/${targetYear}`;
         }
-      }
-      const detailModal = document.getElementById('detail-modal');
-      if (detailModal && !detailModal.classList.contains('hidden') && this.selectedItem) {
-        this.showItemDetail(this.selectedItem.id);
-      }
-      const logModal = document.getElementById('log-detail-modal');
-      if (logModal && !logModal.classList.contains('hidden') && this.currentViewingLogId) {
-        this.showLogDetail(this.currentViewingLogId);
       }
     }
     this.updateNotificationBadge();
@@ -2537,7 +1771,7 @@ class LifeKeepApp {
   }
 
   async forceUpdateApp() {
-    this.showToast(this.currentLang === 'en' ? '🔄 Refreshing data & theme...' : '🔄 Đang làm mới dữ liệu & theme...', 'success');
+    this.showToast('🔄 Đang làm mới dữ liệu & theme...', 'success');
     try {
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
@@ -2890,7 +2124,6 @@ class LifeKeepApp {
     const bannerId = 'alarm-banner-' + item.id;
     if (document.getElementById(bannerId)) return;
 
-    const isEn = this.currentLang === 'en';
     const banner = document.createElement('div');
     banner.id = bannerId;
     banner.className = 'fixed top-4 left-4 right-4 max-w-md mx-auto z-[999] bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white rounded-2xl p-4 shadow-2xl border-2 border-purple-400 flex items-start gap-3 animate-bounce';
@@ -2900,19 +2133,19 @@ class LifeKeepApp {
       </div>
       <div class="flex-1 min-w-0">
         <div class="text-[11px] font-bold uppercase tracking-wider text-purple-200">
-          ${isOverdue ? (isEn ? 'Task Overdue!' : 'Nhắc việc đã quá hạn!') : (isEn ? 'Task Due Today!' : 'Nhắc việc đến hạn!')}
+          ${isOverdue ? 'Nhắc việc đã quá hạn!' : 'Nhắc việc đến hạn!'}
         </div>
         <div class="font-black text-sm text-white truncate">${this.escapeHtml(item.name)}</div>
         <div class="text-xs text-purple-200 mt-0.5">
-          ${isOverdue ? (isEn ? 'Deadline: ' : 'Hạn chót: ') + this.formatDateVN(item.dueDate) : (isEn ? 'Today at ' : 'Hôm nay lúc ') + (item.dueTime || '08:00')}
+          ${isOverdue ? 'Hạn chót: ' + this.formatDateVN(item.dueDate) : 'Hôm nay lúc ' + (item.dueTime || '08:00')}
           ${item.provider ? ' • ' + this.escapeHtml(item.provider) : ''}
         </div>
         <div class="flex items-center gap-2 mt-2">
           <button onclick="app.showItemDetail('${item.id}'); document.getElementById('${bannerId}').remove();" class="px-3 py-1 bg-white text-purple-800 font-bold rounded-lg text-xs shadow hover:bg-purple-50 cursor-pointer">
-            ${isEn ? 'View details' : 'Xem chi tiết'}
+            Xem chi tiết
           </button>
           <button onclick="document.getElementById('${bannerId}').remove();" class="px-2.5 py-1 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg text-xs cursor-pointer">
-            ${isEn ? 'Dismiss' : 'Đã hiểu'}
+            Đã hiểu
           </button>
         </div>
       </div>
@@ -2940,7 +2173,6 @@ class LifeKeepApp {
     const now = new Date();
     const todayStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const isEn = this.currentLang === 'en';
 
     this.items.forEach(item => {
       // Respect user's choice: only alert if notifyPhone is not disabled
@@ -2964,14 +2196,14 @@ class LifeKeepApp {
           localStorage.setItem(alertKey, new Date().toISOString());
           this.alertedItemMap.add(`${item.id}-${todayStr}`);
 
-          const prefix = isOverdue ? (isEn ? '🚨 [OVERDUE]' : '🚨 [QUÁ HẠN]') : (isEn ? '⏰ [DUE]' : '⏰ [ĐẾN HẠN]');
+          const prefix = isOverdue ? '🚨 [QUÁ HẠN]' : '⏰ [ĐẾN HẠN]';
           const dueDesc = isOverdue
-            ? (isEn ? `Overdue since ${this.formatDateVN(item.dueDate)}!` : `Đã quá hạn từ ngày ${this.formatDateVN(item.dueDate)}!`)
-            : (isEn ? `Today at ${targetTime}: ${item.name}` : `Hôm nay lúc ${targetTime}: ${item.name}`);
+            ? `Đã quá hạn từ ngày ${this.formatDateVN(item.dueDate)}!`
+            : `Hôm nay lúc ${targetTime}: ${item.name}`;
 
           this.showPhoneNotification(
             `${prefix} LifeKeep: ${item.name}`,
-            `${dueDesc}. ${item.provider ? (isEn ? 'Provider: ' : 'Nơi làm: ') + item.provider : (isEn ? 'Please check and take action.' : 'Vui lòng kiểm tra và xử lý ngay.')}`,
+            `${dueDesc}. ${item.provider ? 'Nơi làm: ' + item.provider : 'Vui lòng kiểm tra và xử lý ngay.'}`,
             `due-${item.id}`
           );
 
@@ -3000,13 +2232,13 @@ class LifeKeepApp {
             localStorage.setItem(alertKey, new Date().toISOString());
             this.alertedItemMap.add(`note-${note.id}-${todayStr}`);
 
-            const prefix = isOverdue ? (isEn ? '🚨 [NOTE OVERDUE]' : '🚨 [GHI CHÚ QUÁ HẠN]') : (isEn ? '⏰ [NOTE REMINDER]' : '⏰ [NHẮC GHI CHÚ]');
+            const prefix = isOverdue ? '🚨 [GHI CHÚ QUÁ HẠN]' : '⏰ [NHẮC GHI CHÚ]';
             const dueDesc = isOverdue
-              ? (isEn ? `Note overdue since ${this.formatDateVN(note.dueDate)}!` : `Ghi chú đã quá hạn từ ngày ${this.formatDateVN(note.dueDate)}!`)
-              : (isEn ? `At ${targetTime} today: ${note.title || 'Note'}` : `Lúc ${targetTime} hôm nay: ${note.title || 'Ghi chú'}`);
+              ? `Ghi chú đã quá hạn từ ngày ${this.formatDateVN(note.dueDate)}!`
+              : `Lúc ${targetTime} hôm nay: ${note.title || 'Ghi chú'}`;
 
             this.showPhoneNotification(
-              `${prefix} ${note.title || (isEn ? 'LifeKeep Note' : 'Ghi chú LifeKeep')}`,
+              `${prefix} ${note.title || 'Ghi chú LifeKeep'}`,
               `${dueDesc}. ${(note.content || '').slice(0, 100)}`,
               `due-note-${note.id}`
             );
@@ -3025,7 +2257,6 @@ class LifeKeepApp {
     const bannerId = 'alarm-banner-note-' + note.id;
     if (document.getElementById(bannerId)) return;
 
-    const isEn = this.currentLang === 'en';
     const banner = document.createElement('div');
     banner.id = bannerId;
     banner.className = 'fixed top-4 left-4 right-4 max-w-md mx-auto z-[999] bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 text-white rounded-2xl p-4 shadow-2xl border-2 border-amber-300 flex items-start gap-3 animate-bounce';
@@ -3035,18 +2266,18 @@ class LifeKeepApp {
       </div>
       <div class="flex-1 min-w-0">
         <div class="text-[11px] font-bold uppercase tracking-wider text-amber-200">
-          ${isOverdue ? (isEn ? 'Note Overdue!' : 'Ghi chú đã quá hạn!') : (isEn ? 'Note Reminder Due!' : 'Đến giờ hẹn ghi chú!')}
+          ${isOverdue ? 'Ghi chú đã quá hạn!' : 'Đến giờ hẹn ghi chú!'}
         </div>
-        <div class="font-black text-sm text-white truncate">${this.escapeHtml(note.title || (isEn ? 'Note' : 'Ghi chú'))}</div>
+        <div class="font-black text-sm text-white truncate">${this.escapeHtml(note.title || 'Ghi chú')}</div>
         <div class="text-xs text-amber-100 mt-0.5 line-clamp-2">
           ${this.escapeHtml(note.content || '')}
         </div>
         <div class="flex items-center gap-2 mt-2">
           <button onclick="app.openNoteModalById('${note.id}'); document.getElementById('${bannerId}').remove();" class="px-3 py-1 bg-white text-amber-900 font-bold rounded-lg text-xs shadow hover:bg-amber-50 cursor-pointer">
-            ${isEn ? 'Open note' : 'Mở ghi chú'}
+            Mở ghi chú
           </button>
           <button onclick="document.getElementById('${bannerId}').remove();" class="px-2.5 py-1 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg text-xs cursor-pointer">
-            ${isEn ? 'Dismiss' : 'Đã hiểu'}
+            Đã hiểu
           </button>
         </div>
       </div>
@@ -3072,9 +2303,8 @@ class LifeKeepApp {
       });
 
       if (urgentItems.length > 0) {
-        const isEn = this.currentLang === 'en';
-        const title = isEn ? `LifeKeep: ${urgentItems.length} item(s) need attention today!` : `LifeKeep: Có ${urgentItems.length} việc cần chú ý hôm nay!`;
-        const body = urgentItems.map(i => `• ${i.name} (${isEn ? 'Due: ' : 'Hạn: '}${this.formatDateVN(i.dueDate)}${i.dueTime ? ' ' + i.dueTime : ''})`).join('\n');
+        const title = `LifeKeep: Có ${urgentItems.length} việc cần chú ý hôm nay!`;
+        const body = urgentItems.map(i => `• ${i.name} (Hạn: ${this.formatDateVN(i.dueDate)}${i.dueTime ? ' ' + i.dueTime : ''})`).join('\n');
         this.showPhoneNotification(title, body, 'startup-reminder');
       }
     }
@@ -3086,7 +2316,7 @@ class LifeKeepApp {
     this.triggerPhoneVibration();
 
     if (!('Notification' in window)) {
-      this.showToast(this.currentLang === 'en' ? 'ℹ️ Browser does not support Web Notifications.' : 'ℹ️ Trình duyệt chưa hỗ trợ thông báo Web Notification.');
+      this.showToast('ℹ️ Trình duyệt chưa hỗ trợ thông báo Web Notification.');
       return;
     }
 
@@ -3094,19 +2324,19 @@ class LifeKeepApp {
       try {
         const perm = await Notification.requestPermission();
         if (perm === 'granted') {
-          await this.showPhoneNotification('🔔 LifeKeep', this.currentLang === 'en' ? 'Notification sound & phone recognition enabled successfully!' : 'Đã bật chuông thông báo & nhận diện chuông của thiết bị thành công!', 'test-alert');
-          this.showToast(this.currentLang === 'en' ? '🔔 Device notification ringtone enabled!' : '🔔 Đã bật chuông thông báo của máy!');
+          await this.showPhoneNotification('🔔 LifeKeep', 'Đã bật chuông thông báo & nhận diện chuông của thiết bị thành công!', 'test-alert');
+          this.showToast('🔔 Đã bật chuông thông báo của máy!');
           const banner = document.getElementById('notif-permission-banner');
           if (banner) banner.classList.add('hidden');
         } else {
-          this.showToast(this.currentLang === 'en' ? '⚠️ Notification permission not granted on device' : '⚠️ Bạn chưa cấp quyền thông báo trên thiết bị');
+          this.showToast('⚠️ Bạn chưa cấp quyền thông báo trên thiết bị');
         }
       } catch (err) {
         console.warn('Request notification error:', err);
       }
     } else {
-      await this.showPhoneNotification('🔔 LifeKeep', this.currentLang === 'en' ? 'Notification sound & vibration are working normally!' : 'Chuông thông báo & rung thiết bị đang hoạt động bình thường!', 'test-alert');
-      this.showToast(this.currentLang === 'en' ? '🔔 Device alarm is working properly' : '🔔 Chuông báo thiết bị đang hoạt động bình thường');
+      await this.showPhoneNotification('🔔 LifeKeep', 'Chuông thông báo & rung thiết bị đang hoạt động bình thường!', 'test-alert');
+      this.showToast('🔔 Chuông báo thiết bị đang hoạt động bình thường');
       const banner = document.getElementById('notif-permission-banner');
       if (banner) banner.classList.add('hidden');
     }
@@ -3532,7 +2762,7 @@ class LifeKeepApp {
       try {
         const perm = await Notification.requestPermission();
         if (perm !== 'granted') {
-          this.showToast(this.currentLang === 'en' ? '⚠️ Please grant notification permission to enable ring & vibrate' : '⚠️ Vui lòng cấp quyền thông báo để máy đổ chuông & rung khi đến hạn');
+          this.showToast('⚠️ Vui lòng cấp quyền thông báo để máy đổ chuông & rung khi đến hạn');
           return;
         }
       } catch (e) {}
@@ -3549,15 +2779,15 @@ class LifeKeepApp {
       localStorage.removeItem(`lifekeep_alerted_${item.id}_${todayStr}`);
 
       // Test native device notification & vibration using device's default ringtone
-      const notifTitle = this.currentLang === 'en' ? `🔔 [LifeKeep] Alarm enabled: ${item.name}` : `🔔 [LifeKeep] Đã bật chuông: ${item.name}`;
-      const notifBody = this.currentLang === 'en' 
-        ? `Your device will automatically ring & vibrate at ${item.dueTime || '08:00'} on ${this.formatDateVN(item.dueDate)}.` 
-        : `Máy sẽ tự động reo chuông cài sẵn & rung lúc ${item.dueTime || '08:00'} ngày ${this.formatDateVN(item.dueDate)}.`;
-      await this.showPhoneNotification(notifTitle, notifBody, `alarm-${item.id}`);
-      this.showToast(this.currentLang === 'en' ? `🔔 Device alarm enabled for "${item.name}"` : `🔔 Đã bật chuông thiết bị cho "${item.name}"`);
+      await this.showPhoneNotification(
+        `🔔 [LifeKeep] Đã bật chuông: ${item.name}`,
+        `Máy sẽ tự động reo chuông cài sẵn & rung lúc ${item.dueTime || '08:00'} ngày ${this.formatDateVN(item.dueDate)}.`,
+        `alarm-${item.id}`
+      );
+      this.showToast(`🔔 Đã bật chuông thiết bị cho "${item.name}"`);
       this.checkDueAlarms();
     } else {
-      this.showToast(this.currentLang === 'en' ? `🔕 Device alarm muted for "${item.name}"` : `🔕 Đã tắt chuông báo cho "${item.name}"`);
+      this.showToast(`🔕 Đã tắt chuông báo cho "${item.name}"`);
     }
 
     await this.render();
@@ -3699,13 +2929,95 @@ class LifeKeepApp {
     }
   }
 
+  setHeroMonth(monthKey) {
+    if (!monthKey) return;
+    this.heroSelectedMonth = monthKey;
+    localStorage.setItem('lifekeep_hero_month', this.heroSelectedMonth);
+    const parts = monthKey.split('-');
+    if (parts.length >= 1) {
+      this.heroSelectedYear = parseInt(parts[0], 10);
+      localStorage.setItem('lifekeep_hero_year', this.heroSelectedYear);
+    }
+    this.render();
+  }
+
   setHeroYear(year) {
     this.heroSelectedYear = parseInt(year);
     localStorage.setItem('lifekeep_hero_year', this.heroSelectedYear);
     this.render();
   }
 
-  async calculateMetrics(targetYear = this.heroSelectedYear || new Date().getFullYear()) {
+  getAvailableMonths() {
+    const monthKeys = new Set();
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const currentKey = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+    monthKeys.add(currentKey);
+
+    if (this.heroSelectedMonth) {
+      monthKeys.add(this.heroSelectedMonth);
+    }
+
+    // Add at least the past 12 months
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(currentYear, now.getMonth() - i, 1);
+      const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      monthKeys.add(k);
+    }
+
+    // Add months from transactions
+    if (this.transactions && this.transactions.length > 0) {
+      this.transactions.forEach(t => {
+        if (t.date) {
+          const d = new Date(t.date);
+          if (!isNaN(d.getTime())) {
+            monthKeys.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+          }
+        }
+      });
+    }
+
+    // Add months from allLogs
+    if (this.allLogs && this.allLogs.length > 0) {
+      this.allLogs.forEach(l => {
+        if (l.date) {
+          const d = new Date(l.date);
+          if (!isNaN(d.getTime())) {
+            monthKeys.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+          }
+        }
+      });
+    }
+
+    // Add months from items
+    if (this.items && this.items.length > 0) {
+      this.items.forEach(item => {
+        const dateStr = item.dueDate || item.createdAt;
+        if (dateStr) {
+          const d = new Date(dateStr);
+          if (!isNaN(d.getTime())) {
+            monthKeys.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+          }
+        }
+      });
+    }
+
+    // Sort descending (newest first)
+    const sorted = Array.from(monthKeys).sort().reverse();
+    return sorted.map(k => {
+      const [yStr, mStr] = k.split('-');
+      const y = parseInt(yStr, 10);
+      const m = parseInt(mStr, 10);
+      const isCurrent = (k === currentKey);
+      let label = this.currentLang === 'en' 
+        ? `Month ${m}/${y}${isCurrent ? ' (Current)' : ''}`
+        : `Tháng ${m}/${y}${isCurrent ? ' (Hiện tại)' : ''}`;
+      return { key: k, year: y, month: m, label, isCurrent };
+    });
+  }
+
+  async calculateMetrics(targetMonthKey = this.heroSelectedMonth) {
     let overdueCount = 0;
     let soonCount = 0;
     let safeCount = 0;
@@ -3718,34 +3030,75 @@ class LifeKeepApp {
     });
 
     await this.loadAllLogs();
-    const yearNum = Number(targetYear);
+
+    const now = new Date();
+    const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    let selectedKey = (typeof targetMonthKey === 'string' && targetMonthKey.includes('-')) 
+      ? targetMonthKey 
+      : (this.heroSelectedMonth || currentKey);
+
+    if (typeof targetMonthKey === 'number' || (typeof targetMonthKey === 'string' && !targetMonthKey.includes('-'))) {
+      const y = parseInt(targetMonthKey, 10) || now.getFullYear();
+      selectedKey = `${y}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    const [yStr, mStr] = selectedKey.split('-');
+    const yearNum = parseInt(yStr, 10) || now.getFullYear();
+    const monthNum = parseInt(mStr, 10) || (now.getMonth() + 1);
+
+    // Sum from allLogs matching target year and month
     let totalSpent = this.allLogs
-      .filter(l => new Date(l.date).getFullYear() === yearNum)
+      .filter(l => {
+        if (!l.date) return false;
+        const d = new Date(l.date);
+        return d.getFullYear() === yearNum && (d.getMonth() + 1) === monthNum;
+      })
       .reduce((sum, l) => sum + (Number(l.totalCost || l.cost) || 0), 0);
 
-    // Safeguard: include item cost if not already in logs and falls in targetYear
+    // Safeguard: include item cost if not already in logs and falls in target month
     this.items.forEach(item => {
-      const itemYear = item.dueDate ? new Date(item.dueDate).getFullYear() : (item.createdAt ? new Date(item.createdAt).getFullYear() : null);
-      if (itemYear === yearNum) {
-        const hasLog = this.allLogs.some(l => l.itemId === item.id);
-        if (!hasLog && item.cost > 0) {
-          totalSpent += Number(item.cost);
+      const itemDateStr = item.dueDate || item.createdAt;
+      if (itemDateStr) {
+        const d = new Date(itemDateStr);
+        if (d.getFullYear() === yearNum && (d.getMonth() + 1) === monthNum) {
+          const hasLog = this.allLogs.some(l => l.itemId === item.id);
+          if (!hasLog && item.cost > 0) {
+            totalSpent += Number(item.cost);
+          }
         }
       }
     });
 
-    // Include daily living expenses from transactions
+    // Include daily living expenses from transactions matching target year and month
     if (this.transactions && this.transactions.length > 0) {
       totalSpent += this.transactions
-        .filter(t => t.type === 'expense' && new Date(t.date).getFullYear() === yearNum)
+        .filter(t => {
+          if (t.type !== 'expense' || !t.date) return false;
+          const d = new Date(t.date);
+          return d.getFullYear() === yearNum && (d.getMonth() + 1) === monthNum;
+        })
         .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
     }
 
-    return { overdueCount, soonCount, safeCount, totalSpent, year: yearNum };
+    return { 
+      overdueCount, 
+      soonCount, 
+      safeCount, 
+      totalSpent, 
+      year: yearNum, 
+      month: monthNum, 
+      monthKey: selectedKey 
+    };
   }
 
   getCategoryMeta(cat) {
     switch (cat) {
+      case 'note':
+        return {
+          name: this.t('cat_note_name') || 'Ghi chú',
+          icon: '📝',
+          avatarBg: 'bg-amber-50 border-amber-200 text-amber-700 shadow-sm'
+        };
       case 'vehicle': 
         return { 
           name: this.t('cat_vehicle_name'), 
@@ -3796,11 +3149,6 @@ class LifeKeepApp {
         health: 'Health & Medical',
         education: 'Education & Kids',
         other_expense: 'Other Expense',
-        vehicle: 'Vehicle Maintenance',
-        home: 'Home & Water Filter',
-        identity: 'Documents & Insurance',
-        tech: 'Tech Devices',
-        other: 'Other Expense',
         'Tiền lương': 'Salary',
         'Thưởng / Dự án': 'Bonus / Projects',
         'Kinh doanh / Bán hàng': 'Business / Sales',
@@ -3814,43 +3162,10 @@ class LifeKeepApp {
         'Giải trí & Du lịch': 'Entertainment & Travel',
         'Thuốc men & Sức khỏe': 'Health & Medical',
         'Học tập & Con cái': 'Education & Kids',
-        'Chi tiêu khác': 'Other Expense',
-        'Chi khác': 'Other Expense',
-        'Bảo dưỡng Xe': 'Vehicle Maintenance',
-        'Gia dụng & Lọc nước': 'Home & Water Filter',
-        'Giấy tờ & Bảo hiểm': 'Documents & Insurance',
-        'Đồ công nghệ': 'Tech Devices',
-        'Phương tiện': 'Vehicle',
-        'Gia dụng & Nhà': 'Home & Living',
-        'Giấy tờ': 'Documents',
-        'Công nghệ': 'Technology',
-        'Khác': 'Other'
+        'Chi tiêu khác': 'Other Expense'
       };
       if (catId && enMap[catId]) return enMap[catId];
       if (fallbackName && enMap[fallbackName]) return enMap[fallbackName];
-    } else {
-      const viMap = {
-        salary: 'Tiền lương',
-        bonus: 'Thưởng / Dự án',
-        business: 'Kinh doanh / Bán hàng',
-        investment: 'Đầu tư / Tiền lãi',
-        other_income: 'Thu nhập khác',
-        food: 'Ăn uống & Cà phê',
-        market: 'Đi chợ & Siêu thị',
-        bills: 'Hóa đơn Điện & Nước & Net',
-        transport: 'Xăng xe & Đi lại',
-        shopping: 'Mua sắm & Đồ dùng',
-        entertainment: 'Giải trí & Du lịch',
-        health: 'Thuốc men & Sức khỏe',
-        education: 'Học tập & Con cái',
-        other_expense: 'Chi tiêu khác',
-        vehicle: 'Phương tiện',
-        home: 'Gia dụng & Nhà',
-        identity: 'Giấy tờ cá nhân',
-        tech: 'Công nghệ',
-        other: 'Khác'
-      };
-      if (catId && viMap[catId]) return viMap[catId];
     }
     return fallbackName || catId || '';
   }
@@ -3863,23 +3178,49 @@ class LifeKeepApp {
   async render() {
     const listEl = document.getElementById('items-list');
     const emptyEl = document.getElementById('empty-state');
-    const activeYear = this.heroSelectedYear || new Date().getFullYear();
-    const metrics = await this.calculateMetrics(activeYear);
+    const activeMonth = this.heroSelectedMonth || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+    const metrics = await this.calculateMetrics(activeMonth);
 
-    // Update Hero Total Spending & Year Selector
+    const now = new Date();
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const isCurrentMonth = (metrics.monthKey === currentMonthKey);
+
+    // Update Hero Total Spending & Month Selector
+    const heroMonthLabel = document.getElementById('hero-month-label');
+    if (heroMonthLabel) {
+      if (isCurrentMonth) {
+        heroMonthLabel.textContent = this.t('hero_spending_month_this', { month: metrics.month, year: metrics.year });
+      } else {
+        heroMonthLabel.textContent = this.t('hero_spending_title', { month: metrics.month, year: metrics.year });
+      }
+    }
     const heroYearLabel = document.getElementById('hero-year-label');
-    if (heroYearLabel) heroYearLabel.textContent = this.t('hero_spending_title', { year: activeYear });
+    if (heroYearLabel) {
+      heroYearLabel.textContent = this.t('hero_spending_title', { month: metrics.month, year: metrics.year });
+    }
+
     const metricYearLabel = document.getElementById('metric-year-label');
-    if (metricYearLabel) metricYearLabel.textContent = this.t('hero_spending_metric', { year: activeYear });
+    if (metricYearLabel) {
+      metricYearLabel.textContent = this.t('hero_spending_metric', { month: metrics.month, year: metrics.year });
+    }
+
+    const heroMonthSelect = document.getElementById('hero-month-select');
+    if (heroMonthSelect) {
+      const availMonths = this.getAvailableMonths();
+      heroMonthSelect.innerHTML = availMonths.map(m => `
+        <option value="${m.key}" ${m.key === metrics.monthKey ? 'selected' : ''}>${m.label}</option>
+      `).join('');
+      heroMonthSelect.value = metrics.monthKey;
+    }
 
     const heroYearSelect = document.getElementById('hero-year-select');
     if (heroYearSelect) {
       const availYears = this.getAvailableYears();
       const yearPrefix = this.currentLang === 'en' ? 'Year ' : 'Năm ';
       heroYearSelect.innerHTML = availYears.map(y => `
-        <option value="${y}" ${y === activeYear ? 'selected' : ''}>${yearPrefix}${y}</option>
+        <option value="${y}" ${y === metrics.year ? 'selected' : ''}>${yearPrefix}${y}</option>
       `).join('');
-      heroYearSelect.value = String(activeYear);
+      heroYearSelect.value = String(metrics.year);
     }
 
     this.updateNotificationBadge();
@@ -4063,7 +3404,7 @@ class LifeKeepApp {
                   type="button"
                   onclick="event.stopPropagation(); app.openEditModalById('${item.id}')" 
                   class="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl font-semibold transition text-xs border border-slate-200 flex items-center gap-1"
-                  title="${this.t('task_edit_title_hover')}"
+                  title="Sửa thông tin & chi phí"
                 >
                   <span>✏️</span> ${this.t('btn_edit')}
                 </button>
@@ -4071,14 +3412,14 @@ class LifeKeepApp {
                   type="button" 
                   onclick="event.stopPropagation(); app.deleteItemById('${item.id}')" 
                   class="p-1.5 bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl transition text-xs border border-slate-200 flex items-center justify-center shadow-xs" 
-                  title="${this.t('task_delete_title_hover')}"
+                  title="Xóa mục này"
                 >
                   🗑️
                 </button>
                 <button 
                   onclick="event.stopPropagation(); app.openCompleteModal('${item.id}')" 
                   class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold transition text-xs flex items-center gap-1.5 shadow-md shadow-purple-600/30 hover:scale-105 active:scale-95"
-                  title="${this.t('task_complete_title_hover')}"
+                  title="Ghi nhận đã hoàn thành và bóc tách chi phí"
                 >
                   <span>✓</span> ${this.t('btn_done')}
                 </button>
@@ -4106,7 +3447,7 @@ class LifeKeepApp {
         const catMeta = this.getCategoryMeta(log.category);
         const subCount = log.subItems ? log.subItems.length : 0;
         const subPreview = log.subItems && log.subItems.length > 0 
-          ? log.subItems.slice(0, 2).map(s => `${s.name} (${this.formatMoney(s.cost)})`).join(' • ') + (subCount > 2 ? this.t('task_other_items_suffix', { count: subCount - 2 }) : '')
+          ? log.subItems.slice(0, 2).map(s => `${s.name} (${this.formatMoney(s.cost)})`).join(' • ') + (subCount > 2 ? ` • +${subCount - 2} khoản khác` : '')
           : '';
 
         return `
@@ -4121,31 +3462,31 @@ class LifeKeepApp {
                     <span class="text-[11px] text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">✓ ${this.t('tab_history')}</span>
                     <span class="text-xs text-slate-500 font-medium">${this.formatDateVN(log.date)}</span>
                   </div>
-                  <h3 class="font-bold text-slate-900 text-base leading-snug tracking-tight mt-1 truncate">${this.escapeHtml(log.itemName || this.t('log_detail_title_default'))}</h3>
+                  <h3 class="font-bold text-slate-900 text-base leading-snug tracking-tight mt-1 truncate">${this.escapeHtml(log.itemName || 'Bảo dưỡng')}</h3>
                   ${log.provider ? `<p class="text-xs text-slate-500 mt-0.5">${this.currentLang === 'en' ? 'Provider:' : 'Nơi làm:'} <span class="text-slate-700 font-medium">${this.escapeHtml(log.provider)}</span></p>` : ''}
                 </div>
               </div>
               <div class="text-right shrink-0">
                 <span class="text-sm font-black text-slate-900 block">${this.formatMoney(log.totalCost || log.cost)}</span>
-                <span class="text-[10px] text-slate-500">${subCount > 0 ? this.t('sub_items_count', { count: subCount }) : (this.currentLang === 'en' ? 'Package' : 'Trọn gói')}</span>
+                <span class="text-[10px] text-slate-500">${subCount > 0 ? `${subCount} khoản chi con` : 'Trọn gói'}</span>
               </div>
             </div>
 
             ${subPreview ? `
               <div class="mt-2.5 text-[11px] text-slate-600 bg-slate-50 rounded-xl p-2 border border-slate-100 flex items-center gap-1.5">
-                <span class="text-slate-400 shrink-0">${this.currentLang === 'en' ? 'Breakdown:' : 'Bóc tách:'}</span>
+                <span class="text-slate-400 shrink-0">Bóc tách:</span>
                 <span class="truncate text-slate-700 font-medium">${this.escapeHtml(subPreview)}</span>
               </div>
             ` : ''}
 
             <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span class="text-[11px] text-slate-500 truncate max-w-[200px]">${this.escapeHtml(log.notes || (this.currentLang === 'en' ? 'No notes' : 'Không có ghi chú'))}</span>
+              <span class="text-[11px] text-slate-500 truncate max-w-[200px]">${this.escapeHtml(log.notes || 'Không có ghi chú')}</span>
               <div class="flex items-center gap-1.5 shrink-0">
                 <button 
                   type="button"
                   onclick="event.stopPropagation(); app.deleteLogById('${log.id}')" 
                   class="p-1.5 bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl transition text-xs border border-slate-200 flex items-center justify-center shadow-xs" 
-                  title="${this.t('log_detail_delete_btn')}"
+                  title="Xóa bản ghi lịch sử này"
                 >
                   🗑️
                 </button>
@@ -4228,14 +3569,22 @@ class LifeKeepApp {
         >
           <div class="flex items-start justify-between gap-2">
             <h4 class="font-black text-sm leading-snug line-clamp-2 flex-1">
-              ${this.escapeHtml(note.title || this.t('note_card_untitled'))}
+              ${this.escapeHtml(note.title || (this.currentLang === 'en' ? 'Untitled Note' : 'Ghi chú không tiêu đề'))}
             </h4>
             <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
               <button 
                 type="button" 
+                onclick="app.openCompleteNoteModal('${note.id}')" 
+                class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1 font-bold text-[11px] transition shadow-2xs cursor-pointer active:scale-95" 
+                title="Hoàn thành ghi chú"
+              >
+                <span>✓</span> <span>Xong</span>
+              </button>
+              <button 
+                type="button" 
                 onclick="app.toggleNotePin('${note.id}')" 
                 class="w-7 h-7 rounded-lg flex items-center justify-center transition text-xs ${isPinned ? 'bg-amber-400 text-amber-950 shadow-xs' : 'bg-black/5 hover:bg-black/10 text-slate-600'}" 
-                title="${isPinned ? this.t('note_unpin_title') : this.t('note_pin_title')}"
+                title="${isPinned ? 'Bỏ ghim' : 'Ghim lên đầu'}"
               >
                 ${isPinned ? '📌' : '📍'}
               </button>
@@ -4243,7 +3592,7 @@ class LifeKeepApp {
                 type="button" 
                 onclick="app.deleteNoteById('${note.id}')" 
                 class="w-7 h-7 rounded-lg bg-black/5 hover:bg-rose-100 hover:text-rose-600 text-slate-600 flex items-center justify-center transition text-xs" 
-                title="${this.t('note_delete_title')}"
+                title="Xóa ghi chú"
               >
                 🗑️
               </button>
@@ -4343,10 +3692,6 @@ class LifeKeepApp {
     }[m]));
   }
 
-  getPresetTemplates() {
-    return this.currentLang === 'en' ? PRESET_TEMPLATES_EN : PRESET_TEMPLATES;
-  }
-
   async renderTemplates() {
     const container = document.getElementById('template-chips');
     if (!container) return;
@@ -4363,13 +3708,13 @@ class LifeKeepApp {
           <button type="button" onclick="app.applyCustomTemplate('${tmpl.id}')" class="flex items-center gap-1 font-semibold">
             <span>⭐</span> <strong>${this.escapeHtml(tmpl.name)}</strong>
           </button>
-          <button type="button" onclick="event.stopPropagation(); app.deleteCustomTemplate('${tmpl.id}')" class="text-purple-400 hover:text-rose-600 ml-1 text-[11px]" title="${this.t('task_delete_template_title') || 'Xóa mẫu riêng này'}">✕</button>
+          <button type="button" onclick="event.stopPropagation(); app.deleteCustomTemplate('${tmpl.id}')" class="text-purple-400 hover:text-rose-600 ml-1 text-[11px]" title="Xóa mẫu riêng này">✕</button>
         </div>
       `).join('');
     }
 
     // Default presets
-    html += this.getPresetTemplates().map((tmpl, idx) => `
+    html += PRESET_TEMPLATES.map((tmpl, idx) => `
       <button 
         type="button" 
         onclick="app.applyTemplate(${idx})" 
@@ -4383,7 +3728,7 @@ class LifeKeepApp {
   }
 
   applyTemplate(idx) {
-    const tmpl = this.getPresetTemplates()[idx];
+    const tmpl = PRESET_TEMPLATES[idx];
     if (!tmpl) return;
 
     document.getElementById('input-name').value = tmpl.name;
@@ -4404,7 +3749,7 @@ class LifeKeepApp {
       if (tmpl.subItems && tmpl.subItems.length > 0) {
         tmpl.subItems.forEach(s => this.addItemSubCostRow(s.name, s.cost));
       } else {
-        this.addItemSubCostRow(this.t('sub_cost_main') || 'Chi phí chính', '');
+        this.addItemSubCostRow('Chi phí chính', '');
       }
       this.calculateItemTotalCost();
     }
@@ -4432,16 +3777,16 @@ class LifeKeepApp {
       if (tmpl.subItems && tmpl.subItems.length > 0) {
         tmpl.subItems.forEach(s => this.addItemSubCostRow(s.name, s.cost));
       } else if (tmpl.cost) {
-        this.addItemSubCostRow(this.t('sub_cost_main') || 'Chi phí chính', tmpl.cost);
+        this.addItemSubCostRow('Chi phí chính', tmpl.cost);
       } else {
-        this.addItemSubCostRow(this.t('sub_cost_main') || 'Chi phí chính', '');
+        this.addItemSubCostRow('Chi phí chính', '');
       }
       this.calculateItemTotalCost();
     }
   }
 
   async deleteCustomTemplate(id) {
-    if (confirm(this.t('confirm_delete_custom_template') || 'Bạn có chắc muốn xóa mẫu riêng này không?')) {
+    if (confirm('Bạn có chắc muốn xóa mẫu riêng này không?')) {
       await this.storage.deleteCustomTemplate(id);
       await this.renderTemplates();
     }
@@ -4462,14 +3807,14 @@ class LifeKeepApp {
     row.innerHTML = `
       <input 
         type="text" 
-        placeholder="${this.t('sub_cost_item_placeholder') || 'Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)'}" 
+        placeholder="Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)" 
         value="${this.escapeHtml(name)}" 
         class="item-sub-name flex-1 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white" 
       />
       <input 
         type="text" 
         inputmode="numeric" 
-        placeholder="${this.t('sub_cost_amount_placeholder') || 'Số tiền ₫'}" 
+        placeholder="Số tiền ₫" 
         value="${this.formatMoneyString(cost)}" 
         oninput="app.formatCurrencyInput(this); app.calculateItemTotalCost();" 
         onkeyup="app.formatCurrencyInput(this); app.calculateItemTotalCost();" 
@@ -4480,7 +3825,7 @@ class LifeKeepApp {
         type="button" 
         onclick="this.parentElement.remove(); app.calculateItemTotalCost();" 
         class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg text-sm transition" 
-        title="${this.t('sub_cost_remove_title') || 'Xóa khoản này'}"
+        title="Xóa khoản này"
       >✕</button>
     `;
     container.appendChild(row);
@@ -4515,7 +3860,7 @@ class LifeKeepApp {
     });
 
     if (itemToEdit) {
-      title.textContent = this.t('task_modal_edit') || 'Chỉnh sửa mục & Chi phí';
+      title.textContent = 'Chỉnh sửa mục & Chi phí';
       const deleteBtn = document.getElementById('item-delete-btn');
       if (deleteBtn) deleteBtn.classList.remove('hidden');
       document.getElementById('item-id').value = itemToEdit.id;
@@ -4552,13 +3897,13 @@ class LifeKeepApp {
           populated = true;
         } else if (itemToEdit.cost > 0 || (existingLogs.length > 0 && (existingLogs[0].totalCost || existingLogs[0].cost))) {
           const costVal = itemToEdit.cost || existingLogs[0].totalCost || existingLogs[0].cost;
-          this.addItemSubCostRow(this.t('sub_cost_main') || 'Chi phí chính', costVal);
+          this.addItemSubCostRow('Chi phí chính', costVal);
           populated = true;
         }
       }
 
       if (!populated) {
-        this.addItemSubCostRow(this.t('sub_cost_main') || 'Chi phí chính', '');
+        this.addItemSubCostRow('Chi phí chính', '');
       }
 
       this.calculateItemTotalCost();
@@ -4567,16 +3912,16 @@ class LifeKeepApp {
         this.currentPhotoBase64 = itemToEdit.photos[0];
         photoPreview.innerHTML = `
           <div class="relative inline-block mt-2 group">
-            <img src="${this.currentPhotoBase64}" onclick="app.openCurrentEditingPhoto()" class="w-24 h-24 object-cover rounded-xl border-2 border-purple-200 shadow-sm cursor-pointer hover:border-purple-500 transition" title="${this.t('log_detail_zoom_btn') || (this.currentLang === 'en' ? 'Click to view photo' : 'Bấm xem ảnh lớn')}" />
-            <button type="button" onclick="app.removePhoto()" class="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md transition" title="${this.t('btn_delete') || (this.currentLang === 'en' ? 'Delete photo' : 'Xóa ảnh này')}">✕</button>
+            <img src="${this.currentPhotoBase64}" onclick="app.openCurrentEditingPhoto()" class="w-24 h-24 object-cover rounded-xl border-2 border-purple-200 shadow-sm cursor-pointer hover:border-purple-500 transition" title="Bấm xem ảnh lớn" />
+            <button type="button" onclick="app.removePhoto()" class="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md transition" title="Xóa ảnh này">✕</button>
             <button type="button" onclick="app.openCurrentEditingPhoto()" class="mt-1 text-[11px] text-purple-700 font-semibold flex items-center gap-1 hover:underline">
-              <span>🔍 ${this.t('log_detail_zoom_btn') || (this.currentLang === 'en' ? 'View photo' : 'Bấm xem ảnh')}</span>
+              <span>🔍 Bấm xem ảnh</span>
             </button>
           </div>
         `;
       }
     } else {
-      title.textContent = this.t('task_modal_add') || 'Thêm giấy tờ / Thiết bị mới';
+      title.textContent = 'Thêm giấy tờ / Thiết bị mới';
       const deleteBtn = document.getElementById('item-delete-btn');
       if (deleteBtn) deleteBtn.classList.add('hidden');
       document.getElementById('item-id').value = '';
@@ -4593,7 +3938,7 @@ class LifeKeepApp {
       }
 
       // Add 1 initial cost row for adding new item
-      this.addItemSubCostRow(this.t('sub_cost_main') || 'Chi phí chính', '');
+      this.addItemSubCostRow('Chi phí chính', '');
       this.calculateItemTotalCost();
     }
 
@@ -4656,6 +4001,7 @@ class LifeKeepApp {
     const modal = document.getElementById('note-modal');
     const titleEl = document.getElementById('note-modal-title');
     const deleteBtn = document.getElementById('note-delete-btn');
+    const completeBtn = document.getElementById('note-complete-modal-btn');
     const now = new Date();
     const todayStr = now.toLocaleDateString('en-CA');
     const nowHM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
@@ -4663,8 +4009,9 @@ class LifeKeepApp {
     this.editingNoteId = noteToEdit ? noteToEdit.id : null;
 
     if (noteToEdit) {
-      if (titleEl) titleEl.textContent = this.t('note_modal_edit');
+      if (titleEl) titleEl.textContent = 'Chỉnh sửa ghi chú';
       if (deleteBtn) deleteBtn.classList.remove('hidden');
+      if (completeBtn) completeBtn.classList.remove('hidden');
       document.getElementById('input-note-id').value = noteToEdit.id;
       document.getElementById('input-note-title').value = noteToEdit.title || '';
       document.getElementById('input-note-content').value = noteToEdit.content || '';
@@ -4680,8 +4027,9 @@ class LifeKeepApp {
       document.getElementById('input-note-time').value = noteToEdit.dueTime || nowHM;
       document.getElementById('input-note-phone-alarm').checked = (noteToEdit.notifyPhone !== false);
     } else {
-      if (titleEl) titleEl.textContent = this.t('note_modal_new');
+      if (titleEl) titleEl.textContent = 'Ghi chú mới';
       if (deleteBtn) deleteBtn.classList.add('hidden');
+      if (completeBtn) completeBtn.classList.add('hidden');
       document.getElementById('input-note-id').value = '';
       document.getElementById('input-note-title').value = '';
       document.getElementById('input-note-content').value = '';
@@ -4714,6 +4062,130 @@ class LifeKeepApp {
     this.editingNoteId = null;
   }
 
+  openCompleteNoteModal(noteId) {
+    if (!noteId && this.editingNoteId) {
+      noteId = this.editingNoteId;
+    }
+    const note = this.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    this.completeNoteId = noteId;
+    const modal = document.getElementById('complete-note-modal');
+    const titleEl = document.getElementById('complete-note-preview-title');
+    const contentEl = document.getElementById('complete-note-preview-content');
+    const noteIdInput = document.getElementById('complete-note-id');
+
+    if (noteIdInput) noteIdInput.value = note.id;
+    if (titleEl) titleEl.textContent = note.title || 'Ghi chú';
+    if (contentEl) contentEl.textContent = note.content || '(Không có nội dung chi tiết)';
+
+    // Reset default radio to 'finish'
+    const finishRadio = document.querySelector('input[name="note-finish-choice"][value="finish"]');
+    if (finishRadio) finishRadio.checked = true;
+    this.toggleNoteRepeatCycle(false);
+
+    // Close note edit modal if open
+    this.closeNoteModal();
+
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  closeCompleteNoteModal() {
+    const modal = document.getElementById('complete-note-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    this.completeNoteId = null;
+  }
+
+  toggleNoteRepeatCycle(show) {
+    const container = document.getElementById('note-repeat-cycle-container');
+    if (container) {
+      if (show) {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+  }
+
+  async saveCompleteNote(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const noteId = document.getElementById('complete-note-id')?.value || this.completeNoteId;
+    const note = this.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    const choice = document.querySelector('input[name="note-finish-choice"]:checked')?.value || 'finish';
+
+    try {
+      const now = new Date();
+      const todayStr = now.toLocaleDateString('en-CA');
+
+      // Create log for History (Đã xong)
+      const log = {
+        id: 'log-note-' + Date.now(),
+        itemId: note.id,
+        itemName: note.title || 'Ghi chú',
+        category: 'note',
+        date: todayStr,
+        totalCost: 0,
+        subItems: [],
+        provider: '',
+        notes: note.content ? ('[Ghi chú hoàn thành]: ' + note.content) : 'Ghi chú đã hoàn thành',
+        photos: []
+      };
+
+      await this.storage.saveLog(log);
+
+      if (choice === 'finish') {
+        // Remove note from active notes
+        await this.storage.deleteNote(note.id);
+        await this.loadNotes();
+        await this.loadAllLogs();
+        this.closeCompleteNoteModal();
+        await this.render();
+        this.showToast('🎉 Đã hoàn thành ghi chú và lưu vào Nhật ký Đã xong!');
+      } else {
+        // Repeat cycle: calculate new dueDate
+        const cycleOption = document.querySelector('input[name="note-cycle-option"]:checked')?.value || '7d';
+        const baseDate = note.dueDate ? new Date(note.dueDate) : new Date();
+        const nextDate = new Date(baseDate.getTime());
+
+        if (cycleOption === '1d') {
+          nextDate.setDate(nextDate.getDate() + 1);
+        } else if (cycleOption === '7d') {
+          nextDate.setDate(nextDate.getDate() + 7);
+        } else if (cycleOption === '1m') {
+          nextDate.setMonth(nextDate.getMonth() + 1);
+        } else if (cycleOption === '3m') {
+          nextDate.setMonth(nextDate.getMonth() + 3);
+        } else if (cycleOption === '6m') {
+          nextDate.setMonth(nextDate.getMonth() + 6);
+        } else if (cycleOption === '1y') {
+          nextDate.setFullYear(nextDate.getFullYear() + 1);
+        }
+
+        note.dueDate = nextDate.toLocaleDateString('en-CA');
+        note.hasReminder = true;
+        note.updatedAt = new Date().toISOString();
+
+        await this.storage.saveNote(note);
+        await this.loadNotes();
+        await this.loadAllLogs();
+        this.closeCompleteNoteModal();
+        await this.render();
+        this.showToast('✅ Đã lưu vào Nhật ký & Lên lịch nhắc lại: ' + this.formatDateVN(note.dueDate));
+      }
+    } catch (err) {
+      console.error('Lỗi khi hoàn thành ghi chú:', err);
+      alert('Không thể lưu hoàn thành ghi chú: ' + (err.message || err));
+    }
+  }
+
   async saveNoteFromForm(e) {
     if (e && e.preventDefault) e.preventDefault();
     if (this._isSavingNote) return;
@@ -4728,7 +4200,7 @@ class LifeKeepApp {
       const content = document.getElementById('input-note-content').value.trim();
 
       if (!title && !content) {
-        alert(this.t('note_alert_empty'));
+        alert('Vui lòng nhập tiêu đề hoặc nội dung ghi chú!');
         return;
       }
 
@@ -4755,7 +4227,7 @@ class LifeKeepApp {
 
       const note = {
         id,
-        title: title || (content ? content.slice(0, 30) + '...' : this.t('note_title_fallback')),
+        title: title || (content ? content.slice(0, 30) + '...' : 'Ghi chú'),
         content,
         color,
         pinned,
@@ -4772,7 +4244,7 @@ class LifeKeepApp {
 
       this.closeNoteModal();
       this.switchViewTab('notes');
-      this.showToast(this.t('note_toast_saved'));
+      this.showToast('📝 Đã lưu ghi chú thành công!');
 
       // Check alarms immediately if this note is due today
       if (hasReminder) {
@@ -4780,7 +4252,7 @@ class LifeKeepApp {
       }
     } catch (err) {
       console.error('Lỗi lưu ghi chú:', err);
-      alert('Error saving note: ' + (err.message || err));
+      alert('Không thể lưu ghi chú: ' + (err.message || err));
     } finally {
       this._isSavingNote = false;
       if (submitBtn) submitBtn.disabled = false;
@@ -4794,15 +4266,15 @@ class LifeKeepApp {
   }
 
   async deleteNoteById(id) {
-    if (!confirm(this.t('note_confirm_delete'))) return;
+    if (!confirm('Bạn có chắc chắn muốn xóa ghi chú này không?')) return;
     try {
       await this.storage.deleteNote(id);
       await this.loadNotes();
       await this.render();
-      this.showToast(this.t('note_toast_deleted'));
+      this.showToast('🗑️ Đã xóa ghi chú!');
     } catch (err) {
       console.error('Lỗi khi xóa ghi chú:', err);
-      alert('Error deleting note: ' + (err.message || err));
+      alert('Không thể xóa ghi chú: ' + (err.message || err));
     }
   }
 
@@ -4814,7 +4286,7 @@ class LifeKeepApp {
     await this.storage.saveNote(note);
     await this.loadNotes();
     await this.render();
-    this.showToast(note.pinned ? this.t('note_toast_pinned') : this.t('note_toast_unpinned'));
+    this.showToast(note.pinned ? '📌 Đã ghim ghi chú lên đầu!' : 'Đã bỏ ghim ghi chú');
   }
 
   removePhoto() {
@@ -4833,7 +4305,7 @@ class LifeKeepApp {
 
   openCurrentEditingPhoto() {
     if (this.currentPhotoBase64) {
-      const name = document.getElementById('input-name')?.value || (this.currentLang === 'en' ? 'Photo Preview' : 'Ảnh xem trước');
+      const name = document.getElementById('input-name')?.value || 'Ảnh xem trước';
       this.openPhotoViewer(this.currentPhotoBase64, name);
     }
   }
@@ -4865,16 +4337,16 @@ class LifeKeepApp {
 
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
-        this.currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+        this.currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.72);
 
         const previewContainer = document.getElementById('photo-preview-container');
         if (previewContainer) {
           previewContainer.innerHTML = `
             <div class="relative inline-block mt-2 group">
-              <img src="${this.currentPhotoBase64}" onclick="app.openCurrentEditingPhoto()" class="w-24 h-24 object-cover rounded-xl border-2 border-purple-200 shadow-sm cursor-pointer hover:border-purple-500 transition" title="${this.t('log_detail_zoom_btn') || (this.currentLang === 'en' ? 'Click to view photo' : 'Bấm xem ảnh lớn')}" />
-              <button type="button" onclick="app.removePhoto()" class="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md transition" title="${this.t('btn_delete') || (this.currentLang === 'en' ? 'Delete photo' : 'Xóa ảnh này')}">✕</button>
+              <img src="${this.currentPhotoBase64}" onclick="app.openCurrentEditingPhoto()" class="w-24 h-24 object-cover rounded-xl border-2 border-purple-200 shadow-sm cursor-pointer hover:border-purple-500 transition" title="Bấm xem ảnh lớn" />
+              <button type="button" onclick="app.removePhoto()" class="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md transition" title="Xóa ảnh này">✕</button>
               <button type="button" onclick="app.openCurrentEditingPhoto()" class="mt-1 text-[11px] text-purple-700 font-semibold flex items-center gap-1 hover:underline">
-                <span>🔍 ${this.t('log_detail_zoom_btn') || (this.currentLang === 'en' ? 'View photo' : 'Bấm xem ảnh')}</span>
+                <span>🔍 Bấm xem ảnh</span>
               </button>
             </div>
           `;
@@ -5052,20 +4524,20 @@ class LifeKeepApp {
     }
     const cycleEl = document.getElementById('detail-cycle');
     if (cycleEl) {
-      cycleEl.textContent = item.cycleMonths ? this.t('detail_months_cycle', { months: item.cycleMonths }) : this.t('detail_no_cycle');
+      cycleEl.textContent = item.cycleMonths ? `${item.cycleMonths} tháng` : 'Không lặp định kỳ';
     }
-    document.getElementById('detail-provider').textContent = item.provider || this.t('detail_no_provider');
+    document.getElementById('detail-provider').textContent = item.provider || 'Chưa cập nhật';
 
     // Phone / Hotline button
     const phoneBtnContainer = document.getElementById('detail-phone-container');
     if (item.phone) {
       phoneBtnContainer.innerHTML = `
         <a href="tel:${item.phone}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-medium transition">
-          ${this.t('detail_call_btn', { phone: item.phone }) || ('📞 ' + item.phone)}
+          📞 Gọi ${item.phone}
         </a>
       `;
     } else {
-      phoneBtnContainer.innerHTML = `<span class="text-slate-500 text-xs">${this.t('detail_no_phone')}</span>`;
+      phoneBtnContainer.innerHTML = `<span class="text-slate-500 text-xs">Chưa có số</span>`;
     }
 
     // Render Cost & Sub-items Section in detail modal
@@ -5089,23 +4561,23 @@ class LifeKeepApp {
       } else if (totalCost > 0) {
         subcostsEl.innerHTML = `
           <div class="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="text-slate-600">${this.t('detail_total_package')}</span>
+            <span class="text-slate-600">Tổng chi phí</span>
             <span class="font-bold text-emerald-700">${this.formatMoney(totalCost)}</span>
           </div>
         `;
       } else {
         subcostsEl.innerHTML = `
           <div class="text-[11px] text-slate-500 flex items-center justify-between py-1">
-            <span>${this.t('detail_no_cost_set')}</span>
+            <span>Chưa điền chi phí cho mục này</span>
             <button type="button" onclick="app.editSelectedItem()" class="text-purple-600 font-bold hover:underline flex items-center gap-1">
-              <span>✏️</span> ${this.t('detail_fill_cost')}
+              <span>✏️</span> Điền chi phí
             </button>
           </div>
         `;
       }
     }
 
-    document.getElementById('detail-notes').textContent = item.notes || this.t('detail_no_notes');
+    document.getElementById('detail-notes').textContent = item.notes || 'Không có ghi chú thêm.';
 
     // Device Alarm status & toggle button in detail modal
     const isAlarmOn = item.notifyPhone !== false;
@@ -5118,20 +4590,20 @@ class LifeKeepApp {
     if (alarmBtn && alarmBtnText) {
       if (isAlarmOn) {
         alarmBtn.className = 'px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold transition text-xs shrink-0 flex items-center gap-1 shadow-md shadow-purple-600/20 active:scale-95';
-        alarmBtnText.textContent = this.t('detail_alarm_on');
+        alarmBtnText.textContent = 'Đang bật 🔔';
         if (alarmIcon) {
           alarmIcon.className = 'w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-bold border border-purple-200 shrink-0';
           alarmIcon.textContent = '🔔';
         }
-        if (alarmDesc) alarmDesc.textContent = this.t('detail_alarm_desc_on', { time: item.dueTime || '08:00', date: this.formatDateVN(item.dueDate) });
+        if (alarmDesc) alarmDesc.textContent = `Chuông máy sẽ reo lúc ${item.dueTime || '08:00'} ngày ${this.formatDateVN(item.dueDate)}`;
       } else {
         alarmBtn.className = 'px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-semibold transition text-xs shrink-0 flex items-center gap-1 border border-slate-200 active:scale-95';
-        alarmBtnText.textContent = this.t('detail_alarm_off');
+        alarmBtnText.textContent = 'Đang tắt 🔕';
         if (alarmIcon) {
           alarmIcon.className = 'w-8 h-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center text-sm font-bold border border-slate-200 shrink-0';
           alarmIcon.textContent = '🔕';
         }
-        if (alarmDesc) alarmDesc.textContent = this.t('detail_alarm_desc_off');
+        if (alarmDesc) alarmDesc.textContent = 'Chuông báo của thiết bị đang tắt cho mục này';
       }
     }
     if (smallAlarmBtn) {
@@ -5139,9 +4611,7 @@ class LifeKeepApp {
       smallAlarmBtn.className = isAlarmOn 
         ? 'p-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-[10px] font-bold border border-purple-200 flex items-center justify-center shadow-xs'
         : 'p-1 bg-slate-50 hover:bg-slate-100 text-slate-400 rounded-lg text-[10px] font-bold border border-slate-200 flex items-center justify-center shadow-xs';
-      smallAlarmBtn.title = isAlarmOn 
-        ? (this.currentLang === 'en' ? 'Device alarm: ON (Click to turn off)' : 'Chuông báo máy: Đang BẬT (Bấm để tắt)')
-        : (this.currentLang === 'en' ? 'Device alarm: OFF (Click to turn on)' : 'Chuông báo máy: Đang TẮT (Bấm để bật)');
+      smallAlarmBtn.title = isAlarmOn ? 'Chuông báo máy: Đang BẬT (Bấm để tắt)' : 'Chuông báo máy: Đang TẮT (Bấm để bật)';
     }
 
     // Photos
@@ -5153,28 +4623,27 @@ class LifeKeepApp {
             <img src="${item.photos[0]}" alt="${this.escapeHtml(item.name)}" class="max-h-60 max-w-full object-contain rounded-xl transition duration-200" />
             <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition rounded-2xl">
               <span class="bg-black/75 text-white text-xs px-3.5 py-1.5 rounded-full font-semibold backdrop-blur-sm flex items-center gap-1.5 shadow-lg">
-                ${this.t('log_detail_tap_zoom')}
+                🔍 Chạm để phóng to
               </span>
             </div>
           </div>
           <div class="flex items-center justify-between mt-2 px-1">
-            <span class="text-[11px] text-slate-500">${this.t('log_detail_fullscreen_hint')}</span>
+            <span class="text-[11px] text-slate-500">Chạm ảnh để xem toàn màn hình</span>
             <button type="button" onclick="app.openItemPhoto()" class="text-xs text-purple-600 font-bold hover:underline flex items-center gap-1">
-              <span>${this.t('log_detail_zoom_btn')}</span>
+              <span>🔍 Phóng to</span>
             </button>
           </div>
         </div>
       `;
     } else {
-      photoSection.innerHTML = `<p class="text-xs text-slate-400 italic mt-1">${this.currentLang === 'en' ? 'No photos or receipts attached.' : 'Chưa đính kèm ảnh giấy tờ/hóa đơn.'}</p>`;
+      photoSection.innerHTML = `<p class="text-xs text-slate-400 italic mt-1">Chưa đính kèm ảnh giấy tờ/hóa đơn.</p>`;
     }
 
     // Maintenance Logs
     const logList = document.getElementById('detail-log-list');
     if (logs.length === 0) {
-      logList.innerHTML = `<p class="text-xs text-slate-400 italic">${this.currentLang === 'en' ? 'No maintenance history yet.' : 'Chưa có lịch sử bảo dưỡng nào.'}</p>`;
+      logList.innerHTML = `<p class="text-xs text-slate-400 italic">Chưa có lịch sử bảo dưỡng nào.</p>`;
     } else {
-      const isEn = this.currentLang === 'en';
       logList.innerHTML = logs.map(l => {
         const subCount = l.subItems ? l.subItems.length : 0;
         return `
@@ -5182,13 +4651,13 @@ class LifeKeepApp {
             <div>
               <div class="font-bold text-slate-800 flex items-center gap-1.5">
                 <span>${this.formatDateVN(l.date)}</span>
-                ${subCount > 0 ? `<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">${subCount} ${isEn ? 'sub-costs' : 'khoản con'}</span>` : ''}
+                ${subCount > 0 ? `<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">${subCount} khoản con</span>` : ''}
               </div>
-              <div class="text-slate-500 text-[11px] truncate max-w-[200px] mt-0.5">${this.escapeHtml(l.notes || (isEn ? 'Periodic completion' : 'Hoàn thành định kỳ'))}</div>
+              <div class="text-slate-500 text-[11px] truncate max-w-[200px] mt-0.5">${this.escapeHtml(l.notes || 'Hoàn thành định kỳ')}</div>
             </div>
             <div class="text-right">
               <span class="text-emerald-700 font-black text-sm block">${this.formatMoney(l.totalCost || l.cost)}</span>
-              <span class="text-[10px] text-purple-600 font-semibold">${isEn ? 'View details ➜' : 'Xem chi tiết ➜'}</span>
+              <span class="text-[10px] text-purple-600 font-semibold">Xem chi tiết ➜</span>
             </div>
           </div>
         `;
@@ -5214,7 +4683,7 @@ class LifeKeepApp {
     this.completePhotoBase64 = null;
     this.resetCompletePhotoInputs();
     document.getElementById('complete-item-id').value = item.id;
-    document.getElementById('complete-item-name').textContent = item.name + (item.cycleMonths ? (this.t('complete_cycle_text', { cycle: item.cycleMonths }) || ` (Chu kỳ: ${item.cycleMonths} tháng)`) : '');
+    document.getElementById('complete-item-name').textContent = item.name + (item.cycleMonths ? ` (Chu kỳ: ${item.cycleMonths} tháng)` : '');
     document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
     document.getElementById('complete-provider').value = item.provider || '';
     document.getElementById('complete-notes').value = '';
@@ -5225,14 +4694,18 @@ class LifeKeepApp {
 
     // Add 2 initial rows based on item category
     if (item.category === 'vehicle') {
-      this.addSubItemRow(this.t('complete_initial_oil') || 'Thay dầu nhớt động cơ', '');
-      this.addSubItemRow(this.t('complete_initial_filter') || 'Lọc nhớt / Tiền công', '');
+      this.addSubItemRow('Thay dầu nhớt động cơ', '');
+      this.addSubItemRow('Lọc nhớt / Tiền công', '');
     } else if (item.category === 'home') {
-      this.addSubItemRow(this.t('complete_initial_clean') || 'Vệ sinh / Thay thế linh kiện', '');
-      this.addSubItemRow(this.t('complete_initial_labor') || 'Tiền công thợ', '');
+      this.addSubItemRow('Vệ sinh / Thay thế linh kiện', '');
+      this.addSubItemRow('Tiền công thợ', '');
     } else {
-      this.addSubItemRow(this.t('complete_initial_main') || 'Chi phí chính', '');
+      this.addSubItemRow('Chi phí chính', '');
     }
+
+    // Reset choice to repeat by default
+    const repeatRadio = document.getElementById('complete-action-repeat');
+    if (repeatRadio) repeatRadio.checked = true;
 
     this.calculateCompleteTotal();
     toggleModal('complete-modal');
@@ -5243,9 +4716,9 @@ class LifeKeepApp {
     const row = document.createElement('div');
     row.className = 'sub-item-row flex items-center gap-2';
     row.innerHTML = `
-      <input type="text" placeholder="${this.t('sub_cost_item_placeholder') || 'Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)'}" value="${this.escapeHtml(name)}" class="sub-name flex-1 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white" />
-      <input type="text" inputmode="numeric" placeholder="${this.t('sub_cost_amount_placeholder') || 'Số tiền ₫'}" value="${this.formatMoneyString(cost)}" oninput="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onkeyup="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onblur="app.formatCurrencyInput(this); app.calculateCompleteTotal();" class="sub-cost w-32 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white font-bold text-purple-700" />
-      <button type="button" onclick="this.parentElement.remove(); app.calculateCompleteTotal();" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg text-sm transition" title="${this.t('sub_cost_remove_title') || 'Xóa dòng này'}">✕</button>
+      <input type="text" placeholder="Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)" value="${this.escapeHtml(name)}" class="sub-name flex-1 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white" />
+      <input type="text" inputmode="numeric" placeholder="Số tiền ₫" value="${this.formatMoneyString(cost)}" oninput="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onkeyup="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onblur="app.formatCurrencyInput(this); app.calculateCompleteTotal();" class="sub-cost w-32 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white font-bold text-purple-700" />
+      <button type="button" onclick="this.parentElement.remove(); app.calculateCompleteTotal();" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg text-sm transition" title="Xóa dòng này">✕</button>
     `;
     container.appendChild(row);
   }
@@ -5285,16 +4758,16 @@ class LifeKeepApp {
 
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
-        this.completePhotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+        this.completePhotoBase64 = canvas.toDataURL('image/jpeg', 0.72);
 
         const previewContainer = document.getElementById('complete-photo-preview');
         if (previewContainer) {
           previewContainer.innerHTML = `
             <div class="relative inline-block mt-2 group">
-              <img src="${this.completePhotoBase64}" onclick="app.openCurrentCompletePhoto()" class="w-24 h-24 object-cover rounded-xl border-2 border-purple-200 shadow-sm cursor-pointer hover:border-purple-500 transition" title="${this.currentLang === 'en' ? 'Click to view photo' : 'Bấm xem ảnh lớn'}" />
-              <button type="button" onclick="app.removeCompletePhoto()" class="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md transition" title="${this.currentLang === 'en' ? 'Delete photo' : 'Xóa ảnh này'}">✕</button>
+              <img src="${this.completePhotoBase64}" onclick="app.openCurrentCompletePhoto()" class="w-24 h-24 object-cover rounded-xl border-2 border-purple-200 shadow-sm cursor-pointer hover:border-purple-500 transition" title="Bấm xem ảnh lớn" />
+              <button type="button" onclick="app.removeCompletePhoto()" class="absolute -top-2 -right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md transition" title="Xóa ảnh này">✕</button>
               <button type="button" onclick="app.openCurrentCompletePhoto()" class="mt-1 text-[11px] text-purple-700 font-semibold flex items-center gap-1 hover:underline">
-                <span>🔍 ${this.currentLang === 'en' ? 'View photo' : 'Bấm xem ảnh'}</span>
+                <span>🔍 Bấm xem ảnh</span>
               </button>
             </div>
           `;
@@ -5321,7 +4794,7 @@ class LifeKeepApp {
 
   openCurrentCompletePhoto() {
     if (this.completePhotoBase64) {
-      const name = document.getElementById('complete-item-name')?.textContent || (this.currentLang === 'en' ? 'Maintenance receipt' : 'Hóa đơn bảo dưỡng');
+      const name = document.getElementById('complete-item-name')?.textContent || 'Hóa đơn bảo dưỡng';
       this.openPhotoViewer(this.completePhotoBase64, name);
     }
   }
@@ -5350,7 +4823,7 @@ class LifeKeepApp {
         const name = row.querySelector('.sub-name').value.trim();
         const cost = this.parseMoneyInput(row.querySelector('.sub-cost')?.value);
         if (name || cost > 0) {
-          subItems.push({ name: name || (this.currentLang === 'en' ? 'Expense item' : 'Khoản chi phí'), cost });
+          subItems.push({ name: name || 'Khoản chi phí', cost });
         }
       });
 
@@ -5369,26 +4842,38 @@ class LifeKeepApp {
         photos: this.completePhotoBase64 ? [this.completePhotoBase64] : []
       };
 
+      const actionType = document.querySelector('input[name="complete-action-type"]:checked')?.value || 'repeat';
+
       await this.storage.saveLog(log);
 
-      // Auto-advance due date by cycle
-      const cycle = item.cycleMonths || 6;
-      const nextDate = new Date(date);
-      nextDate.setMonth(nextDate.getMonth() + cycle);
-      item.dueDate = nextDate.toISOString().split('T')[0];
-      item.updatedAt = new Date().toISOString();
+      if (actionType === 'finish') {
+        // Xong hoàn toàn: Xóa việc khỏi danh sách việc cần làm nhưng GIỮ NGUYÊN log lịch sử trong Tab Đã xong
+        await this.storage.deleteItemOnly(item.id);
+        await this.loadItems();
+        await this.loadAllLogs();
 
-      await this.storage.saveItem(item);
-      await this.loadItems();
-      await this.loadAllLogs();
+        toggleModal('complete-modal');
+        await this.render();
+        this.showToast('🎉 Đã hoàn thành công việc và lưu vào Nhật ký Đã xong!');
+      } else {
+        // Auto-advance due date by cycle
+        const cycle = item.cycleMonths || 6;
+        const nextDate = new Date(date);
+        nextDate.setMonth(nextDate.getMonth() + cycle);
+        item.dueDate = nextDate.toISOString().split('T')[0];
+        item.updatedAt = new Date().toISOString();
 
-      toggleModal('complete-modal');
-      await this.render();
-      this.showToast(this.t('complete_toast_saved') || '✅ Đã lưu vào Nhật ký bảo dưỡng!');
-      alert(this.t('complete_alert_next_due', { date: this.formatDateVN(item.dueDate) }) || `Đã lưu chi phí vào Nhật ký! Hạn lần tới tự động dời sang ngày: ${this.formatDateVN(item.dueDate)}`);
+        await this.storage.saveItem(item);
+        await this.loadItems();
+        await this.loadAllLogs();
+
+        toggleModal('complete-modal');
+        await this.render();
+        this.showToast('✅ Đã lưu vào Nhật ký & Lên lịch chu kỳ tiếp theo: ' + this.formatDateVN(item.dueDate));
+      }
     } catch (err) {
       console.error('Lỗi khi lưu hoàn thành:', err);
-      alert((this.currentLang === 'en' ? 'Cannot save completion: ' : 'Không thể lưu hoàn thành: ') + (err.message || err));
+      alert('Không thể lưu hoàn thành: ' + (err.message || err));
     } finally {
       this._isSavingComplete = false;
       if (submitBtn) {
@@ -5404,11 +4889,11 @@ class LifeKeepApp {
     this.currentViewingLogId = logId;
     this.currentViewingLog = log;
 
-    document.getElementById('log-detail-title').textContent = log.itemName || this.t('log_detail_title_default');
-    document.getElementById('log-detail-date').textContent = this.t('log_detail_date_label', { date: this.formatDateVN(log.date) });
+    document.getElementById('log-detail-title').textContent = log.itemName || 'Chi tiết bảo dưỡng';
+    document.getElementById('log-detail-date').textContent = `Ngày thực hiện: ${this.formatDateVN(log.date)}`;
     document.getElementById('log-detail-total').textContent = this.formatMoney(log.totalCost || log.cost);
-    document.getElementById('log-detail-provider').textContent = log.provider || this.t('log_detail_no_provider');
-    document.getElementById('log-detail-notes').textContent = log.notes || this.t('log_detail_no_notes');
+    document.getElementById('log-detail-provider').textContent = log.provider || 'Chưa ghi nơi làm';
+    document.getElementById('log-detail-notes').textContent = log.notes || 'Không có ghi chú thêm.';
 
     const subContainer = document.getElementById('log-detail-subitems');
     if (log.subItems && log.subItems.length > 0) {
@@ -5421,7 +4906,7 @@ class LifeKeepApp {
     } else {
       subContainer.innerHTML = `
         <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-          <span class="text-slate-600 font-medium">${this.t('log_detail_total_package')}</span>
+          <span class="text-slate-600 font-medium">Tổng chi phí trọn gói</span>
           <span class="text-emerald-700 font-bold">${this.formatMoney(log.totalCost || log.cost)}</span>
         </div>
       `;
@@ -5435,20 +4920,20 @@ class LifeKeepApp {
             <img src="${log.photos[0]}" alt="${this.escapeHtml(log.itemName)}" class="max-h-60 max-w-full object-contain rounded-xl transition duration-200" />
             <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition rounded-2xl">
               <span class="bg-black/75 text-white text-xs px-3.5 py-1.5 rounded-full font-semibold backdrop-blur-sm flex items-center gap-1.5 shadow-lg">
-                ${this.t('log_detail_tap_zoom')}
+                🔍 Chạm để phóng to
               </span>
             </div>
           </div>
           <div class="flex items-center justify-between mt-2 px-1">
-            <span class="text-[11px] text-slate-500">${this.t('log_detail_fullscreen_hint')}</span>
+            <span class="text-[11px] text-slate-500">Chạm ảnh để xem toàn màn hình</span>
             <button type="button" onclick="app.openLogPhoto()" class="text-xs text-purple-600 font-bold hover:underline flex items-center gap-1">
-              <span>${this.t('log_detail_zoom_btn')}</span>
+              <span>🔍 Phóng to</span>
             </button>
           </div>
         </div>
       `;
     } else {
-      photoContainer.innerHTML = `<p class="text-xs text-slate-400 italic mt-1">${this.t('log_detail_no_photo')}</p>`;
+      photoContainer.innerHTML = `<p class="text-xs text-slate-400 italic mt-1">Không đính kèm ảnh hóa đơn.</p>`;
     }
 
     toggleModal('log-detail-modal');
@@ -5456,20 +4941,18 @@ class LifeKeepApp {
 
   openLogPhoto() {
     if (this.currentViewingLog && this.currentViewingLog.photos && this.currentViewingLog.photos.length > 0) {
-      const isEn = this.currentLang === 'en';
-      this.openPhotoViewer(this.currentViewingLog.photos[0], `${this.currentViewingLog.itemName || (isEn ? 'Receipt' : 'Hóa đơn')} - ${isEn ? 'Bill' : 'Biên nhận'}`);
+      this.openPhotoViewer(this.currentViewingLog.photos[0], `${this.currentViewingLog.itemName || 'Hóa đơn'} - Biên nhận`);
     }
   }
 
   openItemPhoto() {
     if (this.selectedItem && this.selectedItem.photos && this.selectedItem.photos.length > 0) {
-      const isEn = this.currentLang === 'en';
-      this.openPhotoViewer(this.selectedItem.photos[0], this.selectedItem.name || (isEn ? 'Document / Warranty Card' : 'Ảnh giấy tờ / Phiếu bảo hành'));
+      this.openPhotoViewer(this.selectedItem.photos[0], this.selectedItem.name || 'Ảnh giấy tờ / Phiếu bảo hành');
     }
   }
 
   // Photo Fullscreen Viewer Lightbox with Zoom & Pan
-  openPhotoViewer(photoSrc, title = (this.currentLang === 'en' ? 'Image Details' : 'Chi tiết hình ảnh')) {
+  openPhotoViewer(photoSrc, title = 'Chi tiết hình ảnh') {
     if (!photoSrc) return;
     const modal = document.getElementById('photo-viewer-modal');
     const imgEl = document.getElementById('photo-viewer-img');
@@ -5580,24 +5063,23 @@ class LifeKeepApp {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
 
-    const isEn = this.currentLang === 'en';
     let html = '';
     // Add all available years
     availableYears.forEach(y => {
-      html += `<option value="year-${y}">${this.t('analytics_period_all_year', { year: y }) || (isEn ? `Full Year ${y}` : `Cả năm ${y}`)}</option>`;
+      html += `<option value="year-${y}">Cả năm ${y}</option>`;
     });
 
     // Add relevant months from available years
     availableYears.forEach(y => {
       if (y === this.financeSelectedYear) {
-        html += `<option value="month-${this.financeSelectedMonth}-${y}">${isEn ? `Month ${this.financeSelectedMonth}/${y} (Viewing)` : `Tháng ${this.financeSelectedMonth}/${y} (Đang xem)`}</option>`;
+        html += `<option value="month-${this.financeSelectedMonth}-${y}">Tháng ${this.financeSelectedMonth}/${y} (Đang xem)</option>`;
       }
       if (y === currentYear && (this.financeSelectedYear !== currentYear || this.financeSelectedMonth !== currentMonth)) {
-        html += `<option value="month-${currentMonth}-${y}">${this.t('analytics_period_this_month', { month: currentMonth, year: y }) || (isEn ? `Month ${currentMonth}/${y} (This Month)` : `Tháng ${currentMonth}/${y} (Tháng này)`)}</option>`;
+        html += `<option value="month-${currentMonth}-${y}">Tháng ${currentMonth}/${y} (Tháng này)</option>`;
       }
     });
 
-    html += `<option value="all">${this.t('analytics_period_all') || (isEn ? 'All Time (Full History)' : 'Tất cả từ trước đến nay')}</option>`;
+    html += `<option value="all">Tất cả từ trước đến nay</option>`;
     periodSelect.innerHTML = html;
 
     // Default selection matching current finance period
@@ -5654,8 +5136,6 @@ class LifeKeepApp {
     const totalSpent = Object.values(catTotals).reduce((a, b) => a + b, 0);
     document.getElementById('analytics-total-amount').textContent = this.formatMoney(totalSpent);
 
-    const isEn = this.currentLang === 'en';
-
     // Render Doughnut Chart
     const ctxDoughnut = document.getElementById('categoryDoughnutChart');
     if (ctxDoughnut && typeof Chart !== 'undefined') {
@@ -5665,9 +5145,7 @@ class LifeKeepApp {
       this.doughnutChart = new Chart(ctxDoughnut, {
         type: 'doughnut',
         data: {
-          labels: isEn 
-            ? ['Vehicles', 'Home & Living', 'Documents', 'Technology', 'Other'] 
-            : ['Phương tiện', 'Gia dụng & Nhà', 'Giấy tờ', 'Công nghệ', 'Khác'],
+          labels: ['Phương tiện', 'Gia dụng & Nhà', 'Giấy tờ', 'Công nghệ', 'Khác'],
           datasets: [{
             data: [
               catTotals.vehicle,
@@ -5711,11 +5189,11 @@ class LifeKeepApp {
     const catListEl = document.getElementById('analytics-category-list');
     if (catListEl) {
       const cats = [
-        { key: 'vehicle', name: isEn ? '🚗 Vehicles' : '🚗 Phương tiện', color: 'bg-indigo-500', total: catTotals.vehicle },
-        { key: 'home', name: isEn ? '🏠 Home & Living' : '🏠 Gia dụng & Nhà', color: 'bg-emerald-500', total: catTotals.home },
-        { key: 'identity', name: isEn ? '🪪 Personal Documents' : '🪪 Giấy tờ cá nhân', color: 'bg-amber-500', total: catTotals.identity },
-        { key: 'tech', name: isEn ? '💻 Technology' : '💻 Công nghệ', color: 'bg-purple-500', total: catTotals.tech },
-        { key: 'other', name: isEn ? '📌 Other' : '📌 Khác', color: 'bg-slate-500', total: catTotals.other }
+        { key: 'vehicle', name: '🚗 Phương tiện', color: 'bg-indigo-500', total: catTotals.vehicle },
+        { key: 'home', name: '🏠 Gia dụng & Nhà', color: 'bg-emerald-500', total: catTotals.home },
+        { key: 'identity', name: '🪪 Giấy tờ cá nhân', color: 'bg-amber-500', total: catTotals.identity },
+        { key: 'tech', name: '💻 Công nghệ', color: 'bg-purple-500', total: catTotals.tech },
+        { key: 'other', name: '📌 Khác', color: 'bg-slate-500', total: catTotals.other }
       ];
 
       catListEl.innerHTML = cats.map(c => {
@@ -5744,7 +5222,7 @@ class LifeKeepApp {
 
       const barChartTitle = document.getElementById('analytics-barchart-title');
       if (barChartTitle) {
-        barChartTitle.textContent = isEn ? `12-Month Expenses in ${chartYear}` : `Chi phí 12 tháng năm ${chartYear}`;
+        barChartTitle.textContent = `Chi phí 12 tháng năm ${chartYear}`;
       }
 
       const monthlyData = new Array(12).fill(0);
@@ -5767,9 +5245,9 @@ class LifeKeepApp {
       this.barChart = new Chart(ctxBar, {
         type: 'bar',
         data: {
-          labels: isEn ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] : ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+          labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
           datasets: [{
-            label: isEn ? `Expenses (${chartYear})` : `Chi tiêu (${chartYear})`,
+            label: `Chi tiêu (${chartYear})`,
             data: monthlyData,
             backgroundColor: 'rgba(124, 58, 237, 0.75)',
             hoverBackgroundColor: 'rgba(124, 58, 237, 0.95)',
@@ -6596,8 +6074,6 @@ class LifeKeepApp {
   renderFinanceCharts(totalIncome, totalExpense, filteredIncomes, filteredDailyExpenses, filteredMaintLogs) {
     if (typeof Chart === 'undefined') return;
 
-    const isEn = this.currentLang === 'en';
-
     // 1. Dual Bar Chart: Income vs Expense Comparison
     const ctxBar = document.getElementById('financeComparisonChart');
     if (ctxBar) {
@@ -6610,7 +6086,7 @@ class LifeKeepApp {
       let expenseData = [];
 
       if (this.financePeriod === 'week') {
-        labels = isEn ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
         incomeData = new Array(7).fill(0);
         expenseData = new Array(7).fill(0);
 
@@ -6639,7 +6115,7 @@ class LifeKeepApp {
           if (dayIndex >= 0 && dayIndex < 7) expenseData[dayIndex] += Number(l.totalCost || l.cost) || 0;
         });
       } else if (this.financePeriod === 'month') {
-        labels = isEn ? ['Week 1 (1-7)', 'Week 2 (8-14)', 'Week 3 (15-21)', 'Week 4 (22-end)'] : ['Tuần 1 (1-7)', 'Tuần 2 (8-14)', 'Tuần 3 (15-21)', 'Tuần 4 (22-cuối)'];
+        labels = ['Tuần 1 (1-7)', 'Tuần 2 (8-14)', 'Tuần 3 (15-21)', 'Tuần 4 (22-cuối)'];
         incomeData = new Array(4).fill(0);
         expenseData = new Array(4).fill(0);
 
@@ -6685,7 +6161,7 @@ class LifeKeepApp {
           }
         } else if (diffDays <= 60) {
           const numWeeks = Math.ceil(diffDays / 7);
-          labels = Array.from({ length: numWeeks }, (_, i) => isEn ? `Week ${i + 1}` : `Tuần ${i + 1}`);
+          labels = Array.from({ length: numWeeks }, (_, i) => `Tuần ${i + 1}`);
           incomeData = new Array(numWeeks).fill(0);
           expenseData = new Array(numWeeks).fill(0);
 
@@ -6702,7 +6178,7 @@ class LifeKeepApp {
           const monthMap = new Map();
           const cur = new Date(start);
           while (cur <= end || (cur.getMonth() === end.getMonth() && cur.getFullYear() === end.getFullYear())) {
-            const key = (isEn ? 'M' : 'T') + `${cur.getMonth() + 1}/${cur.getFullYear()}`;
+            const key = `T${cur.getMonth() + 1}/${cur.getFullYear()}`;
             if (!monthMap.has(key)) {
               monthMap.set(key, { inc: 0, exp: 0 });
             }
@@ -6711,17 +6187,17 @@ class LifeKeepApp {
 
           filteredIncomes.forEach(t => {
             const d = new Date(t.date);
-            const key = (isEn ? 'M' : 'T') + `${d.getMonth() + 1}/${d.getFullYear()}`;
+            const key = `T${d.getMonth() + 1}/${d.getFullYear()}`;
             if (monthMap.has(key)) monthMap.get(key).inc += Number(t.amount) || 0;
           });
           filteredDailyExpenses.forEach(t => {
             const d = new Date(t.date);
-            const key = (isEn ? 'M' : 'T') + `${d.getMonth() + 1}/${d.getFullYear()}`;
+            const key = `T${d.getMonth() + 1}/${d.getFullYear()}`;
             if (monthMap.has(key)) monthMap.get(key).exp += Number(t.amount) || 0;
           });
           filteredMaintLogs.forEach(l => {
             const d = new Date(l.date);
-            const key = (isEn ? 'M' : 'T') + `${d.getMonth() + 1}/${d.getFullYear()}`;
+            const key = `T${d.getMonth() + 1}/${d.getFullYear()}`;
             if (monthMap.has(key)) monthMap.get(key).exp += Number(l.totalCost || l.cost) || 0;
           });
 
@@ -6752,12 +6228,12 @@ class LifeKeepApp {
             if (yearMap.has(y)) yearMap.get(y).exp += Number(l.totalCost || l.cost) || 0;
           });
 
-          labels = Array.from(yearMap.keys()).map(y => isEn ? `Year ${y}` : `Năm ${y}`);
+          labels = Array.from(yearMap.keys()).map(y => `Năm ${y}`);
           incomeData = Array.from(yearMap.values()).map(v => v.inc);
           expenseData = Array.from(yearMap.values()).map(v => v.exp);
         } else {
           // 12 Months of the selected year (this.financeSelectedYear)
-          labels = isEn ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] : ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+          labels = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
           incomeData = new Array(12).fill(0);
           expenseData = new Array(12).fill(0);
 
@@ -6789,13 +6265,13 @@ class LifeKeepApp {
       const chartTitleEl = document.getElementById('finance-comparison-title');
       if (chartTitleEl) {
         if (this.financePeriod === 'year') {
-          chartTitleEl.textContent = isEn ? `Income & Expenses in ${this.financeSelectedYear}` : `Diễn biến Thu & Chi năm ${this.financeSelectedYear}`;
+          chartTitleEl.textContent = `Diễn biến Thu & Chi năm ${this.financeSelectedYear}`;
         } else if (this.financePeriod === 'month') {
-          chartTitleEl.textContent = isEn ? `Monthly Trend ${this.financeSelectedMonth}/${this.financeSelectedYear}` : `Diễn biến Tháng ${this.financeSelectedMonth}/${this.financeSelectedYear}`;
+          chartTitleEl.textContent = `Diễn biến Tháng ${this.financeSelectedMonth}/${this.financeSelectedYear}`;
         } else if (this.financePeriod === 'all') {
-          chartTitleEl.textContent = isEn ? 'Year-over-Year Comparison' : 'Diễn biến So sánh các Năm';
+          chartTitleEl.textContent = 'Diễn biến So sánh các Năm';
         } else {
-          chartTitleEl.textContent = isEn ? 'Income & Expenses Trend' : 'Diễn biến Thu nhập & Chi tiêu';
+          chartTitleEl.textContent = 'Diễn biến Thu nhập & Chi tiêu';
         }
       }
 
@@ -6805,13 +6281,13 @@ class LifeKeepApp {
           labels,
           datasets: [
             {
-              label: this.t('fin_chart_income_label') || (isEn ? 'Income' : 'Thu nhập'),
+              label: 'Thu nhập',
               data: incomeData,
               backgroundColor: 'rgba(16, 185, 129, 0.85)',
               borderRadius: 6
             },
             {
-              label: this.t('fin_chart_expense_label') || (isEn ? 'Expense' : 'Chi tiêu'),
+              label: 'Chi tiêu',
               data: expenseData,
               backgroundColor: 'rgba(124, 58, 237, 0.85)',
               borderRadius: 6
@@ -6857,16 +6333,16 @@ class LifeKeepApp {
       const allCats = this.getAllCategories();
       const catMap = {};
 
-      // Seed standard categories with localized display names
+      // Seed standard categories
       allCats.forEach(c => {
-        catMap[c.id] = { name: this.getCategoryDisplayName(c.id, c.name), icon: c.icon || '📦', color: '#10b981', total: 0 };
+        catMap[c.id] = { name: c.name, icon: c.icon || '📦', color: '#10b981', total: 0 };
       });
       // Ensure maintenance & fallback categories exist
-      catMap['vehicle'] = { name: this.getCategoryDisplayName('vehicle'), icon: '🚗', color: '#6366f1', total: 0 };
-      catMap['home'] = { name: this.getCategoryDisplayName('home'), icon: '🏠', color: '#14b8a6', total: 0 };
-      catMap['identity'] = { name: this.getCategoryDisplayName('identity'), icon: '🪪', color: '#ec4899', total: 0 };
-      catMap['tech'] = { name: this.getCategoryDisplayName('tech'), icon: '💻', color: '#a855f7', total: 0 };
-      catMap['other'] = { name: this.getCategoryDisplayName('other'), icon: '📦', color: '#64748b', total: 0 };
+      catMap['vehicle'] = { name: 'Bảo dưỡng Xe', icon: '🚗', color: '#6366f1', total: 0 };
+      catMap['home'] = { name: 'Gia dụng & Lọc nước', icon: '🏠', color: '#14b8a6', total: 0 };
+      catMap['identity'] = { name: 'Giấy tờ & Bảo hiểm', icon: '🪪', color: '#ec4899', total: 0 };
+      catMap['tech'] = { name: 'Đồ công nghệ', icon: '💻', color: '#a855f7', total: 0 };
+      catMap['other'] = { name: 'Chi tiêu khác', icon: '📦', color: '#64748b', total: 0 };
 
       // Palette
       const palette = ['#7c3aed', '#10b981', '#06b6d4', '#3b82f6', '#a855f7', '#ec4899', '#f43f5e', '#14b8a6', '#f59e0b', '#64748b'];
@@ -6878,7 +6354,7 @@ class LifeKeepApp {
         const c = t.category || 'other';
         if (catMap[c]) catMap[c].total += (Number(t.amount) || 0);
         else {
-          catMap[c] = { name: this.getCategoryDisplayName(c, t.categoryName), icon: '📦', color: '#64748b', total: Number(t.amount) || 0 };
+          catMap[c] = { name: t.categoryName || 'Chi khác', icon: '📦', color: '#64748b', total: Number(t.amount) || 0 };
         }
       });
 
@@ -6891,7 +6367,7 @@ class LifeKeepApp {
       const activeCats = Object.values(catMap).filter(c => c.total > 0);
       activeCats.sort((a, b) => b.total - a.total);
 
-      const doughnutLabels = activeCats.length > 0 ? activeCats.map(c => `${c.icon} ${c.name}`) : [isEn ? 'No expenses' : 'Chưa có chi tiêu'];
+      const doughnutLabels = activeCats.length > 0 ? activeCats.map(c => `${c.icon} ${c.name}`) : ['Chưa có chi tiêu'];
       const doughnutData = activeCats.length > 0 ? activeCats.map(c => c.total) : [1];
       const doughnutColors = activeCats.length > 0 ? activeCats.map(c => c.color) : ['#e2e8f0'];
 
@@ -6929,7 +6405,7 @@ class LifeKeepApp {
       const breakdownEl = document.getElementById('finance-category-breakdown');
       if (breakdownEl) {
         if (activeCats.length === 0) {
-          breakdownEl.innerHTML = `<p class="text-slate-400 italic text-center py-2">${isEn ? 'No expenses incurred in this period.' : 'Chưa phát sinh chi tiêu trong kỳ này.'}</p>`;
+          breakdownEl.innerHTML = `<p class="text-slate-400 italic text-center py-2">Chưa phát sinh chi tiêu trong kỳ này.</p>`;
         } else {
           breakdownEl.innerHTML = activeCats.map(c => {
             const pct = totalExpense > 0 ? Math.round((c.total / totalExpense) * 100) : 0;
@@ -7007,7 +6483,7 @@ class LifeKeepApp {
           amount: l.totalCost || l.cost || 0,
           date: l.date,
           title: l.itemName || (this.currentLang === 'en' ? 'Maintenance / Docs' : 'Bảo dưỡng / Giấy tờ'),
-          notes: (l.provider ? `${this.currentLang === 'en' ? 'Provider:' : 'Nơi làm:'} ${l.provider} • ` : '') + (subCount > 0 ? this.t('sub_items_count', { count: subCount }) : (l.notes || '')),
+          notes: (l.provider ? `${this.currentLang === 'en' ? 'Provider:' : 'Nơi làm:'} ${l.provider} • ` : '') + (subCount > 0 ? `${subCount} ${this.t('sub_items_count', { count: subCount })}` : (l.notes || '')),
           icon: catMeta ? catMeta.icon : '🔧',
           badgeText: this.currentLang === 'en' ? 'Task Cost' : 'Nhắc việc',
           badgeClass: 'bg-purple-50 text-purple-700 border-purple-200'
@@ -7054,11 +6530,11 @@ class LifeKeepApp {
             <div class="text-xs ${amountColor}">${amountStr}</div>
             <div class="flex items-center justify-end gap-1 mt-1">
               ${item.source === 'tx' ? `
-                <button type="button" onclick="app.editTx('${item.id}')" class="p-1 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg text-xs" title="${this.t('btn_edit') || 'Sửa'}">✏️</button>
-                <button type="button" onclick="app.deleteTx('${item.id}')" class="p-1 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg text-xs" title="${this.t('btn_delete') || 'Xóa'}">🗑️</button>
+                <button type="button" onclick="app.editTx('${item.id}')" class="p-1 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg text-xs" title="Sửa">✏️</button>
+                <button type="button" onclick="app.deleteTx('${item.id}')" class="p-1 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg text-xs" title="Xóa">🗑️</button>
               ` : `
                 <button type="button" onclick="app.showLogDetail('${item.id}')" class="text-[10px] text-purple-600 hover:underline font-bold">${this.t('hero_btn_detail')} ➜</button>
-                <button type="button" onclick="app.deleteLogById('${item.id}')" class="p-1 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg text-xs ml-1" title="${this.t('btn_delete') || 'Xóa'}">🗑️</button>
+                <button type="button" onclick="app.deleteLogById('${item.id}')" class="p-1 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg text-xs ml-1" title="Xóa">🗑️</button>
               `}
             </div>
           </div>
@@ -7502,15 +6978,11 @@ class LifeKeepApp {
       const text = await file.text();
       const data = JSON.parse(text);
       if (!data.items) {
-        alert(this.currentLang === 'en' ? 'Invalid backup file!' : 'File không hợp lệ!');
+        alert('File không hợp lệ!');
         return;
       }
 
-      const confirmMsg = this.currentLang === 'en' 
-        ? `Found ${data.items.length} items in backup. Do you want to restore?` 
-        : `Tìm thấy ${data.items.length} mục trong bản sao lưu. Bạn có muốn khôi phục không?`;
-
-      if (confirm(confirmMsg)) {
+      if (confirm(`Tìm thấy ${data.items.length} mục trong bản sao lưu. Bạn có muốn khôi phục không?`)) {
         await this.storage.importData(data);
         await this.loadItems();
         await this.loadTransactions();
@@ -7518,10 +6990,10 @@ class LifeKeepApp {
         this.customCategories = await this.storage.getCustomCategories();
         await this.renderTemplates();
         await this.render();
-        alert(this.currentLang === 'en' ? 'Data restored successfully!' : 'Khôi phục dữ liệu thành công!');
+        alert('Khôi phục dữ liệu thành công!');
       }
     } catch (err) {
-      alert((this.currentLang === 'en' ? 'Error reading file: ' : 'Lỗi đọc file: ') + err.message);
+      alert('Lỗi đọc file: ' + err.message);
     }
   }
 
@@ -7702,6 +7174,27 @@ class LifeKeepApp {
       this.showAuthScreen();
       this.updateUserUI();
     }
+
+    // Update backup status timestamp in UI if exists
+    const lastBackupTime = localStorage.getItem('lifekeep_last_google_backup_time');
+    const statusEl = document.getElementById('google-backup-sync-status');
+    if (statusEl && lastBackupTime) {
+      statusEl.textContent = `Đồng bộ: ${lastBackupTime}`;
+    }
+
+    // Auto-listen to Firebase Auth state if Firebase is available
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      try {
+        firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+          if (firebaseUser && (!this.currentUser || this.currentUser.provider !== 'google')) {
+            console.log('[LifeKeep Auth] Phát hiện phiên Google từ Firebase Auth:', firebaseUser.email);
+            await this.handleFirebaseUserLogin(firebaseUser);
+          }
+        });
+      } catch (err) {
+        console.warn('[LifeKeep Auth] onAuthStateChanged warning:', err);
+      }
+    }
   }
 
   checkAuthSession() {
@@ -7709,9 +7202,8 @@ class LifeKeepApp {
       const sessionStr = localStorage.getItem('lifekeep_auth_session') || sessionStorage.getItem('lifekeep_auth_session');
       if (!sessionStr) return null;
       const user = JSON.parse(sessionStr);
-      if (user && user.name === 'Đặng Long') {
+      if (user && !user.name) {
         user.name = user.email ? user.email.split('@')[0] : 'User';
-        this.setAuthSession(user, true);
       }
       return user;
     } catch (e) {
@@ -7757,22 +7249,22 @@ class LifeKeepApp {
       if (nameGroup) nameGroup.classList.remove('hidden');
       if (confirmGroup) confirmGroup.classList.remove('hidden');
       if (optionsRow) optionsRow.classList.add('hidden');
-      if (titleEl) titleEl.textContent = this.t('auth_create_account_title');
-      if (subtitleEl) subtitleEl.textContent = this.t('auth_create_account_sub');
-      if (submitText) submitText.textContent = this.t('auth_btn_register');
-      if (switchText) switchText.textContent = this.t('auth_already_have_acc');
-      if (switchBtn) switchBtn.textContent = this.t('auth_login_now');
+      if (titleEl) titleEl.textContent = 'Tạo tài khoản mới';
+      if (subtitleEl) subtitleEl.textContent = 'Đăng ký để bảo mật thông tin trên LifeKeep';
+      if (submitText) submitText.textContent = 'Đăng ký tài khoản';
+      if (switchText) switchText.textContent = 'Đã có tài khoản?';
+      if (switchBtn) switchBtn.textContent = 'Đăng nhập ngay';
       if (nameInput) nameInput.required = true;
       if (confirmInput) confirmInput.required = true;
     } else {
       if (nameGroup) nameGroup.classList.add('hidden');
       if (confirmGroup) confirmGroup.classList.add('hidden');
       if (optionsRow) optionsRow.classList.remove('hidden');
-      if (titleEl) titleEl.textContent = this.t('auth_welcome_title');
-      if (subtitleEl) subtitleEl.textContent = this.t('auth_welcome_sub');
-      if (submitText) submitText.textContent = this.t('auth_btn_login');
-      if (switchText) switchText.textContent = this.t('auth_no_account');
-      if (switchBtn) switchBtn.textContent = this.t('auth_register_now');
+      if (titleEl) titleEl.textContent = 'Chào mừng trở lại';
+      if (subtitleEl) subtitleEl.textContent = 'Đăng nhập tài khoản để tiếp tục sử dụng';
+      if (submitText) submitText.textContent = 'Đăng nhập';
+      if (switchText) switchText.textContent = 'Chưa có tài khoản?';
+      if (switchBtn) switchBtn.textContent = 'Đăng ký ngay';
       if (nameInput) nameInput.required = false;
       if (confirmInput) confirmInput.required = false;
     }
@@ -7810,18 +7302,9 @@ class LifeKeepApp {
 
   getRegisteredAccounts() {
     try {
+      const devEmail = atob('bG9uZ2R0LnZuY2JAZ21haWwuY29t');
       const accounts = JSON.parse(localStorage.getItem('lifekeep_accounts') || '[]');
-      let changed = false;
-      accounts.forEach(a => {
-        if (a && a.name === 'Đặng Long') {
-          a.name = a.email ? a.email.split('@')[0] : 'User';
-          changed = true;
-        }
-      });
-      if (changed) {
-        localStorage.setItem('lifekeep_accounts', JSON.stringify(accounts));
-      }
-      return accounts;
+      return Array.isArray(accounts) ? accounts.filter(a => a && a.email && a.email.toLowerCase() !== devEmail) : [];
     } catch (e) {
       return [];
     }
@@ -7861,7 +7344,7 @@ class LifeKeepApp {
     const rememberMe = rememberCheckbox ? rememberCheckbox.checked : true;
 
     if (!identifier || !password) {
-      this.showAuthAlert(this.t('auth_err_empty'));
+      this.showAuthAlert('Vui lòng điền đầy đủ tài khoản và mật khẩu!');
       return;
     }
 
@@ -7876,9 +7359,9 @@ class LifeKeepApp {
 
       if (!matchedUser) {
         if (accounts.length === 0) {
-          this.showAuthAlert(this.t('auth_err_no_account'));
+          this.showAuthAlert('Chưa có tài khoản nào được tạo. Hãy nhấn "Đăng ký ngay" bên dưới hoặc Đăng nhập nhanh bằng Gmail!');
         } else {
-          this.showAuthAlert(this.t('auth_err_wrong_pass'));
+          this.showAuthAlert('Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại.');
         }
         return;
       }
@@ -7887,7 +7370,7 @@ class LifeKeepApp {
       this.currentUser = matchedUser;
       this.hideAuthScreen();
       await this.switchUserAccount(matchedUser);
-      this.showToast(this.currentLang === 'en' ? `🎉 Welcome, ${matchedUser.name || matchedUser.email}!` : `🎉 Xin chào, ${matchedUser.name || matchedUser.email}!`);
+      this.showToast(`🎉 Xin chào, ${matchedUser.name || matchedUser.email}!`);
       if (emailInput) emailInput.value = '';
       if (passwordInput) passwordInput.value = '';
     } else {
@@ -7897,21 +7380,21 @@ class LifeKeepApp {
       const confirmPassword = (confirmInput ? confirmInput.value : '').trim();
 
       if (!name) {
-        this.showAuthAlert(this.t('auth_err_name_empty'));
+        this.showAuthAlert('Vui lòng nhập họ và tên của bạn!');
         return;
       }
       if (password.length < 4) {
-        this.showAuthAlert(this.t('auth_err_pass_short'));
+        this.showAuthAlert('Mật khẩu cần tối thiểu 4 ký tự!');
         return;
       }
       if (password !== confirmPassword) {
-        this.showAuthAlert(this.t('auth_err_pass_mismatch'));
+        this.showAuthAlert('Mật khẩu xác nhận không khớp! Vui lòng nhập lại.');
         return;
       }
 
       const isTaken = accounts.some(acc => acc.email.toLowerCase() === identifier.toLowerCase());
       if (isTaken) {
-        this.showAuthAlert(this.t('auth_err_user_exists'));
+        this.showAuthAlert('Tài khoản hoặc Email này đã tồn tại! Vui lòng dùng tên khác.');
         return;
       }
 
@@ -7931,7 +7414,7 @@ class LifeKeepApp {
       this.currentUser = newUser;
       this.hideAuthScreen();
       await this.switchUserAccount(newUser);
-      this.showToast(this.currentLang === 'en' ? `🎉 Registration successful! Welcome ${newUser.name}` : `🎉 Đăng ký thành công! Chào mừng ${newUser.name}`);
+      this.showToast(`🎉 Đăng ký thành công! Chào mừng ${newUser.name}`);
       if (nameInput) nameInput.value = '';
       if (emailInput) emailInput.value = '';
       if (passwordInput) passwordInput.value = '';
@@ -7951,9 +7434,14 @@ class LifeKeepApp {
   }
 
   loginWithGoogle() {
+    // Nếu Firebase đã được cấu hình, kích hoạt popup đăng nhập Google chính chủ
+    if (window.LifeKeepFirebase && window.LifeKeepFirebase.isConfigured()) {
+      this.signInWithGooglePopup();
+      return;
+    }
+
+    // Nếu chưa cấu hình Firebase, mở hộp thoại chọn/nhập tài khoản Gmail (chế độ cục bộ & Android Auto Backup)
     this.renderGoogleAccountChooser();
-    
-    // Always open the Google Account Chooser modal so user can choose their Gmail account
     const modal = document.getElementById('google-auth-modal');
     if (modal) {
       modal.classList.remove('hidden');
@@ -7961,110 +7449,198 @@ class LifeKeepApp {
     }
   }
 
+  async signInWithGooglePopup() {
+    // 1. Nếu Firebase đã được cấu hình với API Key thật
+    if (window.LifeKeepFirebase && window.LifeKeepFirebase.isConfigured()) {
+      try {
+        this.showToast('⏳ Đang kết nối với tài khoản Google...');
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        let result;
+        try {
+          result = await firebase.auth().signInWithPopup(provider);
+        } catch (popupErr) {
+          if (popupErr.code === 'auth/popup-blocked' || popupErr.code === 'auth/cancelled-popup-request') {
+            console.warn('[LifeKeep Auth] Popup bị chặn, chuyển sang redirect...');
+            await firebase.auth().signInWithRedirect(provider);
+            return;
+          }
+          throw popupErr;
+        }
+
+        if (result && result.user) {
+          await this.handleFirebaseUserLogin(result.user);
+          return;
+        }
+      } catch (error) {
+        console.error('[LifeKeep Firebase Auth Error]', error);
+        if (error.code === 'auth/popup-closed-by-user') {
+          this.showToast('ℹ️ Bạn đã đóng cửa sổ chọn tài khoản Google.');
+          return;
+        }
+        if (error.code === 'auth/operation-not-allowed') {
+          alert('⚠️ Bạn chưa bật phương thức đăng nhập Google trên Firebase Console!\n\nVui lòng vào Firebase Console > Authentication > tab "Sign-in method" > bấm vào Google > gạt nút Bật (Enable) và bấm Lưu (Save).');
+          return;
+        }
+        if (error.code === 'auth/unauthorized-domain') {
+          alert(`⚠️ Tên miền hiện tại (${window.location.hostname}) chưa được cấp quyền trong Firebase!\n\nVui lòng vào Firebase Console > Authentication > Settings > Authorized domains và bấm thêm "${window.location.hostname}".`);
+          return;
+        }
+        this.showToast(`⚠️ Lỗi kết nối Google: ${error.message || error.code}`);
+        return;
+      }
+    }
+
+    // 2. Chế độ khi chưa cấu hình Firebase API Key:
+    // Kiểm tra xem người dùng đã nhập địa chỉ Gmail của họ vào ô bên dưới chưa
+    const emailInput = document.getElementById('google-email-input');
+    const nameInput = document.getElementById('google-name-input');
+    const targetEmail = emailInput ? emailInput.value.trim() : '';
+    const targetName = nameInput ? nameInput.value.trim() : '';
+
+    if (!targetEmail || !targetEmail.includes('@')) {
+      this.showToast('ℹ️ Vui lòng nhập địa chỉ Gmail của bạn bên dưới để tạo tài khoản mới!');
+      if (emailInput) {
+        emailInput.focus();
+        emailInput.classList.add('ring-2', 'ring-purple-500');
+        setTimeout(() => emailInput.classList.remove('ring-2', 'ring-purple-500'), 2000);
+      }
+      return;
+    }
+
+    this.showToast(`⏳ Đang tạo và đăng nhập tài khoản: ${targetEmail}...`);
+    await this.selectGoogleAccount(targetEmail, targetName);
+  }
+
+  async handleFirebaseUserLogin(firebaseUser) {
+    if (!firebaseUser) return;
+    const googleUser = {
+      id: 'google_' + firebaseUser.uid,
+      uid: firebaseUser.uid,
+      name: firebaseUser.displayName || (firebaseUser.email ? firebaseUser.email.split('@')[0] : 'Google User'),
+      email: firebaseUser.email ? firebaseUser.email.toLowerCase() : '',
+      photoURL: firebaseUser.photoURL || '',
+      provider: 'google',
+      avatar: 'google',
+      loggedAt: new Date().toISOString()
+    };
+
+    const accounts = this.getRegisteredAccounts();
+    const existingIdx = accounts.findIndex(a => a.email && a.email.toLowerCase() === googleUser.email);
+    if (existingIdx >= 0) {
+      accounts[existingIdx] = { ...accounts[existingIdx], ...googleUser };
+    } else {
+      accounts.push(googleUser);
+    }
+    this.saveRegisteredAccounts(accounts);
+    localStorage.setItem('lifekeep_last_google_email', googleUser.email);
+
+    this.setAuthSession(googleUser, true);
+    this.currentUser = googleUser;
+
+    const modal = document.getElementById('google-auth-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    this.hideAuthScreen();
+    await this.switchUserAccount(googleUser);
+    this.updateUserUI();
+
+    // Ghi nhận sự kiện Analytics nếu có
+    if (typeof firebase !== 'undefined' && firebase.analytics) {
+      try {
+        firebase.analytics().logEvent('login', { method: 'google', uid: googleUser.uid });
+      } catch (e) {}
+    }
+
+    this.showToast(`✨ Chào mừng bạn, ${googleUser.name}!`);
+
+    // Tự động kiểm tra và kéo dữ liệu sao lưu đám mây nếu có
+    if (window.LifeKeepFirebase && window.LifeKeepFirebase.isFirestoreAvailable()) {
+      setTimeout(() => this.syncFromCloud(false), 800);
+    }
+  }
+
   renderGoogleAccountChooser() {
-    const listEl = document.getElementById('google-device-accounts-list');
+    const listContainer = document.getElementById('google-accounts-list-container');
+    const listEl = document.getElementById('google-accounts-list');
+    const emailInput = document.getElementById('google-email-input');
+    const nameInput = document.getElementById('google-name-input');
     if (!listEl) return;
 
-    // Accounts from device Google session matching user screenshot
-    const deviceAccounts = [
-      {
-        name: 'Ok Ok',
-        email: 'nguyenkhang30101@gmail.com',
-        avatarType: 'text',
-        initials: 'Ok',
-        avatarBg: 'bg-[#3c4043] text-white'
-      },
-      {
-        name: 'thichdoc sach',
-        email: 'thichdocsach.net@gmail.com',
-        avatarType: 'icon',
-        icon: 'book',
-        avatarBg: 'bg-sky-50 text-sky-600 ring-2 ring-sky-300'
-      },
-      {
-        name: 'vuimua sam',
-        email: 'vuimuasam.vip@gmail.com',
-        avatarType: 'text',
-        initials: 's',
-        avatarBg: 'bg-[#ea4335] text-white'
-      },
-      {
-        name: '688 Coin',
-        email: 'coin688net@gmail.com',
-        avatarType: 'text',
-        initials: 'C',
-        avatarBg: 'bg-[#4285f4] text-white ring-2 ring-blue-100'
-      }
-    ];
+    // Collect all registered/remembered Google & Gmail accounts on THIS device
+    const accounts = this.getRegisteredAccounts();
+    const lastEmail = localStorage.getItem('lifekeep_last_google_email');
+    const knownGoogleAccounts = [];
 
-    // Check if any additional registered accounts exist that aren't the primary or in deviceAccounts
-    const registered = this.getRegisteredAccounts();
-    const knownEmails = new Set(['longdt.vncb@gmail.com', ...deviceAccounts.map(a => a.email.toLowerCase())]);
-
-    registered.forEach(acc => {
-      if (acc.email && acc.email.includes('@')) {
-        const lower = acc.email.toLowerCase();
-        if (!knownEmails.has(lower)) {
-          knownEmails.add(lower);
-          const initial = (acc.name || acc.email || 'G').charAt(0).toUpperCase();
-          deviceAccounts.push({
-            name: acc.name && acc.name !== 'Đặng Long' ? acc.name : acc.email.split('@')[0],
-            email: lower,
-            avatarType: 'text',
-            initials: initial,
-            avatarBg: 'bg-indigo-600 text-white'
+    // Chỉ hiển thị các tài khoản đã thực sự đăng nhập trên chính thiết bị này
+    accounts.forEach(a => {
+      if (a && a.email && (a.provider === 'google' || a.email.toLowerCase().endsWith('@gmail.com'))) {
+        if (!knownGoogleAccounts.some(k => k.email.toLowerCase() === a.email.toLowerCase())) {
+          const accName = a.name && a.name.trim() !== '' ? a.name.trim() : a.email.split('@')[0];
+          const isCurrent = !!(lastEmail && a.email.toLowerCase() === lastEmail.toLowerCase());
+          knownGoogleAccounts.push({
+            email: a.email.toLowerCase(),
+            name: accName,
+            isCurrent: isCurrent
           });
         }
       }
     });
 
-    listEl.innerHTML = deviceAccounts.map(acc => {
-      let avatarHtml = '';
-      if (acc.avatarType === 'icon' && acc.icon === 'book') {
-        avatarHtml = `
-          <div class="w-9 h-9 rounded-full ${acc.avatarBg} flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
-          </div>
+    if (knownGoogleAccounts.length > 0) {
+      if (listContainer) listContainer.classList.remove('hidden');
+      listEl.innerHTML = knownGoogleAccounts.map(acc => {
+        const initial = (acc.name || acc.email || 'G').charAt(0).toUpperCase();
+        return `
+          <button 
+            type="button" 
+            onclick="app.selectGoogleAccount('${acc.email}', '${acc.name.replace(/'/g, "\\'")}')" 
+            class="w-full flex items-center gap-3.5 p-3 rounded-2xl border border-purple-200 hover:border-purple-500 hover:bg-purple-50/70 transition text-left group bg-white shadow-xs active:scale-[0.99] cursor-pointer"
+          >
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-black flex items-center justify-center text-sm shadow-sm ring-2 ring-purple-100 shrink-0">
+              ${initial}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-xs text-slate-800 group-hover:text-purple-700 truncate flex items-center gap-1.5">
+                <span>${acc.name}</span>
+                ${acc.isCurrent ? '<span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Gần đây</span>' : ''}
+              </div>
+              <div class="text-[11px] text-slate-500 truncate">${acc.email}</div>
+            </div>
+            <div class="text-xs text-purple-600 font-bold flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-xl bg-purple-50 group-hover:bg-purple-600 group-hover:text-white transition">
+              <span>Đăng nhập</span>
+              <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </button>
         `;
-      } else {
-        avatarHtml = `
-          <div class="w-9 h-9 rounded-full ${acc.avatarBg} font-medium text-xs flex items-center justify-center shrink-0">
-            ${acc.initials}
-          </div>
-        `;
-      }
+      }).join('');
 
-      const escapedName = (acc.name || '').replace(/'/g, "\\'");
-      return `
-        <div 
-          onclick="app.selectGoogleAccount('${acc.email}', '${escapedName}')"
-          class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-50 transition cursor-pointer group"
-        >
-          ${avatarHtml}
-          <div class="min-w-0 flex-1">
-            <div class="text-[13px] font-medium text-slate-800 leading-tight truncate group-hover:text-blue-600 transition">
-              ${acc.name}
-            </div>
-            <div class="text-[12px] text-slate-500 leading-tight truncate mt-0.5">
-              ${acc.email}
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
+      if (emailInput) emailInput.value = lastEmail || '';
+      if (nameInput) {
+        const matchedPrimary = knownGoogleAccounts.find(k => k.email.toLowerCase() === (lastEmail ? lastEmail.toLowerCase() : ''));
+        nameInput.value = (matchedPrimary && matchedPrimary.name) ? matchedPrimary.name : '';
+      }
+    } else {
+      // Thiết bị mới tinh: hoàn toàn không hiển thị tài khoản nào, để trống ô nhập
+      if (listContainer) listContainer.classList.add('hidden');
+      if (emailInput) emailInput.value = '';
+      if (nameInput) nameInput.value = '';
+    }
   }
 
   async selectGoogleAccount(email, name) {
     if (!email || !email.includes('@')) return;
     email = email.trim().toLowerCase();
     
-    // Sanitize name: no hardcoded fake names, fallback to email prefix if blank
-    if (!name || name === 'Đặng Long' || name.trim() === '') {
+    // Sanitize name: fallback to email prefix if blank
+    if (!name || name.trim() === '') {
       const accounts = this.getRegisteredAccounts();
       const existing = accounts.find(a => a.email && a.email.toLowerCase() === email);
-      if (existing && existing.name && existing.name !== 'Đặng Long') {
+      if (existing && existing.name && existing.name.trim() !== '') {
         name = existing.name;
       } else {
         name = email.split('@')[0];
@@ -8081,7 +7657,6 @@ class LifeKeepApp {
       loggedAt: new Date().toISOString()
     };
 
-    // Auto-create or update account in registered accounts
     const accounts = this.getRegisteredAccounts();
     const existingIdx = accounts.findIndex(a => a.email.toLowerCase() === googleUser.email);
     if (existingIdx >= 0) {
@@ -8093,74 +7668,18 @@ class LifeKeepApp {
     this.saveRegisteredAccounts(accounts);
     localStorage.setItem('lifekeep_last_google_email', googleUser.email);
 
-    // Save active auth session
     this.setAuthSession(googleUser, true);
     this.currentUser = googleUser;
 
-    // Close Google modal
     const modal = document.getElementById('google-auth-modal');
     if (modal) {
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
 
-    // Hide login screen and switch to this user's data
     this.hideAuthScreen();
     await this.switchUserAccount(googleUser);
-    this.showToast(this.currentLang === 'en' ? `✅ Signed in with Gmail: ${googleUser.email}!` : `✅ Đã đăng nhập bằng Gmail: ${googleUser.email}!`);
-  }
-
-  toggleAddGoogleAccountInline() {
-    const inline = document.getElementById('google-add-account-inline');
-    if (!inline) return;
-    if (inline.classList.contains('hidden')) {
-      inline.classList.remove('hidden');
-      const input = document.getElementById('google-custom-email-input');
-      if (input) input.focus();
-    } else {
-      inline.classList.add('hidden');
-    }
-  }
-
-  async submitCustomGoogleAccount() {
-    const emailInput = document.getElementById('google-custom-email-input');
-    const nameInput = document.getElementById('google-custom-name-input');
-    let email = (emailInput ? emailInput.value : '').trim();
-    let name = (nameInput ? nameInput.value : '').trim();
-
-    if (!email) {
-      alert(this.currentLang === 'en' ? 'Please enter a Gmail address!' : 'Vui lòng nhập địa chỉ Gmail!');
-      return;
-    }
-    if (!email.includes('@')) {
-      email = email + '@gmail.com';
-    }
-    if (!name) {
-      name = email.split('@')[0];
-    }
-    await this.selectGoogleAccount(email, name);
-  }
-
-  logoutAllGoogleAccounts() {
-    localStorage.removeItem('lifekeep_auth_session');
-    sessionStorage.removeItem('lifekeep_auth_session');
-    this.currentUser = null;
-    const modal = document.getElementById('google-auth-modal');
-    if (modal) {
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-    this.showAuthScreen();
-    this.updateUserUI();
-    this.showToast(this.currentLang === 'en' ? '🚪 Signed out of all accounts' : '🚪 Đã đăng xuất khỏi tất cả các tài khoản');
-  }
-
-  openExternalGoogleAccount() {
-    window.open('https://myaccount.google.com/', '_blank');
-  }
-
-  openGoogleAIUltra() {
-    window.open('https://one.google.com/explore-plan/gemini-advanced', '_blank');
+    this.showToast(`✅ Đã đăng nhập bằng Gmail: ${googleUser.email}!`);
   }
 
   openExternalGoogleLogin() {
@@ -8181,14 +7700,24 @@ class LifeKeepApp {
   }
 
   async handleGoogleAuthSubmit(event) {
-    if (event && event.preventDefault) event.preventDefault();
-    await this.submitCustomGoogleAccount();
+    event.preventDefault();
+    const emailInput = document.getElementById('google-email-input');
+    const nameInput = document.getElementById('google-name-input');
+    const email = (emailInput ? emailInput.value : '').trim();
+    let name = (nameInput ? nameInput.value : '').trim();
+
+    if (!email || !email.includes('@')) {
+      alert('Vui lòng nhập địa chỉ Gmail hợp lệ!');
+      return;
+    }
+
+    await this.selectGoogleAccount(email, name);
   }
 
   editUserName() {
     if (!this.currentUser) return;
     const currentName = this.currentUser.name || this.currentUser.email.split('@')[0];
-    const newName = prompt(this.currentLang === 'en' ? 'Enter your new display name:' : 'Nhập họ và tên hiển thị mới của bạn:', currentName);
+    const newName = prompt('Nhập họ và tên hiển thị mới của bạn:', currentName);
     if (newName && newName.trim()) {
       this.currentUser.name = newName.trim();
       this.setAuthSession(this.currentUser, true);
@@ -8200,7 +7729,7 @@ class LifeKeepApp {
         this.saveRegisteredAccounts(accounts);
       }
       this.updateUserUI();
-      this.showToast(this.currentLang === 'en' ? `✅ Display name updated to: ${this.currentUser.name}` : `✅ Đã đổi tên hiển thị thành: ${this.currentUser.name}`);
+      this.showToast(`✅ Đã đổi tên hiển thị thành: ${this.currentUser.name}`);
     }
   }
 
@@ -8208,6 +7737,7 @@ class LifeKeepApp {
     const user = this.currentUser;
     const greetingEl = document.getElementById('header-user-greeting');
     const avatarBadge = document.getElementById('header-user-badge');
+    const headerAvatar = document.getElementById('header-user-avatar');
     const sName = document.getElementById('settings-user-name');
     const sEmail = document.getElementById('settings-user-email');
     const sAvatar = document.getElementById('settings-user-avatar');
@@ -8221,16 +7751,28 @@ class LifeKeepApp {
 
       if (sName) sName.textContent = user.name || (this.currentLang === 'en' ? 'LifeKeep User' : 'Người dùng LifeKeep');
       if (sEmail) sEmail.textContent = user.email || '';
-      if (sAvatar) {
-        const initial = (user.name || user.email || 'U').charAt(0).toUpperCase();
-        sAvatar.textContent = initial;
+      
+      // Update Avatar: Support Google profile photoURL if available
+      const initial = (user.name || user.email || 'U').charAt(0).toUpperCase();
+      if (user.photoURL) {
+        if (headerAvatar) headerAvatar.src = user.photoURL;
+        if (sAvatar) {
+          sAvatar.innerHTML = `<img src="${user.photoURL}" alt="${displayName}" class="w-full h-full object-cover rounded-2xl" onerror="this.onerror=null; this.parentElement.textContent='${initial}'" />`;
+        }
+      } else {
+        if (headerAvatar) headerAvatar.src = './logo.png';
+        if (sAvatar) {
+          sAvatar.textContent = initial;
+        }
       }
+
       if (sBadge) {
         sBadge.innerHTML = user.provider === 'google' 
           ? `<span>🛡️</span> Gmail (${user.email})` 
           : (this.currentLang === 'en' ? '<span>🛡️</span> Personal Account' : '<span>🛡️</span> Tài khoản cá nhân');
       }
     } else {
+      if (headerAvatar) headerAvatar.src = './logo.png';
       if (greetingEl) greetingEl.textContent = this.currentLang === 'en' ? 'Hello, Friend' : 'Xin chào, Bạn';
       if (avatarBadge) avatarBadge.classList.add('hidden');
       if (sName) sName.textContent = this.currentLang === 'en' ? 'Not signed in' : 'Chưa đăng nhập';
@@ -8241,7 +7783,15 @@ class LifeKeepApp {
   }
 
   async logout() {
-    if (!confirm(this.t('auth_confirm_logout') || 'Bạn có chắc chắn muốn đăng xuất khỏi LifeKeep?')) return;
+    if (!confirm('Bạn có chắc chắn muốn đăng xuất khỏi LifeKeep?')) return;
+    
+    // Sign out from Firebase Auth if connected
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      try {
+        await firebase.auth().signOut();
+      } catch (e) {}
+    }
+
     localStorage.removeItem('lifekeep_auth_session');
     sessionStorage.removeItem('lifekeep_auth_session');
     this.currentUser = null;
@@ -8268,38 +7818,215 @@ class LifeKeepApp {
     this.toggleAuthMode('login');
     this.showAuthScreen();
     this.updateUserUI();
-    this.showToast(this.t('auth_toast_logged_out') || '🚪 Đã đăng xuất khỏi tài khoản!');
+    this.showToast('🚪 Đã đăng xuất khỏi tài khoản!');
+  }
+
+  // ================= GOOGLE DRIVE & CLOUD FIRESTORE AUTO BACKUP =================
+
+  async syncToCloud() {
+    if (!this.currentUser) {
+      this.showToast('⚠️ Vui lòng đăng nhập để sao lưu dữ liệu!');
+      return;
+    }
+
+    try {
+      // Gather all local records from IndexedDB
+      const items = await this.storage.getAllItems();
+      const logs = await this.storage.getAllLogs();
+      const customTemplates = await this.storage.getCustomTemplates();
+      const transactions = await this.storage.getAllTransactions();
+      const customCategories = await this.storage.getCustomCategories();
+      const settings = await this.storage.getAllSettings();
+      const notes = await this.storage.getAllNotes();
+
+      const payload = {
+        appName: 'LifeKeep',
+        version: 5,
+        updatedAt: new Date().toISOString(),
+        userEmail: this.currentUser.email,
+        userName: this.currentUser.name,
+        uid: this.currentUser.uid || this.currentUser.id,
+        items,
+        logs,
+        customTemplates,
+        transactions,
+        customCategories,
+        settings,
+        notes
+      };
+
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const nowDate = new Date().toLocaleDateString();
+      const nowStr = `${nowTime} (${nowDate})`;
+      localStorage.setItem('lifekeep_last_google_backup_time', nowStr);
+      
+      const statusEl = document.getElementById('google-backup-sync-status');
+      if (statusEl) statusEl.textContent = `Đồng bộ: ${nowStr}`;
+
+      // 1. Try Cloud Firestore sync if configured
+      if (window.LifeKeepFirebase && window.LifeKeepFirebase.isFirestoreAvailable()) {
+        this.showToast('⏳ Đang đồng bộ lên Google Cloud Firestore...');
+        const db = firebase.firestore();
+        const docId = this.currentUser.uid || this.currentUser.email.replace(/[^a-z0-9]/g, '_');
+        await db.collection('users').doc(docId).set(payload, { merge: true });
+        this.showToast('☁️ Đã sao lưu dữ liệu lên Google Cloud Firestore thành công!');
+        return;
+      }
+
+      // 2. Android Auto Backup (Google Drive 25MB) confirmation
+      this.showToast('🛡️ Dữ liệu đã được lưu an toàn trên máy và sẵn sàng cho Android Auto Backup (Google Drive)!');
+    } catch (err) {
+      console.error('[LifeKeep Backup Error]', err);
+      this.showToast(`⚠️ Lỗi sao lưu: ${err.message || err}`);
+    }
+  }
+
+  async syncFromCloud(interactive = true) {
+    if (!this.currentUser) {
+      if (interactive) this.showToast('⚠️ Vui lòng đăng nhập trước khi khôi phục!');
+      return;
+    }
+
+    if (!window.LifeKeepFirebase || !window.LifeKeepFirebase.isFirestoreAvailable()) {
+      if (interactive) {
+        this.showToast('ℹ️ Để khôi phục tức thì qua Cloud Firestore, bạn có thể dán Firebase Key trong Cài đặt, hoặc dùng nút "Phục hồi từ file sao lưu (JSON)".');
+      }
+      return;
+    }
+
+    try {
+      if (interactive) this.showToast('⏳ Đang kiểm tra bản sao lưu trên Google...');
+      const db = firebase.firestore();
+      const docId = this.currentUser.uid || this.currentUser.email.replace(/[^a-z0-9]/g, '_');
+      const docSnap = await db.collection('users').doc(docId).get();
+
+      if (!docSnap.exists) {
+        if (interactive) {
+          this.showToast('ℹ️ Chưa có bản sao lưu nào trên đám mây của tài khoản này.');
+        }
+        return;
+      }
+
+      const cloudData = docSnap.data();
+      if (!cloudData) return;
+
+      if (interactive) {
+        const timeStr = cloudData.updatedAt ? new Date(cloudData.updatedAt).toLocaleString() : 'gần đây';
+        const ok = confirm(`Tìm thấy bản sao lưu trên Google lúc ${timeStr}.\n\nBạn có muốn khôi phục toàn bộ nhắc việc, chi tiêu và ghi chú về máy không?`);
+        if (!ok) return;
+      }
+
+      // Restore datasets
+      if (Array.isArray(cloudData.items)) {
+        for (const it of cloudData.items) await this.storage.saveItem(it);
+      }
+      if (Array.isArray(cloudData.logs)) {
+        for (const lg of cloudData.logs) await this.storage.saveLog(lg);
+      }
+      if (Array.isArray(cloudData.transactions)) {
+        for (const tx of cloudData.transactions) await this.storage.saveTransaction(tx);
+      }
+      if (Array.isArray(cloudData.notes)) {
+        for (const n of cloudData.notes) await this.storage.saveNote(n);
+      }
+      if (Array.isArray(cloudData.customCategories)) {
+        for (const cc of cloudData.customCategories) await this.storage.saveCategory(cc);
+      }
+      if (Array.isArray(cloudData.customTemplates)) {
+        for (const tm of cloudData.customTemplates) await this.storage.saveCustomTemplate(tm);
+      }
+      if (cloudData.settings && typeof cloudData.settings === 'object') {
+        for (const [k, v] of Object.entries(cloudData.settings)) {
+          await this.storage.saveSetting(k, v);
+        }
+      }
+
+      // Reload UI
+      await this.loadAllData();
+      this.renderAll();
+      this.showToast('🎉 Đã phục hồi dữ liệu từ tài khoản Google thành công!');
+    } catch (err) {
+      console.error('[LifeKeep Restore Error]', err);
+      if (interactive) {
+        this.showToast(`⚠️ Lỗi khôi phục từ Google: ${err.message || err.code}`);
+      }
+    }
+  }
+
+  openFirebaseConfigModal() {
+    const modal = document.getElementById('firebase-config-modal');
+    const input = document.getElementById('firebase-config-json-input');
+    if (window.LifeKeepFirebase && input) {
+      const cfg = window.LifeKeepFirebase.getConfig();
+      if (cfg && cfg.apiKey) {
+        input.value = JSON.stringify(cfg, null, 2);
+      } else {
+        input.value = '';
+      }
+    }
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  saveFirebaseConfigFromUI() {
+    const input = document.getElementById('firebase-config-json-input');
+    if (!input || !input.value.trim()) {
+      this.showToast('⚠️ Vui lòng dán đoạn mã JSON cấu hình Firebase!');
+      return;
+    }
+    try {
+      const cfg = JSON.parse(input.value.trim());
+      if (!cfg.apiKey || !cfg.projectId) {
+        this.showToast('⚠️ Cấu hình JSON thiếu apiKey hoặc projectId!');
+        return;
+      }
+      window.LifeKeepFirebase.saveCustomConfig(cfg);
+      toggleModal('firebase-config-modal');
+      this.showToast('✅ Đã lưu cấu hình Firebase thành công!');
+    } catch (e) {
+      this.showToast('❌ JSON không đúng định dạng. Vui lòng kiểm tra lại!');
+    }
+  }
+
+  clearFirebaseConfigFromUI() {
+    if (!confirm('Bạn có chắc chắn muốn xóa cấu hình Firebase tùy chỉnh?')) return;
+    window.LifeKeepFirebase.clearCustomConfig();
+    const input = document.getElementById('firebase-config-json-input');
+    if (input) input.value = '';
+    toggleModal('firebase-config-modal');
+    this.showToast('🗑️ Đã xóa cấu hình Firebase.');
   }
 
   showForgotPasswordPrompt() {
-    const isEn = this.currentLang === 'en';
-    const identifier = prompt(isEn ? 'Enter your Email or Username to reset password:' : 'Nhập Email hoặc Tên đăng nhập của tài khoản bạn muốn đặt lại mật khẩu:');
+    const identifier = prompt('Nhập Email hoặc Tên đăng nhập của tài khoản bạn muốn đặt lại mật khẩu:');
     if (!identifier) return;
 
     const accounts = this.getRegisteredAccounts();
     const user = accounts.find(a => a.email.toLowerCase() === identifier.trim().toLowerCase());
 
     if (!user) {
-      alert(isEn ? 'Account not found matching provided details!' : 'Không tìm thấy tài khoản tương ứng với thông tin đã nhập!');
+      alert('Không tìm thấy tài khoản tương ứng với thông tin đã nhập!');
       return;
     }
 
     if (user.provider === 'google') {
-      alert(isEn ? 'This is a Google Gmail account. Please click "Continue with Google / Gmail" to sign in securely.' : 'Đây là tài khoản đăng nhập bằng Google Gmail. Vui lòng bấm nút "Tiếp tục với Google / Gmail" để đăng nhập an toàn.');
+      alert('Đây là tài khoản đăng nhập bằng Google Gmail. Vui lòng bấm nút "Tiếp tục với Google / Gmail" để đăng nhập an toàn.');
       return;
     }
 
-    const newPass = prompt(isEn ? `Enter new password for ${user.name || user.email} (min 4 chars):` : `Nhập mật khẩu mới cho tài khoản ${user.name || user.email} (tối thiểu 4 ký tự):`);
+    const newPass = prompt('Nhập mật khẩu mới cho tài khoản ' + (user.name || user.email) + ' (tối thiểu 4 ký tự):');
     if (!newPass) return;
     if (newPass.length < 4) {
-      alert(isEn ? 'Password is too short (must be at least 4 characters)!' : 'Mật khẩu quá ngắn (phải có từ 4 ký tự trở lên)!');
+      alert('Mật khẩu quá ngắn (phải có từ 4 ký tự trở lên)!');
       return;
     }
 
     this.hashPassword(newPass.trim()).then(hashed => {
       user.passwordHash = hashed;
       this.saveRegisteredAccounts(accounts);
-      alert(isEn ? '✅ Password reset successful! You can now log in with your new password.' : '✅ Đặt lại mật khẩu thành công! Bây giờ bạn có thể đăng nhập với mật khẩu mới.');
+      alert('✅ Đặt lại mật khẩu thành công! Bây giờ bạn có thể đăng nhập với mật khẩu mới.');
       const passInput = document.getElementById('auth-password');
       if (passInput) passInput.value = newPass.trim();
     });

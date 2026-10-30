@@ -1,14 +1,16 @@
 // Service Worker for LifeKeep PWA - Network First Strategy
-const CACHE_NAME = 'lifekeep-v33';
+const CACHE_NAME = 'lifekeep-v34';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
-  './app.js?v=33',
+  './firebase-config.js?v=34',
+  './app.js?v=34',
   './manifest.json',
   './logo.png',
   './icon-192.png',
   './favicon.png',
-  './apple-touch-icon.png'
+  './apple-touch-icon.png',
+  './privacy.html'
 ];
 
 self.addEventListener('install', (event) => {

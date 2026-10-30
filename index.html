@@ -76,11 +76,11 @@
       <!-- Top Row: Avatar + Greeting + Action Icons -->
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div class="relative cursor-pointer" onclick="toggleModal('settings-modal')" title="Cài đặt & Tài khoản" data-i18n-title="nav_settings_title">
+          <div class="relative cursor-pointer" onclick="toggleModal('settings-modal')" title="Cài đặt & Tài khoản">
             <img id="header-user-avatar" src="./logo.png" alt="LifeKeep Logo" class="w-11 h-11 rounded-2xl shadow-lg shadow-purple-950/25 border-2 border-white/35 object-cover shrink-0 ring-2 ring-white/10 hover:scale-105 transition" />
-            <div id="header-user-badge" class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-purple-700 flex items-center justify-center text-[8px] text-white font-bold" title="Tài khoản bảo mật" data-i18n-title="nav_badge_title">✓</div>
+            <div id="header-user-badge" class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-purple-700 flex items-center justify-center text-[8px] text-white font-bold" title="Tài khoản bảo mật">✓</div>
           </div>
-          <div class="cursor-pointer" onclick="toggleModal('settings-modal')" title="Cài đặt & Tài khoản" data-i18n-title="nav_settings_title">
+          <div class="cursor-pointer" onclick="toggleModal('settings-modal')" title="Cài đặt & Tài khoản">
             <div id="header-user-greeting" class="text-[11px] text-purple-200 font-medium truncate max-w-[130px]">Xin chào, Bạn</div>
             <h1 class="text-base font-bold text-white tracking-tight flex items-center gap-1.5">
               <span>LifeKeep</span>
@@ -91,18 +91,15 @@
 
         <div class="flex items-center gap-1.5">
           <!-- Nút đổi ngôn ngữ nhanh trên Header (VI / EN) -->
-          <button onclick="app.toggleLanguage()" id="header-lang-btn" class="h-9 px-2.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center gap-1 text-[11px] font-bold transition shadow-sm active:scale-95 cursor-pointer" title="Đổi ngôn ngữ / Switch Language" data-i18n-title="btn_toggle_lang_title">
+          <button onclick="app.toggleLanguage()" id="header-lang-btn" class="h-9 px-2.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center gap-1 text-[11px] font-bold transition shadow-sm active:scale-95 cursor-pointer" title="Đổi ngôn ngữ / Switch Language">
             <span id="header-lang-flag">🇻🇳</span> <span id="header-lang-code">VI</span>
           </button>
-          <button onclick="app.forceUpdateApp()" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm cursor-pointer" title="Làm mới & Cập nhật Theme mới" data-i18n-title="btn_refresh_app_title">
+          <button onclick="app.forceUpdateApp()" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm cursor-pointer" title="Làm mới & Cập nhật Theme mới">
             <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          </button>
-          <button onclick="toggleModal('install-modal')" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm cursor-pointer" title="Cài lên điện thoại" data-i18n-title="btn_install_app_title">
-            <svg class="w-4 h-4 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
           </button>
           <!-- Chuông gom toàn bộ thông báo (Thay thế nút bánh răng cài đặt) -->
           <div class="relative">
-            <button id="btn-notification-bell" onclick="app.toggleNotificationCenter()" class="relative w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm active:scale-95 cursor-pointer" title="Trung tâm Thông báo & Nhắc việc" data-i18n-title="btn_notif_center_title">
+            <button id="btn-notification-bell" onclick="app.toggleNotificationCenter()" class="relative w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition shadow-sm active:scale-95 cursor-pointer" title="Trung tâm Thông báo & Nhắc việc">
               <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
               </svg>
@@ -113,15 +110,15 @@
         </div>
       </div>
 
-      <!-- Hero Total Balance Section with Interactive Year Dropdown -->
+      <!-- Hero Total Balance Section with Interactive Month Dropdown -->
       <div class="text-center my-3">
         <div class="relative inline-block mb-2 group">
           <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-[11px] font-bold text-white transition shadow-sm cursor-pointer active:scale-95">
-            <span id="hero-year-label">TỔNG CHI TIÊU NĂM 2026</span>
+            <span id="hero-month-label">CHI TIÊU THÁNG NÀY</span>
             <svg class="w-3.5 h-3.5 text-purple-200 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
           </div>
-          <select id="hero-year-select" onchange="app.setHeroYear(this.value)" title="Chọn năm chi tiêu" data-i18n-title="hero_year_select_title" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-slate-800 font-bold">
-            <option value="2026">Năm 2026</option>
+          <select id="hero-month-select" onchange="app.setHeroMonth(this.value)" title="Chọn tháng chi tiêu" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-slate-800 font-bold">
+            <!-- Populated dynamically by app.js -->
           </select>
         </div>
         <div id="hero-total-balance" class="text-3xl sm:text-4xl font-black tracking-tight text-white">
@@ -134,16 +131,16 @@
 
       <!-- 3 Quick Action Circular Buttons (matching the mockup) -->
       <div class="flex items-center justify-center gap-7 mt-4 pt-1">
-        <!-- Action 1: Ghi chú -->
-        <button onclick="app.goToNotesTab()" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Xem & Soạn thảo Ghi chú" data-i18n-title="hero_btn_notes">
+        <!-- Action 1: Ghi chú (Bấm vào thêm ngay ghi chú mới) -->
+        <button onclick="app.openNoteModal(); app.switchViewTab('notes')" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Thêm Ghi chú mới" data-i18n-title="hero_btn_notes">
           <div class="w-12 h-12 rounded-full bg-white/20 group-hover:bg-white/30 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-md transition transform group-hover:scale-105 active:scale-95">
             <svg class="w-5 h-5 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
           </div>
           <span class="text-[11px] font-semibold text-white/95" data-i18n="hero_btn_notes">Ghi chú</span>
         </button>
 
-        <!-- Action 2: Nhắc việc -->
-        <button onclick="app.goToJobsTab()" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Xem & Quản lý Nhắc việc" data-i18n-title="hero_btn_jobs">
+        <!-- Action 2: Nhắc việc (Bấm vào thêm ngay nhắc việc mới) -->
+        <button onclick="app.openAddModal(); app.switchViewTab('pending')" class="flex flex-col items-center gap-1.5 group cursor-pointer" title="Thêm Nhắc việc mới" data-i18n-title="hero_btn_jobs">
           <div class="w-12 h-12 rounded-full bg-white/20 group-hover:bg-white/30 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-md transition transform group-hover:scale-105 active:scale-95">
             <svg class="w-5 h-5 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
@@ -180,12 +177,12 @@
       <div class="flex items-center gap-2.5 min-w-0">
         <span class="text-xl shrink-0 animate-bounce">🔔</span>
         <div class="min-w-0">
-          <div class="text-xs font-bold text-white truncate" data-i18n="banner_alarm_title">Bật chuông & rung nhắc việc</div>
-          <div class="text-[10px] text-purple-200 truncate" data-i18n="banner_alarm_desc">Nhận báo thức ngay trên điện thoại khi đến hạn</div>
+          <div class="text-xs font-bold text-white truncate">Bật chuông & rung nhắc việc</div>
+          <div class="text-[10px] text-purple-200 truncate">Nhận báo thức ngay trên điện thoại khi đến hạn</div>
         </div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button onclick="app.requestNotificationPermission()" class="px-3 py-1.5 bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 hover:brightness-105 active:scale-95 font-black text-xs rounded-xl shadow transition cursor-pointer" data-i18n="banner_alarm_btn">
+        <button onclick="app.requestNotificationPermission()" class="px-3 py-1.5 bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 hover:brightness-105 active:scale-95 font-black text-xs rounded-xl shadow transition cursor-pointer">
           Bật ngay
         </button>
         <button onclick="document.getElementById('notif-permission-banner').classList.add('hidden')" class="p-1 text-purple-300 hover:text-white text-xs cursor-pointer">✕</button>
@@ -219,7 +216,7 @@
             onclick="app.openStartingBalanceModal()" 
             class="px-2.5 py-1.5 bg-amber-950 hover:bg-amber-900 text-amber-200 rounded-xl text-[11px] font-bold shadow-md shadow-amber-950/20 flex items-center gap-1 active:scale-95 transition shrink-0"
             title="Nhập / Sửa số dư gốc ban đầu"
-            data-i18n-title="home_fin_btn_edit_title"
+            data-i18n-title="home_fin_btn_edit"
           >
             <span>✏️</span> <span data-i18n="home_fin_btn_edit">Số dư gốc</span>
           </button>
@@ -234,7 +231,7 @@
             <div id="home-starting-balance" class="text-base sm:text-lg font-black text-amber-950 tracking-tight mt-0.5 truncate">
               0 ₫
             </div>
-            <div id="home-starting-balance-hint" class="text-[9px] text-amber-800 font-medium truncate" data-i18n="home_fin_starting_unset">
+            <div id="home-starting-balance-hint" class="text-[9px] text-amber-800 font-medium truncate">
               (Chưa cài đặt số dư gốc)
             </div>
           </div>
@@ -246,7 +243,7 @@
             <div id="home-current-balance" class="text-base sm:text-lg font-black text-emerald-950 tracking-tight mt-0.5 truncate">
               0 ₫
             </div>
-            <div id="home-current-balance-sub" class="text-[9px] text-amber-800 font-medium truncate" data-i18n="home_fin_avail_formula">
+            <div id="home-current-balance-sub" class="text-[9px] text-amber-800 font-medium truncate">
               (Gốc + Thu - Chi)
             </div>
           </div>
@@ -291,7 +288,7 @@
         <div class="text-[11px] text-emerald-700 font-semibold" data-i18n="safe_badge">An toàn</div>
         <div id="metric-safe" class="text-xl font-black text-emerald-600 mt-0.5">0</div>
       </div>
-      <div onclick="app.openFinanceModal()" class="bg-white rounded-2xl p-2.5 text-center border border-purple-100 shadow-sm hover:border-purple-300 transition cursor-pointer" title="Bấm để xem Quản lý Tài chính & Thu chi" data-i18n-title="home_metric_finance_title">
+      <div onclick="app.openFinanceModal()" class="bg-white rounded-2xl p-2.5 text-center border border-purple-100 shadow-sm hover:border-purple-300 transition cursor-pointer" title="Bấm để xem Quản lý Tài chính & Thu chi">
         <div id="metric-year-label" class="text-[11px] text-purple-700 font-semibold flex items-center justify-center gap-1">Chi 2026 🪙</div>
         <div id="metric-cost" class="text-xs font-bold text-purple-700 mt-1.5 truncate">0 ₫</div>
       </div>
@@ -432,7 +429,7 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5">
-          <button type="button" onclick="app.requestNotificationPermission()" class="px-2.5 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px] flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-xs" title="Thử chuông & rung thiết bị" data-i18n-title="notif_btn_test_title">
+          <button type="button" onclick="app.requestNotificationPermission()" class="px-2.5 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px] flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-xs" title="Thử chuông & rung thiết bị">
             <span>🔔</span>
             <span class="hidden sm:inline" data-i18n="notif_btn_test">Thử chuông</span>
           </button>
@@ -596,12 +593,12 @@
           <div>
             <div class="text-[11px] font-bold text-slate-700 mb-1.5" data-i18n="note_color_label">Màu thẻ ghi chú:</div>
             <div class="flex items-center gap-2">
-              <button type="button" onclick="app.selectNoteColor('amber')" data-color="amber" class="note-color-btn w-6 h-6 rounded-full bg-amber-200 border border-amber-400 shadow-xs ring-2 ring-purple-600 scale-110 transition cursor-pointer" title="Vàng chanh" data-i18n-title="note_color_amber"></button>
-              <button type="button" onclick="app.selectNoteColor('purple')" data-color="purple" class="note-color-btn w-6 h-6 rounded-full bg-purple-200 border border-purple-400 shadow-xs transition cursor-pointer" title="Tím lavender" data-i18n-title="note_color_purple"></button>
-              <button type="button" onclick="app.selectNoteColor('emerald')" data-color="emerald" class="note-color-btn w-6 h-6 rounded-full bg-emerald-200 border border-emerald-400 shadow-xs transition cursor-pointer" title="Xanh mint" data-i18n-title="note_color_emerald"></button>
-              <button type="button" onclick="app.selectNoteColor('sky')" data-color="sky" class="note-color-btn w-6 h-6 rounded-full bg-sky-200 border border-sky-400 shadow-xs transition cursor-pointer" title="Xanh trời" data-i18n-title="note_color_sky"></button>
-              <button type="button" onclick="app.selectNoteColor('rose')" data-color="rose" class="note-color-btn w-6 h-6 rounded-full bg-rose-200 border border-rose-400 shadow-xs transition cursor-pointer" title="Hồng phấn" data-i18n-title="note_color_rose"></button>
-              <button type="button" onclick="app.selectNoteColor('white')" data-color="white" class="note-color-btn w-6 h-6 rounded-full bg-white border border-slate-300 shadow-xs transition cursor-pointer" title="Trắng" data-i18n-title="note_color_white"></button>
+              <button type="button" onclick="app.selectNoteColor('amber')" data-color="amber" class="note-color-btn w-6 h-6 rounded-full bg-amber-200 border border-amber-400 shadow-xs ring-2 ring-purple-600 scale-110 transition cursor-pointer" title="Vàng chanh"></button>
+              <button type="button" onclick="app.selectNoteColor('purple')" data-color="purple" class="note-color-btn w-6 h-6 rounded-full bg-purple-200 border border-purple-400 shadow-xs transition cursor-pointer" title="Tím lavender"></button>
+              <button type="button" onclick="app.selectNoteColor('emerald')" data-color="emerald" class="note-color-btn w-6 h-6 rounded-full bg-emerald-200 border border-emerald-400 shadow-xs transition cursor-pointer" title="Xanh mint"></button>
+              <button type="button" onclick="app.selectNoteColor('sky')" data-color="sky" class="note-color-btn w-6 h-6 rounded-full bg-sky-200 border border-sky-400 shadow-xs transition cursor-pointer" title="Xanh trời"></button>
+              <button type="button" onclick="app.selectNoteColor('rose')" data-color="rose" class="note-color-btn w-6 h-6 rounded-full bg-rose-200 border border-rose-400 shadow-xs transition cursor-pointer" title="Hồng phấn"></button>
+              <button type="button" onclick="app.selectNoteColor('white')" data-color="white" class="note-color-btn w-6 h-6 rounded-full bg-white border border-slate-300 shadow-xs transition cursor-pointer" title="Trắng"></button>
             </div>
           </div>
 
@@ -618,7 +615,7 @@
               <span class="text-base">⏰</span>
               <div>
                 <div class="font-black text-xs text-purple-950" data-i18n="note_alarm_switch">Đặt lịch hẹn & Chuông báo thức</div>
-                <div class="text-[10px] text-purple-700" data-i18n="note_alarm_phone_desc">Đổ chuông & rung điện thoại khi đến ngày giờ hẹn</div>
+                <div class="text-[10px] text-purple-700" data-i18n="note_alarm_phone">Đổ chuông & rung điện thoại khi đến ngày giờ hẹn</div>
               </div>
             </div>
             <input 
@@ -664,11 +661,19 @@
             type="button" 
             id="note-delete-btn" 
             onclick="app.deleteCurrentEditingNote()" 
-            class="hidden py-3 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition border border-rose-200 flex items-center justify-center gap-1.5 shrink-0 cursor-pointer" 
+            class="hidden py-3 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition border border-rose-200 flex items-center justify-center gap-1.5 shrink-0 cursor-pointer" 
             title="Xóa ghi chú này"
-            data-i18n-title="note_delete_title"
           >
             <span>🗑️</span> <span data-i18n="btn_delete">Xóa</span>
+          </button>
+          <button 
+            type="button" 
+            id="note-complete-modal-btn" 
+            onclick="app.openCompleteNoteModal(app.editingNoteId)" 
+            class="hidden py-3 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-xl text-xs transition border border-emerald-300 flex items-center justify-center gap-1 shrink-0 cursor-pointer" 
+            title="Hoàn thành ghi chú này"
+          >
+            <span>✓</span> <span data-i18n="hero_btn_done">Xong</span>
           </button>
           <button 
             type="submit" 
@@ -680,6 +685,116 @@
         </div>
 
       </form>
+
+    </div>
+  </div>
+
+  <!-- Modal Hoàn thành Ghi chú (Xong hoặc Nhắc lại theo chu kỳ) -->
+  <div id="complete-note-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom text-slate-800">
+      
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-50 via-teal-50/50 to-transparent">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-lg font-bold">
+            ✓
+          </div>
+          <div>
+            <h2 class="font-bold text-base text-slate-900">Hoàn thành ghi chú</h2>
+            <p id="complete-note-preview-title" class="text-xs text-emerald-700 font-semibold mt-0.5 truncate max-w-xs"></p>
+          </div>
+        </div>
+        <button type="button" onclick="app.closeCompleteNoteModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">✕</button>
+      </div>
+
+      <form id="complete-note-form" onsubmit="app.saveCompleteNote(event)" class="p-5 overflow-y-auto space-y-4 text-xs flex-1">
+        <input type="hidden" id="complete-note-id" />
+
+        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-slate-600 text-xs leading-relaxed">
+          <p id="complete-note-preview-content" class="line-clamp-3 text-[11px] text-slate-500 italic"></p>
+        </div>
+
+        <!-- Choice: Nhắc lại theo chu kỳ hay Xong hẳn -->
+        <div class="space-y-2">
+          <label class="block text-slate-800 font-bold text-xs">
+            Sau khi lưu hoàn thành:
+          </label>
+          <div class="space-y-2">
+            <label class="flex items-start gap-3 p-3 rounded-2xl border border-emerald-300 bg-emerald-50/30 hover:bg-emerald-50/60 cursor-pointer transition shadow-2xs">
+              <input type="radio" name="note-finish-choice" value="finish" checked onchange="app.toggleNoteRepeatCycle(false)" class="mt-1 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
+                  <span>🏁</span> <span>Xong việc & Lưu vào Nhật ký (Đã xong)</span>
+                </span>
+                <span class="text-[11px] text-slate-600 mt-0.5 block">
+                  Đánh dấu ghi chú đã hoàn thành, chuyển vào tab Đã xong để lưu trữ lịch sử và gỡ khỏi danh sách ghi chú cần làm.
+                </span>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 p-3 rounded-2xl border border-slate-200 hover:border-purple-300 bg-white cursor-pointer transition shadow-2xs">
+              <input type="radio" name="note-finish-choice" value="repeat" onchange="app.toggleNoteRepeatCycle(true)" class="mt-1 text-purple-600 focus:ring-purple-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-purple-950 flex items-center gap-1.5">
+                  <span>🔄</span> <span>Nhắc lại theo chu kỳ</span>
+                </span>
+                <span class="text-[11px] text-slate-500 mt-0.5 block">
+                  Lưu 1 mốc hoàn thành vào Nhật ký và tự động dời ngày hẹn ghi chú sang chu kỳ tiếp theo.
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Cycle Picker (shown only when 'repeat' is chosen) -->
+        <div id="note-repeat-cycle-container" class="hidden p-3.5 bg-purple-50 rounded-2xl border border-purple-200 space-y-2">
+          <label class="block text-purple-950 font-bold text-xs">
+            Chu kỳ nhắc lại tiếp theo:
+          </label>
+          <div class="grid grid-cols-3 gap-1.5 text-center text-xs">
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="1d" class="accent-purple-600" />
+              <span>+1 ngày</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="7d" checked class="accent-purple-600" />
+              <span>+1 tuần</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="1m" class="accent-purple-600" />
+              <span>+1 tháng</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="3m" class="accent-purple-600" />
+              <span>+3 tháng</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="6m" class="accent-purple-600" />
+              <span>+6 tháng</span>
+            </label>
+            <label class="p-2 rounded-xl bg-white border border-purple-200 hover:border-purple-400 cursor-pointer font-medium flex items-center justify-center gap-1">
+              <input type="radio" name="note-cycle-option" value="1y" class="accent-purple-600" />
+              <span>+1 năm</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center gap-2">
+          <button 
+            type="button" 
+            onclick="app.closeCompleteNoteModal()" 
+            class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition"
+          >
+            Hủy
+          </button>
+          <button 
+            type="submit" 
+            class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-xs shadow-md shadow-emerald-600/30 transition active:scale-95"
+          >
+            Xác nhận hoàn thành
+          </button>
+        </div>
+      </form>
+
     </div>
   </div>
 
@@ -689,14 +804,14 @@
       
       <!-- Modal Header -->
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h2 id="modal-title" class="font-bold text-base text-slate-900" data-i18n="task_modal_add">Thêm giấy tờ / Thiết bị</h2>
+        <h2 id="modal-title" class="font-bold text-base text-slate-900">Thêm giấy tờ / Thiết bị</h2>
         <button type="button" onclick="app.closeModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">✕</button>
       </div>
 
       <!-- Quick Template Selector -->
       <div class="px-5 pt-3 pb-2 bg-slate-50 border-b border-slate-100">
         <div class="text-[11px] text-slate-500 font-semibold mb-1.5 flex items-center gap-1">
-          <span data-i18n="task_quick_presets">⚡ Chọn nhanh mẫu thông dụng:</span>
+          <span>⚡ Chọn nhanh mẫu thông dụng:</span>
         </div>
         <div id="template-chips" class="flex gap-1.5 overflow-x-auto hide-scrollbar pb-1">
           <!-- Templates injected here -->
@@ -708,30 +823,29 @@
         <input type="hidden" id="item-id" />
 
         <div>
-          <label class="block text-slate-700 font-medium mb-1" data-i18n-html="task_name_label_html">Tên mục / Tài sản <span class="text-rose-500">*</span></label>
+          <label class="block text-slate-700 font-medium mb-1">Tên mục / Tài sản <span class="text-rose-500">*</span></label>
           <input 
             type="text" 
             id="input-name" 
             required 
             placeholder="Ví dụ: Đăng kiểm xe CX5, Máy lọc nước Karofi..." 
-            data-i18n-placeholder="task_name_placeholder"
             class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-500/20"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-700 font-medium mb-1" data-i18n="task_category_label">Danh mục</label>
+            <label class="block text-slate-700 font-medium mb-1">Danh mục</label>
             <select id="input-category" class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600 font-medium">
-              <option value="vehicle" data-i18n="cat_opt_vehicle">🚗 Phương tiện (Xe)</option>
-              <option value="home" data-i18n="cat_opt_home">🏠 Gia dụng & Nhà</option>
-              <option value="identity" data-i18n="cat_opt_identity">🪪 Giấy tờ cá nhân</option>
-              <option value="tech" data-i18n="cat_opt_tech">💻 Đồ công nghệ</option>
-              <option value="other" data-i18n="cat_opt_other">📌 Khác</option>
+              <option value="vehicle">🚗 Phương tiện (Xe)</option>
+              <option value="home">🏠 Gia dụng & Nhà</option>
+              <option value="identity">🪪 Giấy tờ cá nhân</option>
+              <option value="tech">💻 Đồ công nghệ</option>
+              <option value="other">📌 Khác</option>
             </select>
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1" data-i18n-html="task_due_date_label_html">Ngày đến hạn <span class="text-rose-500">*</span></label>
+            <label class="block text-slate-700 font-medium mb-1">Ngày đến hạn <span class="text-rose-500">*</span></label>
             <input 
               type="date" 
               id="input-date" 
@@ -744,8 +858,8 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-slate-700 font-medium mb-1 flex items-center justify-between">
-              <span data-i18n="task_due_time_label">Giờ thông báo</span>
-              <span class="text-[10px] text-purple-600 font-semibold" data-i18n="task_time_badge">⏰ Giờ nhắc</span>
+              <span>Giờ thông báo</span>
+              <span class="text-[10px] text-purple-600 font-semibold">⏰ Giờ nhắc</span>
             </label>
             <input 
               type="time" 
@@ -755,12 +869,11 @@
             />
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1" data-i18n="task_cycle_label">Chu kỳ lặp lại (tháng)</label>
+            <label class="block text-slate-700 font-medium mb-1">Chu kỳ lặp lại (tháng)</label>
             <input 
               type="number" 
               id="input-cycle" 
               placeholder="Ví dụ: 6, 12, 24" 
-              data-i18n-placeholder="task_cycle_placeholder"
               min="1" 
               class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
             />
@@ -774,8 +887,8 @@
               🔔
             </div>
             <div>
-              <div class="text-xs font-bold text-slate-800" data-i18n="task_alarm_title">Chuông thông báo của thiết bị</div>
-              <div class="text-[10px] text-slate-500" data-i18n="task_alarm_desc">Tự động nhận chuông cài trên máy, rung & hiện thông báo khi đến hạn (Không cần tải file)</div>
+              <div class="text-xs font-bold text-slate-800">Chuông thông báo của thiết bị</div>
+              <div class="text-[10px] text-slate-500">Tự động nhận chuông cài trên máy, rung & hiện thông báo khi đến hạn (Không cần tải file)</div>
             </div>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
@@ -786,22 +899,20 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-700 font-medium mb-1" data-i18n="task_phone_label">Số hotline / Thợ quen</label>
+            <label class="block text-slate-700 font-medium mb-1">Số hotline / Thợ quen</label>
             <input 
               type="tel" 
               id="input-phone" 
               placeholder="0908..." 
-              data-i18n-placeholder="task_phone_placeholder"
               class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
             />
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1" data-i18n="task_provider_label">Đơn vị / Nơi làm</label>
+            <label class="block text-slate-700 font-medium mb-1">Đơn vị / Nơi làm</label>
             <input 
               type="text" 
               id="input-provider" 
               placeholder="Gara, Trung tâm, Thợ..." 
-              data-i18n-placeholder="task_provider_placeholder"
               class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
             />
           </div>
@@ -811,17 +922,17 @@
         <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-slate-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>💰</span> <span data-i18n="task_subcosts_heading">Chi phí & Bóc tách các khoản con:</span>
+              <span>💰</span> Chi phí & Bóc tách các khoản con:
             </span>
             <button 
               type="button" 
               onclick="app.addItemSubCostRow()" 
               class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-medium transition text-[11px] flex items-center gap-1 border border-purple-200"
             >
-              <span>+</span> <span data-i18n="task_subcosts_add_btn">Thêm khoản con</span>
+              <span>+</span> Thêm khoản con
             </button>
           </div>
-          <p class="text-[11px] text-slate-500" data-i18n="task_subcosts_desc">
+          <p class="text-[11px] text-slate-500">
             Điền số tiền hoặc bóc tách từng món con (ví dụ: Thay nhớt, lọc gió, tiền công...) để thống kê vào biểu đồ chi tiêu.
           </p>
 
@@ -832,18 +943,17 @@
 
           <!-- Total Cost Display -->
           <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
-            <span class="text-slate-700 font-semibold" data-i18n="task_total_cost_label">Tổng chi phí:</span>
+            <span class="text-slate-700 font-semibold">Tổng chi phí:</span>
             <span id="item-total-cost-display" class="text-base font-black text-purple-700">0 ₫</span>
           </div>
         </div>
 
         <div>
-          <label class="block text-slate-700 font-medium mb-1" data-i18n="task_notes_label">Ghi chú & Lưu ý</label>
+          <label class="block text-slate-700 font-medium mb-1">Ghi chú & Lưu ý</label>
           <textarea 
             id="input-notes" 
             rows="2" 
             placeholder="Ví dụ: Vị trí cất sổ gốc, số hợp đồng, phụ kiện cần thay..." 
-            data-i18n-placeholder="task_notes_placeholder"
             class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
           ></textarea>
         </div>
@@ -851,29 +961,29 @@
         <!-- Reminder Customization -->
         <div>
           <label class="block text-slate-700 font-medium mb-1.5 flex items-center justify-between">
-            <span data-i18n="task_reminders_label">🔔 Nhắc nhở trước thời hạn:</span>
-            <span class="text-[10px] text-slate-500" data-i18n="task_reminders_sub">Chọn các mốc báo trước</span>
+            <span>🔔 Nhắc nhở trước thời hạn:</span>
+            <span class="text-[10px] text-slate-500">Chọn các mốc báo trước</span>
           </label>
           <div class="grid grid-cols-5 gap-1.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="30" class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-600 text-[11px]" data-i18n="remind_30_days">30 ngày</span>
+              <span class="text-slate-600 text-[11px]">30 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="7" checked class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-800 font-medium text-[11px]" data-i18n="remind_7_days">7 ngày</span>
+              <span class="text-slate-800 font-medium text-[11px]">7 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="3" class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-600 text-[11px]" data-i18n="remind_3_days">3 ngày</span>
+              <span class="text-slate-600 text-[11px]">3 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="1" checked class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-800 font-medium text-[11px]" data-i18n="remind_1_day">1 ngày</span>
+              <span class="text-slate-800 font-medium text-[11px]">1 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="0" class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-600 text-[11px]" data-i18n="remind_same_day">Đúng ngày</span>
+              <span class="text-slate-600 text-[11px]">Đúng ngày</span>
             </label>
           </div>
         </div>
@@ -882,20 +992,20 @@
         <div class="pt-1">
           <label class="flex items-center gap-2 p-2.5 bg-amber-50 hover:bg-amber-100/70 rounded-xl border border-amber-200 cursor-pointer transition">
             <input type="checkbox" id="cb-save-template" class="rounded text-amber-600 focus:ring-0 bg-white border-amber-300" />
-            <span class="text-amber-800 text-xs font-medium" data-i18n="task_save_template_cb">⭐ Lưu mục này thành mẫu riêng (hiện trên thanh chọn nhanh)</span>
+            <span class="text-amber-800 text-xs font-medium">⭐ Lưu mục này thành mẫu riêng (hiện trên thanh chọn nhanh)</span>
           </label>
         </div>
 
         <!-- Camera & Photo Capture -->
         <div>
-          <label class="block text-slate-700 font-medium mb-1" data-i18n="task_photos_label">Ảnh giấy tờ / Phiếu bảo hành</label>
+          <label class="block text-slate-700 font-medium mb-1">Ảnh giấy tờ / Phiếu bảo hành</label>
           <div class="grid grid-cols-2 gap-2">
             <!-- Option 1: Chụp ảnh ngay (Camera) -->
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-purple-200 hover:border-purple-500 rounded-xl cursor-pointer bg-purple-50/40 hover:bg-purple-50 transition text-center group">
               <svg class="w-5 h-5 text-purple-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="4" stroke-width="2"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="photo_camera_btn">Chụp ảnh</div>
-                <div class="text-[10px] text-slate-500" data-i18n="photo_camera_sub">Mở camera</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight">Chụp ảnh</div>
+                <div class="text-[10px] text-slate-500">Mở camera</div>
               </div>
               <input type="file" id="photo-camera-input" accept="image/*" capture="environment" class="hidden" />
             </label>
@@ -904,8 +1014,8 @@
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-slate-200 hover:border-purple-500 rounded-xl cursor-pointer bg-slate-50 hover:bg-purple-50 transition text-center group">
               <svg class="w-5 h-5 text-indigo-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="photo_file_btn">Chọn từ máy</div>
-                <div class="text-[10px] text-slate-500" data-i18n="photo_file_sub">File / Bộ sưu tập</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight">Chọn từ máy</div>
+                <div class="text-[10px] text-slate-500">File / Bộ sưu tập</div>
               </div>
               <input type="file" id="photo-file-input" accept="image/*" class="hidden" />
             </label>
@@ -921,15 +1031,15 @@
             onclick="app.deleteCurrentEditingItem()" 
             class="hidden py-3 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold rounded-xl text-sm transition border border-rose-200 flex items-center justify-center gap-1.5 shrink-0" 
             title="Xóa mục này"
-            data-i18n-title="task_delete_title_hover"
           >
-            <span>🗑️</span> <span data-i18n="btn_delete_item">Xóa mục</span>
+            <span>🗑️</span> Xóa mục
           </button>
-          <button type="submit" id="item-submit-btn" data-i18n="btn_save_item" class="flex-1 py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30">
+          <button type="submit" id="item-submit-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30">
             Lưu thông tin
           </button>
         </div>
       </form>
+
     </div>
   </div>
 
@@ -951,15 +1061,15 @@
           <h2 id="detail-title" class="text-lg font-bold text-slate-900"></h2>
           <div class="mt-3 grid grid-cols-3 gap-2 text-slate-700">
             <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-              <span class="text-slate-500 block text-[10px]" data-i18n="detail_due_label">Hạn thực hiện:</span>
+              <span class="text-slate-500 block text-[10px]">Hạn thực hiện:</span>
               <strong id="detail-due-date" class="text-xs text-slate-900 font-bold mt-0.5 block truncate"></strong>
             </div>
             <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-              <span class="text-slate-500 block text-[10px]" data-i18n="detail_cycle_label">Chu kỳ lặp:</span>
+              <span class="text-slate-500 block text-[10px]">Chu kỳ lặp:</span>
               <strong id="detail-cycle" class="text-xs text-purple-700 font-bold mt-0.5 block truncate"></strong>
             </div>
             <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-              <span class="text-slate-500 block text-[10px]" data-i18n="detail_time_alarm_label">Giờ & Chuông máy:</span>
+              <span class="text-slate-500 block text-[10px]">Giờ & Chuông máy:</span>
               <div class="flex items-center justify-between mt-0.5">
                 <strong id="detail-due-time" class="text-xs text-purple-700 font-bold">--:--</strong>
                 <button 
@@ -968,7 +1078,6 @@
                   onclick="app.toggleSelectedAlarm()" 
                   class="p-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-[10px] font-bold border border-purple-200 flex items-center justify-center shadow-xs"
                   title="Bật/Tắt chuông báo của thiết bị"
-                  data-i18n-title="detail_small_alarm_title"
                 >
                   🔔
                 </button>
@@ -979,7 +1088,7 @@
 
         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex items-center justify-between">
           <div>
-            <span class="text-slate-500 block text-[11px]" data-i18n="detail_provider_label">Nơi thực hiện / Đơn vị:</span>
+            <span class="text-slate-500 block text-[11px]">Nơi thực hiện / Đơn vị:</span>
             <span id="detail-provider" class="text-slate-800 font-semibold"></span>
           </div>
           <div id="detail-phone-container"></div>
@@ -989,7 +1098,7 @@
         <div id="detail-cost-card" class="bg-purple-50/70 border border-purple-200 p-3.5 rounded-2xl space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-purple-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>💰</span> <span data-i18n="detail_cost_heading">Chi phí & Bóc tách chi phí con:</span>
+              <span>💰</span> Chi phí & Bóc tách chi phí con:
             </span>
             <span id="detail-item-cost" class="text-base font-black text-purple-700">0 ₫</span>
           </div>
@@ -1005,8 +1114,8 @@
               🔔
             </div>
             <div>
-              <div class="text-xs font-bold text-slate-800" data-i18n="detail_alarm_title">Chuông thông báo của máy</div>
-              <p id="detail-alarm-desc" class="text-[11px] text-slate-500 mt-0.5" data-i18n="detail_alarm_desc_default">Tự động nhận chuông cài trên thiết bị, không cần tải file</p>
+              <div class="text-xs font-bold text-slate-800">Chuông thông báo của máy</div>
+              <p id="detail-alarm-desc" class="text-[11px] text-slate-500 mt-0.5">Tự động nhận chuông cài trên thiết bị, không cần tải file</p>
             </div>
           </div>
           <button 
@@ -1020,13 +1129,13 @@
         </div>
 
         <div>
-          <span class="text-slate-600 block text-[11px] mb-1 font-semibold" data-i18n="detail_notes_label">Ghi chú & Hướng dẫn:</span>
+          <span class="text-slate-600 block text-[11px] mb-1 font-semibold">Ghi chú & Hướng dẫn:</span>
           <p id="detail-notes" class="p-3 bg-slate-50 rounded-xl text-slate-700 leading-relaxed border border-slate-200"></p>
         </div>
 
         <!-- Photos preview -->
         <div>
-          <span class="text-slate-600 block text-[11px] font-semibold" data-i18n="detail_photos_label">Ảnh giấy tờ / Biên nhận:</span>
+          <span class="text-slate-600 block text-[11px] font-semibold">Ảnh giấy tờ / Biên nhận:</span>
           <div id="detail-photos"></div>
         </div>
 
@@ -1034,7 +1143,7 @@
         <div>
           <div class="flex items-center justify-between mb-2">
             <span class="text-slate-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>🧾</span> <span data-i18n="detail_history_label">Lịch sử bảo dưỡng / chi phí:</span>
+              <span>🧾</span> Lịch sử bảo dưỡng / chi phí:
             </span>
           </div>
           <div id="detail-log-list" class="space-y-2">
@@ -1046,12 +1155,12 @@
       <!-- Modal Footer Actions -->
       <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center gap-2">
         <button onclick="const id = app.selectedItem?.id; app.closeDetailModal(); app.openCompleteModal(id)" class="flex-1 py-2.5 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-lg shadow-purple-600/30">
-          <span>✓</span> <span data-i18n="detail_btn_complete">Ghi nhận bảo dưỡng & Chi phí</span>
+          <span>✓</span> Ghi nhận bảo dưỡng & Chi phí
         </button>
-        <button onclick="app.editSelectedItem()" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition border border-slate-200" title="Sửa thông tin" data-i18n-title="detail_btn_edit_title">
+        <button onclick="app.editSelectedItem()" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition border border-slate-200" title="Sửa thông tin">
           ✏️
         </button>
-        <button onclick="app.deleteSelectedItem()" class="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition border border-rose-200" title="Xóa" data-i18n-title="detail_btn_delete_title">
+        <button onclick="app.deleteSelectedItem()" class="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition border border-rose-200" title="Xóa">
           🗑️
         </button>
       </div>
@@ -1067,7 +1176,7 @@
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-500/10 via-transparent to-transparent">
         <div class="flex items-center gap-2.5">
           <img src="./logo.png" alt="LifeKeep Logo" class="w-7 h-7 rounded-lg shadow-xs border border-purple-200 object-cover shrink-0" />
-          <h2 class="font-bold text-base text-slate-900" data-i18n="help_modal_title">
+          <h2 class="font-bold text-base text-slate-900">
             Hướng dẫn sử dụng LifeKeep
           </h2>
         </div>
@@ -1081,9 +1190,9 @@
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
           <div class="font-bold text-sm text-purple-700 flex items-center gap-2 mb-1.5">
             <span class="w-6 h-6 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-black">1</span>
-            <span data-i18n="help_step1_title">Thêm mới mục cần theo dõi (Nút +)</span>
+            Thêm mới mục cần theo dõi (Nút +)
           </div>
-          <p class="text-slate-600 leading-relaxed" data-i18n-html="help_step1_desc">
+          <p class="text-slate-600 leading-relaxed">
             Bấm <strong>nút dấu cộng (+) ở chính giữa</strong> thanh menu dưới cùng. Bạn có thể bấm chọn nhanh các mẫu thông dụng (<em>Đăng kiểm ô tô, Thay nhớt xe, Vệ sinh máy lạnh, Thay lõi lọc nước...</em>) để app tự động điền chu kỳ chuẩn, hoặc tự nhập tay theo nhu cầu.
           </p>
         </div>
@@ -1092,9 +1201,9 @@
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
           <div class="font-bold text-sm text-indigo-700 flex items-center gap-2 mb-1.5">
             <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-black">2</span>
-            <span data-i18n="help_step2_title">Chụp ảnh giấy tờ & Hóa đơn</span>
+            Chụp ảnh giấy tờ & Hóa đơn
           </div>
-          <p class="text-slate-600 leading-relaxed" data-i18n-html="help_step2_desc">
+          <p class="text-slate-600 leading-relaxed">
             Trong form thêm mục, bấm <strong>"Chụp ảnh hoặc chọn từ máy"</strong> để lưu ảnh cà vẹt xe, sổ đăng kiểm, biên nhận bảo dưỡng. Toàn bộ ảnh được lưu trữ an toàn ngay trong bộ nhớ thiết bị của bạn.
           </p>
         </div>
@@ -1103,9 +1212,9 @@
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
           <div class="font-bold text-sm text-amber-700 flex items-center gap-2 mb-1.5">
             <span class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-black">3</span>
-            <span data-i18n="help_step3_title">Đặt chuông nhắc nhở vào Lịch điện thoại</span>
+            Đặt chuông nhắc nhở vào Lịch điện thoại
           </div>
-          <p class="text-slate-600 leading-relaxed" data-i18n-html="help_step3_desc">
+          <p class="text-slate-600 leading-relaxed">
             Khi xem chi tiết bất kỳ mục nào, bấm nút <strong>"+ Đặt chuông"</strong> ở mục Lịch điện thoại. App sẽ tự động đồng bộ sự kiện vào ứng dụng <strong>Apple Calendar (iPhone)</strong> hoặc <strong>Google Calendar (Android)</strong> để reo chuông báo thức trước 7 ngày và 1 ngày, không bao giờ bị quên dù bạn không mở app!
           </p>
         </div>
@@ -1114,9 +1223,9 @@
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
           <div class="font-bold text-sm text-emerald-700 flex items-center gap-2 mb-1.5">
             <span class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black">4</span>
-            <span data-i18n="help_step4_title">Nút "Đã xong" & Tự nhảy chu kỳ</span>
+            Nút "Đã xong" & Tự nhảy chu kỳ
           </div>
-          <p class="text-slate-600 leading-relaxed" data-i18n-html="help_step4_desc">
+          <p class="text-slate-600 leading-relaxed">
             Mỗi khi bạn đã hoàn thành bảo dưỡng (ví dụ: vừa đi thay nhớt máy xong), hãy bấm nút <strong>"✓ Đã xong"</strong> trên thẻ ➜ nhập số tiền đã chi. App sẽ tự động ghi nhật ký chi phí và <strong>tự nhảy ngày đến hạn tiếp theo</strong> (ví dụ +6 tháng) mà không cần tính toán bằng tay!
           </p>
         </div>
@@ -1125,9 +1234,9 @@
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
           <div class="font-bold text-sm text-purple-700 flex items-center gap-2 mb-1.5">
             <span class="w-6 h-6 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-black">5</span>
-            <span data-i18n="help_step5_title">Tự tạo mẫu riêng & Sao lưu</span>
+            Tự tạo mẫu riêng & Sao lưu
           </div>
-          <p class="text-slate-600 leading-relaxed" data-i18n-html="help_step5_desc">
+          <p class="text-slate-600 leading-relaxed">
             • Khi thêm việc riêng, tích vào ô <em>"⭐ Lưu mục này thành mẫu riêng"</em> để dùng lại nhanh chóng.<br/>
             • Vào tab <strong>"Sao lưu"</strong> để tải file dự phòng JSON về máy, dễ dàng phục hồi dữ liệu khi bạn đổi điện thoại mới.
           </p>
@@ -1135,38 +1244,38 @@
 
         <!-- Cẩm nang Quy trình & Thủ tục thực tế -->
         <div class="pt-2 border-t border-slate-200 space-y-2">
-          <div class="font-bold text-sm text-amber-700 flex items-center gap-1.5" data-i18n="help_handbook_title">
+          <div class="font-bold text-sm text-amber-700 flex items-center gap-1.5">
             <span>📚</span> Cẩm nang thủ tục & Chu kỳ thực tế:
           </div>
           <div class="space-y-2 text-xs">
             <details class="bg-slate-50 p-3 rounded-xl border border-slate-200 cursor-pointer">
-              <summary class="font-semibold text-purple-700 flex items-center gap-1.5" data-i18n="help_guide_car_title">
+              <summary class="font-semibold text-purple-700 flex items-center gap-1.5">
                 🚗 Quy trình Đăng kiểm ô tô (Bấm để xem)
               </summary>
               <ul class="list-disc pl-4 mt-2 space-y-1 text-slate-600">
-                <li data-i18n="help_guide_car_1">Mang theo Đăng ký xe gốc, Bảo hiểm TNDS còn hạn.</li>
-                <li data-i18n="help_guide_car_2">Tra cứu phạt nguội tại csgt.vn trước khi đi, xe dính phạt nguội sẽ bị từ chối kiểm định.</li>
-                <li data-i18n="help_guide_car_3">Chu kỳ: xe mới 36 tháng; xe dưới 7 năm: 24 tháng; xe trên 7 năm: 12 tháng.</li>
+                <li>Mang theo Đăng ký xe gốc, Bảo hiểm TNDS còn hạn.</li>
+                <li>Tra cứu phạt nguội tại csgt.vn trước khi đi, xe dính phạt nguội sẽ bị từ chối kiểm định.</li>
+                <li>Chu kỳ: xe mới 36 tháng; xe dưới 7 năm: 24 tháng; xe trên 7 năm: 12 tháng.</li>
               </ul>
             </details>
             <details class="bg-slate-50 p-3 rounded-xl border border-slate-200 cursor-pointer">
-              <summary class="font-semibold text-emerald-700 flex items-center gap-1.5" data-i18n="help_guide_water_title">
+              <summary class="font-semibold text-emerald-700 flex items-center gap-1.5">
                 💧 Chu kỳ chuẩn máy lọc nước RO (Bấm để xem)
               </summary>
               <ul class="list-disc pl-4 mt-2 space-y-1 text-slate-600">
-                <li data-i18n="help_guide_water_1">Lõi số 1 (PP 5 micron): 3 – 6 tháng.</li>
-                <li data-i18n="help_guide_water_2">Lõi số 2 (Than OCB/GAC): 6 – 9 tháng.</li>
-                <li data-i18n="help_guide_water_3">Lõi số 3 (PP 1 micron): 9 – 12 tháng.</li>
-                <li data-i18n="help_guide_water_4">Màng RO: 24 – 36 tháng.</li>
+                <li>Lõi số 1 (PP 5 micron): 3 – 6 tháng.</li>
+                <li>Lõi số 2 (Than OCB/GAC): 6 – 9 tháng.</li>
+                <li>Lõi số 3 (PP 1 micron): 9 – 12 tháng.</li>
+                <li>Màng RO: 24 – 36 tháng.</li>
               </ul>
             </details>
             <details class="bg-slate-50 p-3 rounded-xl border border-slate-200 cursor-pointer">
-              <summary class="font-semibold text-amber-700 flex items-center gap-1.5" data-i18n="help_guide_ins_title">
+              <summary class="font-semibold text-amber-700 flex items-center gap-1.5">
                 🛡️ Thủ tục bồi thường Bảo hiểm xe khi va chạm (Bấm để xem)
               </summary>
               <ul class="list-disc pl-4 mt-2 space-y-1 text-slate-600">
-                <li data-i18n="help_guide_ins_1">Giữ nguyên hiện trường, gọi ngay Hotline bảo hiểm trước khi di chuyển xe.</li>
-                <li data-i18n="help_guide_ins_2">Chụp ảnh 4 góc xe, toàn cảnh hiện trường, vệt phanh, biển số đối phương.</li>
+                <li>Giữ nguyên hiện trường, gọi ngay Hotline bảo hiểm trước khi di chuyển xe.</li>
+                <li>Chụp ảnh 4 góc xe, toàn cảnh hiện trường, vệt phanh, biển số đối phương.</li>
               </ul>
             </details>
           </div>
@@ -1176,7 +1285,7 @@
 
       <!-- Footer Button -->
       <div class="p-4 border-t border-slate-100 bg-slate-50">
-        <button onclick="toggleModal('help-modal')" data-i18n="help_close_btn" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-xs transition">
+        <button onclick="toggleModal('help-modal')" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-xs transition">
           Đã hiểu, đóng hướng dẫn
         </button>
       </div>
@@ -1615,6 +1724,7 @@
           </button>
         </div>
       </form>
+
     </div>
   </div>
 
@@ -1624,7 +1734,7 @@
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-500/10 via-transparent to-transparent">
         <div class="flex items-center gap-2.5">
           <img src="./logo.png" alt="LifeKeep Logo" class="w-7 h-7 rounded-lg shadow-xs border border-purple-200 object-cover shrink-0" />
-          <h2 class="font-bold text-base text-slate-900" data-i18n="install_modal_title">
+          <h2 class="font-bold text-base text-slate-900">
             Cài đặt & Mở trên điện thoại
           </h2>
         </div>
@@ -1635,19 +1745,19 @@
         <!-- Tab Switcher between Wi-Fi and Online Tunnel -->
         <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-2xl border border-slate-200">
           <button type="button" id="qr-tab-wifi" onclick="app.setInstallQrMode('wifi')" class="py-2 rounded-xl bg-purple-600 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition flex items-center justify-center gap-1.5">
-            <span>📶</span> <span data-i18n="install_tab_wifi">Chung Wi-Fi (Khuyên dùng)</span>
+            <span>📶</span> Chung Wi-Fi (Khuyên dùng)
           </button>
           <button type="button" id="qr-tab-online" onclick="app.setInstallQrMode('online')" class="py-2 rounded-xl text-slate-600 hover:text-slate-900 font-semibold text-xs transition flex items-center justify-center gap-1.5">
-            <span>🌐</span> <span data-i18n="install_tab_4g">Dùng 4G (Online)</span>
+            <span>🌐</span> Dùng 4G (Online)
           </button>
         </div>
 
         <!-- Mode 1: Wi-Fi Direct (Nhanh nhất & Mới nhất 100%) -->
         <div id="qr-section-wifi" class="p-4 bg-purple-50/70 rounded-2xl border border-purple-100 text-center space-y-2.5">
           <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
-            <span>⚡</span> <span data-i18n="install_wifi_title">Kết nối trực tiếp máy tính qua Wi-Fi</span>
+            <span>⚡</span> Kết nối trực tiếp máy tính qua Wi-Fi
           </div>
-          <p class="text-slate-700 text-xs" data-i18n="install_wifi_desc">Quét mã QR để mở trực tiếp từ máy tính (Điện thoại và máy tính cùng bắt Wi-Fi nhà):</p>
+          <p class="text-slate-700 text-xs">Quét mã QR để mở trực tiếp từ máy tính (Điện thoại và máy tính cùng bắt Wi-Fi nhà):</p>
           
           <div class="flex justify-center my-1">
             <div class="p-2.5 bg-white rounded-2xl shadow-md border border-purple-100 inline-block">
@@ -1655,32 +1765,31 @@
             </div>
           </div>
 
-          <p class="text-slate-500 text-[11px]" data-i18n="install_or_type">Hoặc gõ địa chỉ này vào Safari / Chrome trên điện thoại:</p>
+          <p class="text-slate-500 text-[11px]">Hoặc gõ địa chỉ này vào Safari / Chrome trên điện thoại:</p>
           <div id="install-qr-url" class="text-xs font-mono font-bold text-purple-700 bg-white py-2 px-3 rounded-xl border border-purple-200 select-all break-all shadow-xs">
             http://192.168.1.244:8080
           </div>
 
           <!-- Quick IP selector chips -->
           <div class="flex items-center justify-center gap-2 pt-1 flex-wrap">
-            <span class="text-[10px] text-slate-500" data-i18n="install_change_ip">Đổi IP nếu cần:</span>
-            <button type="button" onclick="app.setInstallTargetUrl('http://192.168.1.244:8080')" class="px-2 py-0.5 bg-white hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-[10px] font-semibold" data-i18n="install_chip_wifi">Wi-Fi (.244)</button>
-            <button type="button" onclick="app.setInstallTargetUrl('http://192.168.1.165:8080')" class="px-2 py-0.5 bg-white hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-[10px] font-semibold" data-i18n="install_chip_lan">Dây LAN (.165)</button>
+            <span class="text-[10px] text-slate-500">Đổi IP nếu cần:</span>
+            <button type="button" onclick="app.setInstallTargetUrl('http://192.168.1.244:8080')" class="px-2 py-0.5 bg-white hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-[10px] font-semibold">Wi-Fi (.244)</button>
+            <button type="button" onclick="app.setInstallTargetUrl('http://192.168.1.165:8080')" class="px-2 py-0.5 bg-white hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-[10px] font-semibold">Dây LAN (.165)</button>
           </div>
         </div>
 
         <!-- Mode 2: Online Tunnel (Khi dùng 4G) -->
         <div id="qr-section-online" class="hidden p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center space-y-2.5">
           <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700 border border-slate-300">
-            <span>🌐</span> <span data-i18n="install_4g_title">Dùng khi đi ra ngoài / mạng 4G/5G</span>
+            <span>🌐</span> Dùng khi đi ra ngoài / mạng 4G/5G
           </div>
-          <p class="text-slate-600 text-[11px] leading-relaxed" data-i18n-html="install_4g_desc">
+          <p class="text-slate-600 text-[11px] leading-relaxed">
             Chạy file <strong>start_online.bat</strong> trên máy tính để lấy link HTTPS Cloudflare mới, sau đó dán vào ô dưới đây để tạo mã QR:
           </p>
           <input 
             type="text" 
             id="install-online-input" 
             placeholder="Dán link https://xxx.trycloudflare.com vào đây..." 
-            data-i18n-placeholder="install_4g_placeholder"
             oninput="app.setInstallOnlineUrl(this.value)"
             class="w-full bg-white text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 font-mono" 
           />
@@ -1689,20 +1798,20 @@
         <!-- Mobile Installation Steps -->
         <div class="space-y-3">
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-            <h4 class="font-bold text-slate-800 mb-1" data-i18n="install_ios_title">🍎 Dành cho iPhone (Safari):</h4>
+            <h4 class="font-bold text-slate-800 mb-1">🍎 Dành cho iPhone (Safari):</h4>
             <ol class="list-decimal pl-4 space-y-1 text-slate-600">
-              <li data-i18n-html="install_ios_1">Mở link trên bằng trình duyệt <strong>Safari</strong>.</li>
-              <li data-i18n-html="install_ios_2">Bấm nút <strong>Chia sẻ (Biểu tượng mũi tên hướng lên)</strong> ở thanh dưới cùng.</li>
-              <li data-i18n-html="install_ios_3">Cuộn xuống chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong>.</li>
+              <li>Mở link trên bằng trình duyệt <strong>Safari</strong>.</li>
+              <li>Bấm nút <strong>Chia sẻ (Biểu tượng mũi tên hướng lên)</strong> ở thanh dưới cùng.</li>
+              <li>Cuộn xuống chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong>.</li>
             </ol>
           </div>
 
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-            <h4 class="font-bold text-slate-800 mb-1" data-i18n="install_android_title">🤖 Dành cho Android (Chrome):</h4>
+            <h4 class="font-bold text-slate-800 mb-1">🤖 Dành cho Android (Chrome):</h4>
             <ol class="list-decimal pl-4 space-y-1 text-slate-600">
-              <li data-i18n-html="install_android_1">Mở link trên bằng trình duyệt <strong>Google Chrome</strong>.</li>
-              <li data-i18n-html="install_android_2">Bấm vào <strong>menu 3 chấm (Góc trên bên phải)</strong>.</li>
-              <li data-i18n-html="install_android_3">Chọn <strong>"Cài đặt ứng dụng" (Install app)</strong> hoặc <strong>"Thêm vào Màn hình chính"</strong>.</li>
+              <li>Mở link trên bằng trình duyệt <strong>Google Chrome</strong>.</li>
+              <li>Bấm vào <strong>menu 3 chấm (Góc trên bên phải)</strong>.</li>
+              <li>Chọn <strong>"Cài đặt ứng dụng" (Install app)</strong> hoặc <strong>"Thêm vào Màn hình chính"</strong>.</li>
             </ol>
           </div>
         </div>
@@ -1734,7 +1843,7 @@
             <div class="min-w-0">
               <div class="flex items-center gap-1.5">
                 <div id="settings-user-name" class="font-bold text-sm text-purple-950 truncate">Tài khoản LifeKeep</div>
-                <button type="button" onclick="app.editUserName()" class="text-purple-600 hover:text-purple-800 p-0.5 rounded transition text-[11px]" title="Đổi tên hiển thị" data-i18n-title="settings_edit_name_title">✏️</button>
+                <button type="button" onclick="app.editUserName()" class="text-purple-600 hover:text-purple-800 p-0.5 rounded transition text-[11px]" title="Đổi tên hiển thị">✏️</button>
               </div>
               <div id="settings-user-email" class="text-[11px] text-slate-500 truncate">user@gmail.com</div>
               <div id="settings-user-badge" class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full mt-0.5">
@@ -1742,7 +1851,7 @@
               </div>
             </div>
           </div>
-          <button type="button" onclick="app.logout()" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-2xs active:scale-95" title="Đăng xuất tài khoản" data-i18n-title="settings_logout_title">
+          <button type="button" onclick="app.logout()" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-2xs active:scale-95" title="Đăng xuất tài khoản">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
             <span data-i18n="settings_logout">Đăng xuất</span>
           </button>
@@ -1780,10 +1889,15 @@
         </div>
         
         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <h3 class="font-bold text-sm text-slate-800" data-i18n="settings_privacy_title">🔒 Quyền riêng tư & Lưu trữ</h3>
-          <p class="text-slate-600 text-xs leading-relaxed" data-i18n-html="settings_privacy_desc">
-            Mọi thông tin giấy tờ, ngày bảo dưỡng và ảnh chụp đều được lưu <strong>trực tiếp trong bộ nhớ máy của bạn (IndexedDB)</strong>, hoàn toàn bảo mật và không bị tải lên bất kỳ máy chủ bên ngoài nào.
+          <h3 class="font-bold text-sm text-slate-800" data-i18n="settings_privacy_title">🔒 Bảo mật & Dữ liệu ngoại tuyến</h3>
+          <p class="text-slate-600 text-xs leading-relaxed" data-i18n="settings_privacy_desc">
+            Chúng tôi không lưu trữ dữ liệu cá nhân của bạn, dữ liệu được lưu trữ 100% trên máy cài phần mềm này. Mọi thông tin nhắc việc, chi tiêu tài chính, ảnh chụp và ghi chú đều nằm trực tiếp trong bộ nhớ thiết bị của bạn (IndexedDB), bảo đảm quyền riêng tư tuyệt đối.
           </p>
+          <div class="pt-1">
+            <a href="./privacy.html" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-purple-600 font-bold hover:underline">
+              <span>📄</span> <span>Xem Chính sách Quyền riêng tư (Privacy Policy) ↗</span>
+            </a>
+          </div>
         </div>
 
         <div class="space-y-2">
@@ -1799,8 +1913,57 @@
           </button>
         </div>
 
+        <!-- Google Drive & Cloud Auto Backup Card -->
+        <div class="p-3.5 bg-gradient-to-r from-emerald-50 via-teal-50/50 to-emerald-50 rounded-2xl border border-emerald-200/90 shadow-xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🛡️</span>
+              <h3 class="font-bold text-xs text-emerald-950 uppercase tracking-wide">Sao lưu tự động vào Google</h3>
+            </div>
+            <span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">25MB miễn phí</span>
+          </div>
+          
+          <div class="text-[11px] text-emerald-800/90 leading-relaxed">
+            Hệ thống Android tự động sao lưu dữ liệu ngầm vào <strong class="text-emerald-950 font-semibold">Google Drive</strong> của máy (khi cắm sạc & có Wi-Fi). Khi đổi điện thoại hoặc cài lại app, dữ liệu sẽ tự động khôi phục 100%.
+          </div>
+
+          <div class="flex items-center justify-between text-[10px] text-emerald-700 bg-white/80 p-2 rounded-xl border border-emerald-100">
+            <span>Trạng thái: <strong class="text-emerald-800 font-bold">🟢 Đang bảo vệ</strong></span>
+            <span id="google-backup-sync-status">Đồng bộ: Tự động</span>
+          </div>
+
+          <!-- Dual Action Buttons: Cloud Sync Now & Restore from Cloud -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button 
+              type="button" 
+              onclick="app.syncToCloud()" 
+              class="py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition flex items-center justify-center gap-1.5 text-[11px] shadow-sm shadow-emerald-600/25 active:scale-95"
+            >
+              <span>☁️ Sao lưu lên Google</span>
+            </button>
+            <button 
+              type="button" 
+              onclick="app.syncFromCloud(true)" 
+              class="py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition flex items-center justify-center gap-1.5 text-[11px] shadow-sm shadow-indigo-600/25 active:scale-95"
+            >
+              <span>📥 Khôi phục từ Google</span>
+            </button>
+          </div>
+
+          <!-- Optional Firebase Setup Trigger -->
+          <div class="text-right pt-0.5">
+            <button 
+              type="button" 
+              onclick="app.openFirebaseConfigModal()" 
+              class="text-[10px] text-emerald-700 hover:text-emerald-900 underline font-semibold transition"
+            >
+              ⚙️ Cấu hình Firebase Key (Tùy chọn nâng cao)
+            </button>
+          </div>
+        </div>
+
         <div class="space-y-2 pt-2 border-t border-slate-200">
-          <h3 class="font-bold text-sm text-slate-800" data-i18n="settings_backup_title">💾 Sao lưu phòng mất dữ liệu:</h3>
+          <h3 class="font-bold text-sm text-slate-800" data-i18n="settings_backup_title">💾 Sao lưu thủ công ra tệp máy:</h3>
           <button onclick="app.exportBackup()" class="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium transition flex items-center justify-center gap-2 text-xs shadow-md shadow-purple-600/30">
             <span data-i18n="settings_backup_export">📥 Xuất file sao lưu (JSON)</span>
           </button>
@@ -1822,7 +1985,7 @@
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-600/10 via-transparent to-transparent">
         <div>
           <h2 class="font-bold text-base text-slate-900 flex items-center gap-2">
-            <span>✅</span> <span data-i18n="complete_modal_title">Ghi nhận hoàn thành & Chi phí</span>
+            <span>✅</span> Ghi nhận hoàn thành & Chi phí
           </h2>
           <p id="complete-item-name" class="text-xs text-purple-700 font-semibold mt-0.5"></p>
         </div>
@@ -1834,12 +1997,12 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-700 font-medium mb-1" data-i18n-html="complete_date_label_html">Ngày thực hiện <span class="text-rose-500">*</span></label>
+            <label class="block text-slate-700 font-medium mb-1">Ngày thực hiện <span class="text-rose-500">*</span></label>
             <input type="date" id="complete-date" required class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600" />
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1" data-i18n="complete_provider_label">Gara / Thợ / Nơi làm</label>
-            <input type="text" id="complete-provider" placeholder="Gara Thành Phát, Thợ Tuấn..." data-i18n-placeholder="complete_provider_placeholder" class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600" />
+            <label class="block text-slate-700 font-medium mb-1">Gara / Thợ / Nơi làm</label>
+            <input type="text" id="complete-provider" placeholder="Gara Thành Phát, Thợ Tuấn..." class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600" />
           </div>
         </div>
 
@@ -1847,13 +2010,13 @@
         <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-slate-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>🧾</span> <span data-i18n="complete_subcosts_heading">Bóc tách các khoản chi phí con:</span>
+              <span>🧾</span> Bóc tách các khoản chi phí con:
             </span>
             <button type="button" onclick="app.addSubItemRow()" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-medium transition text-[11px] flex items-center gap-1 border border-purple-200">
-              <span>+</span> <span data-i18n="complete_add_row_btn">Thêm dòng</span>
+              <span>+</span> Thêm dòng
             </button>
           </div>
-          <p class="text-[11px] text-slate-500" data-i18n="complete_subcosts_desc">Ví dụ: Thay nhớt, Lọc dầu, Tiền công... để sau này tra cứu chi tiết từng món.</p>
+          <p class="text-[11px] text-slate-500">Ví dụ: Thay nhớt, Lọc dầu, Tiền công... để sau này tra cứu chi tiết từng món.</p>
 
           <div id="sub-items-container" class="space-y-2">
             <!-- Dynamic Sub-item Rows injected here -->
@@ -1861,26 +2024,26 @@
 
           <!-- Total Cost Display -->
           <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
-            <span class="text-slate-700 font-semibold" data-i18n="complete_total_label">Tổng chi phí lần này:</span>
+            <span class="text-slate-700 font-semibold">Tổng chi phí lần này:</span>
             <span id="complete-total-display" class="text-base font-black text-purple-700">0 ₫</span>
           </div>
         </div>
 
         <div>
-          <label class="block text-slate-700 font-medium mb-1" data-i18n="complete_notes_label">Ghi chú lần này (Km xe, bảo hành thợ...)</label>
-          <textarea id="complete-notes" rows="2" placeholder="Ví dụ: Thay lúc 45.000km, thợ bảo hành 3 tháng..." data-i18n-placeholder="complete_notes_placeholder" class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"></textarea>
+          <label class="block text-slate-700 font-medium mb-1">Ghi chú lần này (Km xe, bảo hành thợ...)</label>
+          <textarea id="complete-notes" rows="2" placeholder="Ví dụ: Thay lúc 45.000km, thợ bảo hành 3 tháng..." class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"></textarea>
         </div>
 
         <!-- Receipt / Bill Photo -->
         <div>
-          <label class="block text-slate-700 font-medium mb-1" data-i18n="complete_photo_label">Ảnh hóa đơn / Biên nhận (Tùy chọn)</label>
+          <label class="block text-slate-700 font-medium mb-1">Ảnh hóa đơn / Biên nhận (Tùy chọn)</label>
           <div class="grid grid-cols-2 gap-2">
             <!-- Option 1: Chụp ảnh ngay (Camera) -->
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-purple-200 hover:border-purple-500 rounded-xl cursor-pointer bg-purple-50/40 hover:bg-purple-50 transition text-center group">
               <svg class="w-4 h-4 text-purple-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="4" stroke-width="2"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="photo_camera_btn">Chụp ảnh</div>
-                <div class="text-[10px] text-slate-500" data-i18n="photo_camera_sub">Mở camera</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight">Chụp ảnh</div>
+                <div class="text-[10px] text-slate-500">Mở camera</div>
               </div>
               <input type="file" id="complete-photo-camera-input" accept="image/*" capture="environment" class="hidden" />
             </label>
@@ -1889,8 +2052,8 @@
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-slate-200 hover:border-purple-500 rounded-xl cursor-pointer bg-slate-50 hover:bg-purple-50 transition text-center group">
               <svg class="w-4 h-4 text-indigo-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="photo_file_btn">Chọn từ máy</div>
-                <div class="text-[10px] text-slate-500" data-i18n="photo_file_sub">File / Bộ sưu tập</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight">Chọn từ máy</div>
+                <div class="text-[10px] text-slate-500">File / Bộ sưu tập</div>
               </div>
               <input type="file" id="complete-photo-file-input" accept="image/*" class="hidden" />
             </label>
@@ -1898,12 +2061,36 @@
           <div id="complete-photo-preview"></div>
         </div>
 
+        <!-- Option: Lặp lại theo chu kỳ hay Xong hoàn toàn -->
+        <div class="p-3.5 bg-purple-50/80 rounded-2xl border border-purple-200 space-y-2">
+          <label class="block text-slate-800 font-bold text-xs">
+            Sau khi lưu hoàn thành:
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-start gap-2 p-2.5 rounded-xl border border-purple-300 bg-white cursor-pointer hover:bg-purple-50/50 transition shadow-2xs">
+              <input type="radio" name="complete-action-type" id="complete-action-repeat" value="repeat" checked class="mt-0.5 text-purple-600 focus:ring-purple-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-purple-950 block">🔄 Lặp lại định kỳ</span>
+                <span class="text-[10px] text-slate-500 block">Tự dời ngày theo chu kỳ</span>
+              </div>
+            </label>
+            <label class="flex items-start gap-2 p-2.5 rounded-xl border border-slate-200 bg-white cursor-pointer hover:bg-emerald-50/50 hover:border-emerald-300 transition shadow-2xs">
+              <input type="radio" name="complete-action-type" id="complete-action-finish" value="finish" class="mt-0.5 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+              <div>
+                <span class="font-bold text-xs text-emerald-900 block">🏁 Xong hoàn toàn</span>
+                <span class="text-[10px] text-slate-500 block">Lưu vào Nhật ký (Đã xong)</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <div class="pt-2">
-          <button type="submit" id="complete-submit-btn" data-i18n="complete_submit_btn" class="w-full py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30">
-            Lưu vào Nhật ký & Tự động gia hạn
+          <button type="submit" id="complete-submit-btn" class="w-full py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30">
+            Xác nhận hoàn thành
           </button>
         </div>
       </form>
+
     </div>
   </div>
 
@@ -1915,9 +2102,9 @@
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-50 via-transparent to-transparent">
         <div>
           <h2 class="font-bold text-base text-slate-900 flex items-center gap-2">
-            <span>📊</span> <span data-i18n="analytics_modal_title">Thống kê & Biểu đồ chi tiêu</span>
+            <span>📊</span> Thống kê & Biểu đồ chi tiêu
           </h2>
-          <p class="text-[11px] text-slate-500 mt-0.5" data-i18n="analytics_modal_subtitle">Phân tích chi phí bảo dưỡng & giấy tờ</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">Phân tích chi phí bảo dưỡng & giấy tờ</p>
         </div>
         <button type="button" onclick="toggleModal('analytics-modal')" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">✕</button>
       </div>
@@ -1926,7 +2113,7 @@
         
         <!-- Period Filter -->
         <div class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-          <span class="text-slate-500 font-medium shrink-0" data-i18n="analytics_filter_label">Xem theo:</span>
+          <span class="text-slate-500 font-medium shrink-0">Xem theo:</span>
           <select id="analytics-period" onchange="app.renderAnalytics()" class="bg-white text-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-purple-600 flex-1 font-medium shadow-sm">
             <option value="year-2026">Cả năm 2026</option>
             <option value="month-10-2026">Tháng 10/2026 (Tháng này)</option>
@@ -1938,14 +2125,14 @@
 
         <!-- Total Cost Banner -->
         <div class="p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-50 border border-purple-200 text-center">
-          <span class="text-xs text-slate-600 font-semibold block" data-i18n="analytics_total_period">Tổng chi tiêu trong kỳ:</span>
+          <span class="text-xs text-slate-600 font-semibold block">Tổng chi tiêu trong kỳ:</span>
           <span id="analytics-total-amount" class="text-2xl font-black text-purple-700 tracking-tight mt-1 block">0 ₫</span>
         </div>
 
         <!-- Doughnut Chart (Biểu đồ tròn theo Danh mục) -->
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
           <h3 class="font-bold text-sm text-slate-800 mb-2 flex items-center gap-1.5">
-            <span>🍩</span> <span data-i18n="analytics_doughnut_title">Cơ cấu chi tiêu theo Danh mục</span>
+            <span>🍩</span> Cơ cấu chi tiêu theo Danh mục
           </h3>
           <div class="relative w-full max-w-[260px] mx-auto my-2">
             <canvas id="categoryDoughnutChart"></canvas>
@@ -1969,7 +2156,7 @@
       </div>
 
       <div class="p-4 border-t border-slate-100 bg-slate-50">
-        <button onclick="toggleModal('analytics-modal')" data-i18n="analytics_close_btn" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition border border-slate-200">
+        <button onclick="toggleModal('analytics-modal')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition border border-slate-200">
           Đóng thống kê
         </button>
       </div>
@@ -1994,11 +2181,11 @@
         <!-- Total Cost Highlight -->
         <div class="bg-purple-50/70 p-3.5 rounded-2xl border border-purple-200 flex items-center justify-between">
           <div>
-            <span class="text-slate-600 block text-[11px]" data-i18n="log_detail_total_label">Tổng số tiền đã chi:</span>
+            <span class="text-slate-600 block text-[11px]">Tổng số tiền đã chi:</span>
             <span id="log-detail-total" class="text-lg font-black text-purple-700 mt-0.5 block">0 ₫</span>
           </div>
           <div class="text-right">
-            <span class="text-slate-500 block text-[11px]" data-i18n="log_detail_provider_label">Nơi thực hiện:</span>
+            <span class="text-slate-500 block text-[11px]">Nơi thực hiện:</span>
             <span id="log-detail-provider" class="text-slate-800 font-semibold mt-0.5 block"></span>
           </div>
         </div>
@@ -2006,7 +2193,7 @@
         <!-- Sub-items Table (Bóc tách chi phí con chi tiết) -->
         <div>
           <h3 class="font-bold text-xs text-slate-800 mb-2 flex items-center gap-1.5">
-            <span>📋</span> <span data-i18n="log_detail_subitems_label">Chi tiết các khoản chi con:</span>
+            <span>📋</span> Chi tiết các khoản chi con:
           </h3>
           <div id="log-detail-subitems" class="space-y-1.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
             <!-- Subitems list injected here -->
@@ -2014,12 +2201,12 @@
         </div>
 
         <div>
-          <span class="text-slate-600 block text-[11px] mb-1 font-semibold" data-i18n="log_detail_notes_label">Ghi chú lần này:</span>
+          <span class="text-slate-600 block text-[11px] mb-1 font-semibold">Ghi chú lần này:</span>
           <p id="log-detail-notes" class="p-3 bg-slate-50 rounded-xl text-slate-700 leading-relaxed border border-slate-200"></p>
         </div>
 
         <div>
-          <span class="text-slate-600 block text-[11px] mb-1 font-semibold" data-i18n="log_detail_photo_label">Ảnh hóa đơn / Biên nhận:</span>
+          <span class="text-slate-600 block text-[11px] mb-1 font-semibold">Ảnh hóa đơn / Biên nhận:</span>
           <div id="log-detail-photo"></div>
         </div>
 
@@ -2027,9 +2214,9 @@
 
       <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center gap-2">
         <button type="button" onclick="app.deleteCurrentViewingLog()" class="py-2.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold rounded-xl text-xs transition border border-rose-200 flex items-center gap-1.5 shrink-0">
-          <span>🗑️</span> <span data-i18n="log_detail_delete_btn">Xóa lịch sử này</span>
+          <span>🗑️</span> Xóa lịch sử này
         </button>
-        <button type="button" onclick="toggleModal('log-detail-modal')" data-i18n="log_detail_close_btn" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-xs transition shadow-md shadow-purple-600/30">
+        <button type="button" onclick="toggleModal('log-detail-modal')" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-xs transition shadow-md shadow-purple-600/30">
           Đóng chi tiết
         </button>
       </div>
@@ -2101,6 +2288,7 @@
           </button>
         </div>
       </form>
+
     </div>
   </div>
 
@@ -2131,7 +2319,6 @@
               value="🏷️" 
               class="w-12 text-center bg-white text-slate-800 text-sm py-2 rounded-xl border border-slate-200 shadow-sm" 
               title="Biểu tượng Emoji"
-              data-i18n-title="cat_icon_title"
             />
             <input 
               type="text" 
@@ -2349,7 +2536,7 @@
     <div class="w-full max-w-4xl flex items-center justify-between pt-1 pb-3 px-2 text-white border-b border-white/10 shrink-0 z-20">
       <div class="flex items-center gap-2 overflow-hidden pr-2">
         <span class="text-base sm:text-lg">🖼️</span>
-        <h3 id="photo-viewer-title" class="font-bold text-xs sm:text-sm text-white truncate max-w-[130px] sm:max-w-xs" data-i18n="photo_viewer_title">Chi tiết hình ảnh</h3>
+        <h3 id="photo-viewer-title" class="font-bold text-xs sm:text-sm text-white truncate max-w-[130px] sm:max-w-xs">Chi tiết hình ảnh</h3>
       </div>
       
       <!-- Zoom Controls & Actions -->
@@ -2360,7 +2547,6 @@
           onclick="app.zoomOutPhoto()" 
           class="w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 active:scale-90 border border-white/20 text-white font-bold text-base flex items-center justify-center transition shadow-xs"
           title="Thu nhỏ (-)"
-          data-i18n-title="photo_zoom_out_title"
         >
           −
         </button>
@@ -2371,7 +2557,6 @@
           id="photo-zoom-level" 
           class="px-2 py-1 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 text-white font-mono font-bold text-xs border border-white/25 transition min-w-[52px] text-center shadow-xs"
           title="Bấm để đặt lại 100%"
-          data-i18n-title="photo_zoom_reset_title"
         >
           100%
         </button>
@@ -2381,7 +2566,6 @@
           onclick="app.zoomInPhoto()" 
           class="w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 active:scale-90 border border-white/20 text-white font-bold text-base flex items-center justify-center transition shadow-xs"
           title="Phóng to (+)"
-          data-i18n-title="photo_zoom_in_title"
         >
           +
         </button>
@@ -2392,10 +2576,9 @@
           onclick="app.downloadCurrentPhoto()" 
           class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 shadow-xs"
           title="Tải ảnh về máy"
-          data-i18n-title="photo_download_title"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          <span class="hidden sm:inline" data-i18n="photo_download_btn">Tải về</span>
+          <span class="hidden sm:inline">Tải về</span>
         </button>
         <!-- Close Button -->
         <button 
@@ -2403,7 +2586,6 @@
           onclick="app.closePhotoViewer()" 
           class="w-8 h-8 rounded-full bg-white/20 hover:bg-rose-600 text-white flex items-center justify-center font-bold text-base transition active:scale-95 shadow-xs"
           title="Đóng (✕)"
-          data-i18n-title="photo_close_title"
         >
           ✕
         </button>
@@ -2428,10 +2610,10 @@
     <div class="w-full max-w-4xl flex items-center justify-between pb-1 pt-2 text-slate-400 text-[11px] shrink-0 border-t border-white/10 px-2 z-20">
       <span class="flex items-center gap-1 truncate pr-2">
         <span>💡</span> 
-        <span class="hidden sm:inline" data-i18n="photo_hint_desktop">Kéo chuột/chạm 2 ngón tay để thu phóng (pinch-to-zoom), cuộn chuột hoặc bấm nút +/-</span>
-        <span class="sm:hidden" data-i18n="photo_hint_mobile">Dùng 2 ngón tay thu phóng (pinch-to-zoom)</span>
+        <span class="hidden sm:inline">Kéo chuột/chạm 2 ngón tay để thu phóng (pinch-to-zoom), cuộn chuột hoặc bấm nút +/-</span>
+        <span class="sm:hidden">Dùng 2 ngón tay thu phóng (pinch-to-zoom)</span>
       </span>
-      <button type="button" onclick="app.closePhotoViewer()" data-i18n="photo_close_bottom" class="text-purple-400 hover:text-white font-semibold shrink-0">
+      <button type="button" onclick="app.closePhotoViewer()" class="text-purple-400 hover:text-white font-semibold shrink-0">
         Đóng lại ✕
       </button>
     </div>
@@ -2456,10 +2638,10 @@
       </div>
 
       <!-- Header Titles -->
-      <h2 id="auth-title" class="text-2xl font-black text-slate-800 tracking-tight text-center" data-i18n="auth_welcome_title">
+      <h2 id="auth-title" class="text-2xl font-black text-slate-800 tracking-tight text-center">
         Chào mừng trở lại
       </h2>
-      <p id="auth-subtitle" class="text-xs text-slate-400 font-medium text-center mt-1.5 mb-6" data-i18n="auth_welcome_sub">
+      <p id="auth-subtitle" class="text-xs text-slate-400 font-medium text-center mt-1.5 mb-6">
         Đăng nhập tài khoản để tiếp tục sử dụng
       </p>
 
@@ -2479,7 +2661,6 @@
               type="text" 
               id="auth-name" 
               placeholder="Họ và tên của bạn" 
-              data-i18n-placeholder="auth_name_placeholder"
               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/90 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition shadow-inner-xs" 
               autocomplete="name" 
             />
@@ -2495,7 +2676,6 @@
             type="text" 
             id="auth-email" 
             placeholder="Email hoặc Tên đăng nhập" 
-            data-i18n-placeholder="auth_email_placeholder"
             required 
             class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/90 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition shadow-inner-xs" 
             autocomplete="username" 
@@ -2511,7 +2691,6 @@
             type="password" 
             id="auth-password" 
             placeholder="Mật khẩu" 
-            data-i18n-placeholder="auth_pass_placeholder"
             required 
             class="w-full pl-11 pr-11 py-3 bg-slate-50 border border-slate-200/90 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition shadow-inner-xs" 
             autocomplete="current-password" 
@@ -2521,7 +2700,6 @@
             onclick="app.toggleAuthPasswordVisibility('auth-password', this)" 
             class="absolute right-3.5 text-slate-400 hover:text-purple-600 transition p-1" 
             title="Hiện/Ẩn mật khẩu"
-            data-i18n-title="auth_toggle_pass_title"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
           </button>
@@ -2537,7 +2715,6 @@
               type="password" 
               id="auth-confirm-password" 
               placeholder="Nhập lại mật khẩu" 
-              data-i18n-placeholder="auth_pass_confirm_placeholder"
               class="w-full pl-11 pr-11 py-3 bg-slate-50 border border-slate-200/90 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-purple-600 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition shadow-inner-xs" 
               autocomplete="new-password" 
             />
@@ -2546,7 +2723,6 @@
               onclick="app.toggleAuthPasswordVisibility('auth-confirm-password', this)" 
               class="absolute right-3.5 text-slate-400 hover:text-purple-600 transition p-1" 
               title="Hiện/Ẩn mật khẩu"
-              data-i18n-title="auth_toggle_pass_title"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
             </button>
@@ -2557,9 +2733,9 @@
         <div id="auth-options-row" class="flex items-center justify-between text-xs py-1">
           <label class="flex items-center gap-2 cursor-pointer text-slate-600 font-medium select-none">
             <input type="checkbox" id="auth-remember" checked class="w-4 h-4 rounded text-purple-600 accent-purple-600" />
-            <span data-i18n="auth_remember_me">Ghi nhớ đăng nhập</span>
+            <span>Ghi nhớ đăng nhập</span>
           </label>
-          <button type="button" onclick="app.showForgotPasswordPrompt()" class="font-bold text-purple-600 hover:text-purple-700 transition" data-i18n="auth_forgot_pass">
+          <button type="button" onclick="app.showForgotPasswordPrompt()" class="font-bold text-purple-600 hover:text-purple-700 transition">
             Quên mật khẩu?
           </button>
         </div>
@@ -2570,14 +2746,14 @@
           id="auth-submit-btn" 
           class="w-full mt-3 py-3.5 px-6 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white font-black text-sm rounded-2xl shadow-lg shadow-purple-600/35 active:scale-[0.98] transition flex items-center justify-center gap-2.5"
         >
-          <span id="auth-submit-text" data-i18n="auth_btn_login">Đăng nhập</span>
+          <span id="auth-submit-text">Đăng nhập</span>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
 
         <!-- Divider -->
         <div class="relative flex py-3 items-center">
           <div class="flex-grow border-t border-slate-200"></div>
-          <span class="flex-shrink mx-3 text-[10px] font-bold uppercase tracking-wider text-slate-400" data-i18n="auth_or_continue">
+          <span class="flex-shrink mx-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Hoặc tiếp tục với
           </span>
           <div class="flex-grow border-t border-slate-200"></div>
@@ -2590,186 +2766,183 @@
           class="w-full py-3 px-4 bg-white hover:bg-slate-50 border border-slate-200 hover:border-purple-300 text-slate-700 font-bold text-xs rounded-2xl shadow-sm flex items-center justify-center gap-3 transition active:scale-[0.98]"
         >
           <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-          <span data-i18n="auth_btn_google">Tiếp tục với Google / Gmail</span>
+          <span>Tiếp tục với Google / Gmail</span>
         </button>
 
         <!-- Switch between Login & Register -->
         <div class="text-center mt-4 text-xs text-slate-500 font-medium">
-          <span id="auth-switch-text" data-i18n="auth_no_account">Chưa có tài khoản?</span>
+          <span id="auth-switch-text">Chưa có tài khoản?</span>
           <button 
             type="button" 
             id="auth-switch-btn" 
             onclick="app.toggleAuthMode()" 
             class="font-bold text-purple-600 hover:text-purple-700 ml-1 transition"
-            data-i18n="auth_register_now"
           >
             Đăng ký ngay
           </button>
         </div>
 
       </form>
+
+      <!-- Google Auto Backup Trust Badge -->
+      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center gap-2 text-[10px] text-slate-500 font-medium text-center">
+        <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <span>Tự động sao lưu ngầm vào Google Drive (25MB miễn phí)</span>
+      </div>
+
     </div>
   </div>
 
-  <!-- Google / Gmail Authentication Modal (Matches Google Account Chooser Bottom Sheet) -->
-  <div id="google-auth-modal" class="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 overflow-y-auto" onclick="if(event.target === this) toggleModal('google-auth-modal')">
-    <div class="bg-[#f0f4f9] border border-slate-200/90 w-full max-w-[360px] rounded-[28px] p-4 sm:p-5 shadow-2xl animate-in zoom-in-95 text-slate-800 relative my-auto select-none">
+  <!-- Google / Gmail Authentication Modal -->
+  <div id="google-auth-modal" class="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-sm rounded-[32px] p-6 shadow-2xl animate-in zoom-in-95 text-slate-800">
       
-      <!-- Top Close Button -->
-      <div class="flex justify-end pb-1.5">
+      <!-- Google Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+          <div>
+            <h3 class="font-black text-sm text-slate-900 leading-tight">Đăng nhập qua Gmail</h3>
+            <p class="text-[10px] text-slate-400 font-medium">Bảo mật dữ liệu LifeKeep bằng tài khoản Google</p>
+          </div>
+        </div>
+        <button type="button" onclick="toggleModal('google-auth-modal')" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">✕</button>
+      </div>
+
+      <!-- Direct Google Sign-In Popup Button -->
+      <div class="mt-3.5">
         <button 
           type="button" 
-          onclick="toggleModal('google-auth-modal')" 
-          class="w-8 h-8 rounded-full hover:bg-slate-200/70 text-slate-700 flex items-center justify-center transition active:scale-95 cursor-pointer text-lg leading-none"
-          title="Đóng"
+          onclick="app.signInWithGooglePopup()" 
+          class="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md shadow-purple-600/25 flex items-center justify-center gap-2 transition active:scale-[0.98] cursor-pointer"
         >
-          ✕
+          <svg class="w-4 h-4 shrink-0 bg-white rounded-full p-0.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+          <span>Đăng nhập trực tiếp bằng Google</span>
         </button>
       </div>
 
-      <!-- Main Account Chooser White Card -->
-      <div class="bg-white rounded-[24px] border border-slate-200/70 shadow-xs overflow-hidden">
-        
-        <!-- Primary / Featured Top Account: Do Thanh Long -->
-        <div 
-          onclick="app.selectGoogleAccount('longdt.vncb@gmail.com', 'Do Thanh Long')"
-          class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer group"
-        >
-          <div class="flex items-center gap-3 min-w-0">
-            <!-- Waves Avatar with Ring & Pencil -->
-            <div class="relative w-12 h-12 shrink-0">
-              <div class="w-12 h-12 rounded-full p-0.5 ring-2 ring-blue-500 overflow-hidden shadow-xs">
-                <svg class="w-full h-full rounded-full" viewBox="0 0 100 100" fill="none">
-                  <circle cx="50" cy="50" r="50" fill="url(#wave-grad)"/>
-                  <path d="M0 55 C30 45 45 65 70 52 C85 45 95 58 100 55 L100 100 L0 100 Z" fill="#1d4ed8" opacity="0.9"/>
-                  <path d="M0 68 C25 60 50 74 75 66 C88 62 95 68 100 66 L100 100 L0 100 Z" fill="#172554"/>
-                  <defs>
-                    <linearGradient id="wave-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#38bdf8"/>
-                      <stop offset="50%" stop-color="#2563eb"/>
-                      <stop offset="100%" stop-color="#1d4ed8"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-              <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-xs">
-                <svg class="w-2.5 h-2.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              </div>
+      <!-- Quick Recent Accounts List (if any previously saved) -->
+      <div id="google-accounts-list-container" class="hidden mt-3 pt-1">
+        <p class="text-[11px] font-bold text-slate-600 mb-1.5">Tài khoản Google trên thiết bị:</p>
+        <div id="google-accounts-list" class="space-y-2 max-h-44 overflow-y-auto pr-0.5 mb-2">
+          <!-- Populated dynamically -->
+        </div>
+        <div class="relative flex py-2 items-center">
+          <div class="flex-grow border-t border-slate-200"></div>
+          <span class="flex-shrink mx-2 text-[9px] font-bold uppercase tracking-wider text-slate-400">Hoặc đăng nhập với Gmail khác</span>
+          <div class="flex-grow border-t border-slate-200"></div>
+        </div>
+      </div>
+
+      <!-- Google Sign In Form -->
+      <form id="google-login-form" onsubmit="app.handleGoogleAuthSubmit(event)" class="mt-3.5 space-y-3">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">
+            Địa chỉ Gmail của bạn <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative flex items-center">
+            <div class="absolute left-3 text-purple-500 pointer-events-none">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
             </div>
+            <input 
+              type="email" 
+              id="google-email-input" 
+              placeholder="ví dụ: tenban@gmail.com" 
+              required 
+              class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-purple-600 focus:bg-white focus:ring-2 focus:ring-purple-500/20 shadow-xs" 
+            />
+          </div>
+        </div>
 
-            <!-- Name, Email, Pro badge -->
-            <div class="min-w-0 flex-1">
-              <div class="font-semibold text-slate-800 text-[14px] leading-tight truncate">Do Thanh Long</div>
-              <div class="text-slate-500 text-[12px] leading-tight truncate mt-0.5">longdt.vncb@gmail.com</div>
-              <div class="mt-1">
-                <span class="inline-block bg-[#e8f0fe] text-[#1a73e8] text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-200/80 leading-none">Pro</span>
-              </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">
+            Họ và tên hiển thị của bạn
+          </label>
+          <div class="relative flex items-center">
+            <div class="absolute left-3 text-purple-500 pointer-events-none">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             </div>
-          </div>
-
-          <!-- Chevron Up Icon -->
-          <div class="w-7 h-7 rounded-full bg-[#f0f4f9] group-hover:bg-slate-200/80 flex items-center justify-center text-slate-600 shrink-0 ml-2 transition">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+            <input 
+              type="text" 
+              id="google-name-input" 
+              placeholder="Nhập họ tên của bạn (hoặc để trống)" 
+              class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-purple-600 focus:bg-white focus:ring-2 focus:ring-purple-500/20 shadow-xs" 
+            />
           </div>
         </div>
 
-        <div class="border-b border-slate-100"></div>
-
-        <!-- Dynamic Device Accounts List (Item 2, 3, 4, 5, etc.) -->
-        <div id="google-device-accounts-list" class="divide-y divide-slate-100">
-          <!-- Populated dynamically by app.renderGoogleAccountChooser() -->
-        </div>
-
-        <div class="border-b border-slate-100"></div>
-
-        <!-- Add Another Account Row -->
-        <div 
-          onclick="app.toggleAddGoogleAccountInline()" 
-          class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-50 transition cursor-pointer group"
-        >
-          <div class="w-8 h-8 rounded-full bg-[#ebf2fc] text-[#1a73e8] flex items-center justify-center shrink-0 group-hover:scale-105 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-          </div>
-          <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_add_account">Thêm tài khoản khác</span>
-        </div>
-
-        <!-- Inline Form for adding another account (hidden by default) -->
-        <div id="google-add-account-inline" class="hidden p-3.5 bg-slate-50 border-t border-slate-100 space-y-2">
-          <input 
-            type="email" 
-            id="google-custom-email-input" 
-            onkeydown="if(event.key==='Enter') app.submitCustomGoogleAccount()"
-            placeholder="ví dụ: tenban@gmail.com" 
-            data-i18n-placeholder="gmail_address_placeholder"
-            class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500 shadow-xs"
-          />
-          <input 
-            type="text" 
-            id="google-custom-name-input" 
-            onkeydown="if(event.key==='Enter') app.submitCustomGoogleAccount()"
-            placeholder="Họ tên hiển thị (tùy chọn)" 
-            data-i18n-placeholder="gmail_name_placeholder"
-            class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500 shadow-xs"
-          />
+        <div class="pt-1">
           <button 
-            type="button" 
-            onclick="app.submitCustomGoogleAccount()"
-            class="w-full py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
-            data-i18n="gmail_btn_signin"
+            type="submit" 
+            class="w-full py-3 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white font-bold text-xs rounded-xl shadow-md shadow-purple-600/30 transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
           >
-            Đăng nhập qua Gmail này
+            <span>Đăng nhập qua Gmail này</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
         </div>
-
-        <div class="border-b border-slate-100"></div>
-
-        <!-- Sign Out Of All Accounts Row -->
-        <div 
-          onclick="app.logoutAllGoogleAccounts()" 
-          class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-50 transition cursor-pointer group"
-        >
-          <div class="w-8 h-8 flex items-center justify-center shrink-0 text-slate-600 group-hover:scale-105 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-          </div>
-          <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_logout_all">Đăng xuất khỏi tất cả các tài khoản</span>
-        </div>
-
-      </div>
-
-      <!-- Action Button 1: Manage Google Account -->
-      <button 
-        type="button" 
-        onclick="app.openExternalGoogleAccount()" 
-        class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 rounded-full py-2.5 px-4 flex items-center gap-3 shadow-xs transition mt-3 text-left cursor-pointer active:scale-[0.99]"
-      >
-        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-        <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_manage_account">Quản lý Tài khoản Google của bạn</span>
-      </button>
-
-      <!-- Action Button 2: Upgrade to Google AI Ultra -->
-      <button 
-        type="button" 
-        onclick="app.openGoogleAIUltra()" 
-        class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 rounded-full py-2.5 px-4 flex items-center gap-3 shadow-xs transition mt-2 text-left cursor-pointer active:scale-[0.99]"
-      >
-        <svg class="w-5 h-5 text-slate-800 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/>
-        </svg>
-        <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_upgrade_ultra">Nâng cấp lên Google AI Ultra</span>
-      </button>
-
-      <!-- Footer Policy Links -->
-      <div class="text-[11px] text-slate-500 font-normal mt-3 text-center flex items-center justify-center gap-2">
-        <a href="https://policies.google.com/privacy" target="_blank" class="hover:underline text-slate-500" data-i18n="gmail_privacy">Chính sách quyền riêng tư</a>
-        <span>•</span>
-        <a href="https://policies.google.com/terms" target="_blank" class="hover:underline text-slate-500" data-i18n="gmail_terms">Điều khoản dịch vụ</a>
-      </div>
+      </form>
 
     </div>
   </div>
 
+  <!-- Firebase Configuration Modal -->
+  <div id="firebase-config-modal" class="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-[32px] p-6 shadow-2xl animate-in zoom-in-95 text-slate-800">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">⚙️</span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-900">Cấu hình Firebase (Tùy chọn)</h3>
+            <p class="text-[10px] text-slate-400">Dán config từ Firebase Console để kích hoạt Google Sign-In & Firestore</p>
+          </div>
+        </div>
+        <button type="button" onclick="toggleModal('firebase-config-modal')" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">✕</button>
+      </div>
+
+      <div class="mt-4 space-y-3 text-xs">
+        <div class="p-3 bg-purple-50 rounded-2xl border border-purple-100 text-purple-900 text-[11px] leading-relaxed">
+          💡 Bạn có thể dán đoạn mã <strong>firebaseConfig</strong> dạng JSON từ Firebase Console vào ô bên dưới, hoặc cấu hình trực tiếp trong tệp <code class="bg-white px-1 py-0.5 rounded border border-purple-200 font-mono">firebase-config.js</code>.
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Dán firebaseConfig JSON:</label>
+          <textarea 
+            id="firebase-config-json-input" 
+            rows="6" 
+            placeholder='{&#10;  "apiKey": "AIzaSy...",&#10;  "authDomain": "...",&#10;  "projectId": "...",&#10;  "storageBucket": "...",&#10;  "messagingSenderId": "...",&#10;  "appId": "..."&#10;}'
+            class="w-full p-3 font-mono text-[11px] bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+          ></textarea>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2">
+          <button 
+            type="button" 
+            onclick="app.saveFirebaseConfigFromUI()" 
+            class="flex-1 py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md shadow-purple-600/25 transition active:scale-95"
+          >
+            Lưu cấu hình
+          </button>
+          <button 
+            type="button" 
+            onclick="app.clearFirebaseConfigFromUI()" 
+            class="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition active:scale-95"
+          >
+            Xóa cấu hình
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Web SDK (Compat v10 for Vanilla JS PWA) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
+  <script src="./firebase-config.js?v=34"></script>
+
   <!-- Scripts -->
-  <script src="./app.js?v=33"></script>
+  <script src="./app.js?v=34"></script>
   <script>
     // Modal toggle helper
     function toggleModal(modalId) {
@@ -2787,10 +2960,10 @@
     // Register Service Worker with auto-update and automatic reload on controller change
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=32')
+        navigator.serviceWorker.register('./sw.js?v=34')
           .then(reg => {
             reg.update();
-            console.log('LifeKeep PWA Service Worker Registered & Updated!');
+            console.log('LifeKeep PWA Service Worker Registered & Updated (v34)!');
           })
           .catch(err => console.log('SW registration failed:', err));
       });
