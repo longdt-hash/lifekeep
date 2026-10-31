@@ -3,14 +3,12 @@ const CACHE_NAME = 'lifekeep-v34';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
-  './firebase-config.js?v=34',
   './app.js?v=34',
   './manifest.json',
   './logo.png',
   './icon-192.png',
   './favicon.png',
-  './apple-touch-icon.png',
-  './privacy.html'
+  './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -59,6 +57,9 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only process HTTP and HTTPS requests, ignore unsupported schemes (e.g., chrome-extension)
+  if (!event.request.url.startsWith('http')) return;
+
   // Always fetch fresh HTML from network for navigations
   if (event.request.mode === 'navigate') {
     event.respondWith(
