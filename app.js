@@ -2665,15 +2665,15 @@ class LifeKeepApp {
   }
 
   async start() {
-    // Auto-clean stale service worker cache if upgraded to v39
+    // Auto-clean stale service worker cache if upgraded to v40
     try {
       const currentUiVersion = localStorage.getItem('lifekeep_ui_version');
-      if (currentUiVersion !== 'v39') {
-        localStorage.setItem('lifekeep_ui_version', 'v39');
+      if (currentUiVersion !== 'v40') {
+        localStorage.setItem('lifekeep_ui_version', 'v40');
         if ('caches' in window) {
           caches.keys().then(keys => {
             keys.forEach(k => {
-              if (k !== 'lifekeep-v39') caches.delete(k);
+              if (k !== 'lifekeep-v40') caches.delete(k);
             });
           });
         }
@@ -7856,13 +7856,7 @@ class LifeKeepApp {
       const sessionStr = localStorage.getItem('lifekeep_auth_session') || sessionStorage.getItem('lifekeep_auth_session');
       if (!sessionStr) return null;
       const user = JSON.parse(sessionStr);
-      const testEmails = ['longdt.vncb@gmail.com', 'nguyenkhang30101@gmail.com', 'thichdocsach.net@gmail.com', 'vuimuasam.vip@gmail.com', 'coin688net@gmail.com'];
-      if (user && (testEmails.includes((user.email || '').toLowerCase()) || user.name === 'Đặng Long' || user.name === 'Do Thanh Long')) {
-        localStorage.removeItem('lifekeep_auth_session');
-        sessionStorage.removeItem('lifekeep_auth_session');
-        localStorage.removeItem('lifekeep_last_google_email');
-        return null;
-      }
+      if (!user || (!user.id && !user.email)) return null;
       return user;
     } catch (e) {
       console.warn('Lỗi đọc phiên đăng nhập:', e);
@@ -7987,20 +7981,7 @@ class LifeKeepApp {
 
   getRegisteredAccounts() {
     try {
-      let accounts = JSON.parse(localStorage.getItem('lifekeep_accounts') || '[]');
-      const testEmails = ['longdt.vncb@gmail.com', 'nguyenkhang30101@gmail.com', 'thichdocsach.net@gmail.com', 'vuimuasam.vip@gmail.com', 'coin688net@gmail.com'];
-      const filtered = accounts.filter(a => {
-        if (!a || !a.email) return false;
-        const lower = a.email.toLowerCase();
-        if (testEmails.includes(lower)) return false;
-        if (a.name === 'Đặng Long' || a.name === 'Do Thanh Long') return false;
-        return true;
-      });
-      if (filtered.length !== accounts.length) {
-        localStorage.setItem('lifekeep_accounts', JSON.stringify(filtered));
-        accounts = filtered;
-      }
-      return accounts;
+      return JSON.parse(localStorage.getItem('lifekeep_accounts') || '[]');
     } catch (e) {
       return [];
     }
@@ -8162,6 +8143,32 @@ class LifeKeepApp {
       try {
         firebase.initializeApp(firebaseConfig);
         console.log('Firebase initialized successfully for LifeKeep');
+
+        // Keep Firebase session synced across refreshes
+        firebase.auth().onAuthStateChanged(async (fbUser) => {
+          if (fbUser && !this.currentUser) {
+            console.log('Auto-restoring session from Firebase Auth:', fbUser.email);
+            const userObj = {
+              id: 'google_' + fbUser.uid,
+              sub: fbUser.uid,
+              name: fbUser.displayName || fbUser.email.split('@')[0],
+              email: fbUser.email.toLowerCase(),
+              avatar: fbUser.photoURL || 'google',
+              picture: fbUser.photoURL || '',
+              provider: 'google',
+              emailVerified: fbUser.emailVerified,
+              loggedAt: new Date().toISOString()
+            };
+            this.setAuthSession(userObj, true);
+            this.currentUser = userObj;
+            this.hideAuthScreen();
+            this.updateUserUI();
+            const accountKey = this.getAccountKey(userObj);
+            this.storage.setAccount(accountKey);
+            await this.storage.init();
+            await this.renderAll();
+          }
+        });
       } catch (e) {
         console.warn('Firebase init error:', e);
       }
