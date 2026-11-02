@@ -7,12 +7,15 @@
 function toggleModal(modalId) {
   const el = document.getElementById(modalId);
   if (!el) return;
-  if (el.classList.contains('hidden')) {
+  const isHidden = el.classList.contains('hidden') || el.style.display === 'none' || window.getComputedStyle(el).display === 'none';
+  if (isHidden) {
     el.classList.remove('hidden');
     el.classList.add('flex');
+    el.style.display = 'flex';
   } else {
     el.classList.add('hidden');
     el.classList.remove('flex');
+    el.style.display = 'none';
   }
 }
 window.toggleModal = toggleModal;
@@ -1575,6 +1578,9 @@ const I18N = {
     gmail_name_label: 'Họ và tên hiển thị của bạn',
     gmail_name_placeholder: 'Nhập họ tên của bạn (hoặc để trống)',
     gmail_btn_signin: 'Đăng nhập qua Gmail này',
+    gmail_btn_open_official: 'Mở cửa sổ đăng nhập Google chính thức',
+    gmail_or_enter_manually: 'Hoặc kết nối bằng địa chỉ Gmail',
+    gmail_btn_enter_app: 'Đăng nhập vào LifeKeep',
     gmail_open_account: 'Mở trang tài khoản Google (accounts.google.com)',
     gmail_add_account: 'Thêm tài khoản khác',
     gmail_logout_all: 'Đăng xuất khỏi tất cả các tài khoản',
@@ -2196,6 +2202,9 @@ const I18N = {
     gmail_name_label: 'Display name',
     gmail_name_placeholder: 'Enter your name (or leave blank)',
     gmail_btn_signin: 'Sign in with this Gmail',
+    gmail_btn_open_official: 'Open official Google Sign-in window',
+    gmail_or_enter_manually: 'Or connect with Gmail address',
+    gmail_btn_enter_app: 'Sign in to LifeKeep',
     gmail_open_account: 'Open Google Account (accounts.google.com)',
     gmail_add_account: 'Add another account',
     gmail_logout_all: 'Sign out of all accounts',
@@ -2662,15 +2671,15 @@ class LifeKeepApp {
   }
 
   async start() {
-    // Auto-clean stale service worker cache if upgraded to v29
+    // Auto-clean stale service worker cache if upgraded to v37
     try {
       const currentUiVersion = localStorage.getItem('lifekeep_ui_version');
-      if (currentUiVersion !== 'v29') {
-        localStorage.setItem('lifekeep_ui_version', 'v29');
+      if (currentUiVersion !== 'v37') {
+        localStorage.setItem('lifekeep_ui_version', 'v37');
         if ('caches' in window) {
           caches.keys().then(keys => {
             keys.forEach(k => {
-              if (k !== 'lifekeep-v29') caches.delete(k);
+              if (k !== 'lifekeep-v37') caches.delete(k);
             });
           });
         }
@@ -8149,6 +8158,7 @@ class LifeKeepApp {
     if (modal) {
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      modal.style.display = 'flex';
     }
   }
 
@@ -8280,6 +8290,7 @@ class LifeKeepApp {
     if (modal) {
       modal.classList.add('hidden');
       modal.classList.remove('flex');
+      modal.style.display = 'none';
     }
 
     // Hide login screen and switch to this user's data
@@ -8319,6 +8330,7 @@ class LifeKeepApp {
     if (modal) {
       modal.classList.add('hidden');
       modal.classList.remove('flex');
+      modal.style.display = 'none';
     }
     this.showAuthScreen();
     this.updateUserUI();
@@ -8334,19 +8346,27 @@ class LifeKeepApp {
   }
 
   openExternalGoogleLogin() {
-    const width = 500;
-    const height = 620;
+    const width = 520;
+    const height = 650;
     const left = window.screen.width ? (window.screen.width - width) / 2 : 100;
     const top = window.screen.height ? (window.screen.height - height) / 2 : 100;
+    const lang = this.currentLang === 'en' ? 'en' : 'vi';
+    // AddSession guarantees Google ALWAYS displays the Email/Password sign-in form,
+    // avoiding redirect to myaccount.google.com when Chrome already has a session!
+    const targetUrl = `https://accounts.google.com/AddSession?hl=${lang}`;
     
     try {
-      window.open(
-        'https://accounts.google.com/ServiceLogin?service=lso&passive=1209600&continue=https://accounts.google.com/',
+      const win = window.open(
+        targetUrl,
         'GoogleSignInWindow',
         `width=${width},height=${height},top=${top},left=${left},status=yes,toolbar=no,menubar=no,location=yes,resizable=yes`
       );
+      if (!win) {
+        window.open(targetUrl, '_blank');
+      }
     } catch (e) {
-      console.warn('Popup blocked:', e);
+      console.warn('Popup blocked, fallback to _blank:', e);
+      window.open(targetUrl, '_blank');
     }
   }
 
