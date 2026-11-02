@@ -7852,9 +7852,12 @@ class LifeKeepApp {
       const sessionStr = localStorage.getItem('lifekeep_auth_session') || sessionStorage.getItem('lifekeep_auth_session');
       if (!sessionStr) return null;
       const user = JSON.parse(sessionStr);
-      if (user && user.name === 'Đặng Long') {
-        user.name = user.email ? user.email.split('@')[0] : 'User';
-        this.setAuthSession(user, true);
+      const testEmails = ['longdt.vncb@gmail.com', 'nguyenkhang30101@gmail.com', 'thichdocsach.net@gmail.com', 'vuimuasam.vip@gmail.com', 'coin688net@gmail.com'];
+      if (user && (testEmails.includes((user.email || '').toLowerCase()) || user.name === 'Đặng Long' || user.name === 'Do Thanh Long')) {
+        localStorage.removeItem('lifekeep_auth_session');
+        sessionStorage.removeItem('lifekeep_auth_session');
+        localStorage.removeItem('lifekeep_last_google_email');
+        return null;
       }
       return user;
     } catch (e) {
@@ -7980,16 +7983,18 @@ class LifeKeepApp {
 
   getRegisteredAccounts() {
     try {
-      const accounts = JSON.parse(localStorage.getItem('lifekeep_accounts') || '[]');
-      let changed = false;
-      accounts.forEach(a => {
-        if (a && a.name === 'Đặng Long') {
-          a.name = a.email ? a.email.split('@')[0] : 'User';
-          changed = true;
-        }
+      let accounts = JSON.parse(localStorage.getItem('lifekeep_accounts') || '[]');
+      const testEmails = ['longdt.vncb@gmail.com', 'nguyenkhang30101@gmail.com', 'thichdocsach.net@gmail.com', 'vuimuasam.vip@gmail.com', 'coin688net@gmail.com'];
+      const filtered = accounts.filter(a => {
+        if (!a || !a.email) return false;
+        const lower = a.email.toLowerCase();
+        if (testEmails.includes(lower)) return false;
+        if (a.name === 'Đặng Long' || a.name === 'Do Thanh Long') return false;
+        return true;
       });
-      if (changed) {
-        localStorage.setItem('lifekeep_accounts', JSON.stringify(accounts));
+      if (filtered.length !== accounts.length) {
+        localStorage.setItem('lifekeep_accounts', JSON.stringify(filtered));
+        accounts = filtered;
       }
       return accounts;
     } catch (e) {
@@ -8149,97 +8154,84 @@ class LifeKeepApp {
 
   renderGoogleAccountChooser() {
     const listEl = document.getElementById('google-device-accounts-list');
-    if (!listEl) return;
+    const accountsContainer = document.getElementById('google-saved-accounts-section');
+    const directSignin = document.getElementById('google-direct-signin');
+    const backBtn = document.getElementById('google-back-to-accounts-btn');
 
-    // Accounts from device Google session matching user screenshot
-    const deviceAccounts = [
-      {
-        name: 'Ok Ok',
-        email: 'nguyenkhang30101@gmail.com',
-        avatarType: 'text',
-        initials: 'Ok',
-        avatarBg: 'bg-[#3c4043] text-white'
-      },
-      {
-        name: 'thichdoc sach',
-        email: 'thichdocsach.net@gmail.com',
-        avatarType: 'icon',
-        icon: 'book',
-        avatarBg: 'bg-sky-50 text-sky-600 ring-2 ring-sky-300'
-      },
-      {
-        name: 'vuimua sam',
-        email: 'vuimuasam.vip@gmail.com',
-        avatarType: 'text',
-        initials: 's',
-        avatarBg: 'bg-[#ea4335] text-white'
-      },
-      {
-        name: '688 Coin',
-        email: 'coin688net@gmail.com',
-        avatarType: 'text',
-        initials: 'C',
-        avatarBg: 'bg-[#4285f4] text-white ring-2 ring-blue-100'
-      }
-    ];
-
-    // Check if any additional registered accounts exist that aren't the primary or in deviceAccounts
+    // Get real registered Google accounts for this device
     const registered = this.getRegisteredAccounts();
-    const knownEmails = new Set(['longdt.vncb@gmail.com', ...deviceAccounts.map(a => a.email.toLowerCase())]);
+    const googleAccounts = registered.filter(a => a && a.email && (a.provider === 'google' || a.email.toLowerCase().endsWith('@gmail.com')));
 
-    registered.forEach(acc => {
-      if (acc.email && acc.email.includes('@')) {
-        const lower = acc.email.toLowerCase();
-        if (!knownEmails.has(lower)) {
-          knownEmails.add(lower);
-          const initial = (acc.name || acc.email || 'G').charAt(0).toUpperCase();
-          deviceAccounts.push({
-            name: acc.name && acc.name !== 'Đặng Long' ? acc.name : acc.email.split('@')[0],
-            email: lower,
-            avatarType: 'text',
-            initials: initial,
-            avatarBg: 'bg-indigo-600 text-white'
-          });
-        }
-      }
-    });
+    if (googleAccounts.length === 0) {
+      // Fresh installation: directly show the clean Google sign-in form
+      if (accountsContainer) accountsContainer.classList.add('hidden');
+      if (directSignin) directSignin.classList.remove('hidden');
+      if (backBtn) backBtn.classList.add('hidden');
+      const emailInput = document.getElementById('google-custom-email-input');
+      if (emailInput) setTimeout(() => emailInput.focus(), 150);
+      return;
+    }
 
-    listEl.innerHTML = deviceAccounts.map(acc => {
-      let avatarHtml = '';
-      if (acc.avatarType === 'icon' && acc.icon === 'book') {
-        avatarHtml = `
-          <div class="w-9 h-9 rounded-full ${acc.avatarBg} flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
+    // Has saved accounts on this device: show account chooser
+    if (accountsContainer) accountsContainer.classList.remove('hidden');
+    if (directSignin) directSignin.classList.add('hidden');
+    if (backBtn) backBtn.classList.remove('hidden');
+
+    if (listEl) {
+      const palette = ['bg-indigo-600', 'bg-emerald-600', 'bg-blue-600', 'bg-purple-600', 'bg-rose-600', 'bg-amber-600'];
+      listEl.innerHTML = googleAccounts.map((acc, idx) => {
+        const initial = (acc.name || acc.email || 'G').trim().charAt(0).toUpperCase();
+        const bg = palette[idx % palette.length];
+        const displayName = acc.name || acc.email.split('@')[0];
+        const escapedName = displayName.replace(/'/g, "\\'");
+        return `
+          <div 
+            onclick="app.selectGoogleAccount('${acc.email}', '${escapedName}')"
+            class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-100 transition cursor-pointer group"
+          >
+            <div class="w-9 h-9 rounded-full ${bg} text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+              ${initial}
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-[13px] font-semibold text-slate-800 leading-tight truncate group-hover:text-blue-600 transition">
+                ${displayName}
+              </div>
+              <div class="text-[12px] text-slate-500 leading-tight truncate mt-0.5">
+                ${acc.email}
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </div>
         `;
+      }).join('');
+    }
+  }
+
+  showGoogleDirectSignin() {
+    const accountsContainer = document.getElementById('google-saved-accounts-section');
+    const directSignin = document.getElementById('google-direct-signin');
+    const backBtn = document.getElementById('google-back-to-accounts-btn');
+    const registered = this.getRegisteredAccounts();
+    const googleAccounts = registered.filter(a => a && a.email && (a.provider === 'google' || a.email.toLowerCase().endsWith('@gmail.com')));
+
+    if (accountsContainer) accountsContainer.classList.add('hidden');
+    if (directSignin) directSignin.classList.remove('hidden');
+    if (backBtn) {
+      if (googleAccounts.length > 0) {
+        backBtn.classList.remove('hidden');
       } else {
-        avatarHtml = `
-          <div class="w-9 h-9 rounded-full ${acc.avatarBg} font-medium text-xs flex items-center justify-center shrink-0">
-            ${acc.initials}
-          </div>
-        `;
+        backBtn.classList.add('hidden');
       }
+    }
+    const emailInput = document.getElementById('google-custom-email-input');
+    if (emailInput) setTimeout(() => emailInput.focus(), 150);
+  }
 
-      const escapedName = (acc.name || '').replace(/'/g, "\\'");
-      return `
-        <div 
-          onclick="app.selectGoogleAccount('${acc.email}', '${escapedName}')"
-          class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-50 transition cursor-pointer group"
-        >
-          ${avatarHtml}
-          <div class="min-w-0 flex-1">
-            <div class="text-[13px] font-medium text-slate-800 leading-tight truncate group-hover:text-blue-600 transition">
-              ${acc.name}
-            </div>
-            <div class="text-[12px] text-slate-500 leading-tight truncate mt-0.5">
-              ${acc.email}
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
+  showGoogleSavedAccounts() {
+    const accountsContainer = document.getElementById('google-saved-accounts-section');
+    const directSignin = document.getElementById('google-direct-signin');
+    if (accountsContainer) accountsContainer.classList.remove('hidden');
+    if (directSignin) directSignin.classList.add('hidden');
   }
 
   async selectGoogleAccount(email, name) {
@@ -8247,10 +8239,10 @@ class LifeKeepApp {
     email = email.trim().toLowerCase();
     
     // Sanitize name: no hardcoded fake names, fallback to email prefix if blank
-    if (!name || name === 'Đặng Long' || name.trim() === '') {
+    if (!name || name.trim() === '') {
       const accounts = this.getRegisteredAccounts();
       const existing = accounts.find(a => a.email && a.email.toLowerCase() === email);
-      if (existing && existing.name && existing.name !== 'Đặng Long') {
+      if (existing && existing.name) {
         name = existing.name;
       } else {
         name = email.split('@')[0];
@@ -8293,19 +8285,7 @@ class LifeKeepApp {
     // Hide login screen and switch to this user's data
     this.hideAuthScreen();
     await this.switchUserAccount(googleUser);
-    this.showToast(this.currentLang === 'en' ? `✅ Signed in with Gmail: ${googleUser.email}!` : `✅ Đã đăng nhập bằng Gmail: ${googleUser.email}!`);
-  }
-
-  toggleAddGoogleAccountInline() {
-    const inline = document.getElementById('google-add-account-inline');
-    if (!inline) return;
-    if (inline.classList.contains('hidden')) {
-      inline.classList.remove('hidden');
-      const input = document.getElementById('google-custom-email-input');
-      if (input) input.focus();
-    } else {
-      inline.classList.add('hidden');
-    }
+    this.showToast(this.currentLang === 'en' ? `✅ Signed in with Google: ${googleUser.email}!` : `✅ Đã đăng nhập bằng Google: ${googleUser.email}!`);
   }
 
   async submitCustomGoogleAccount() {
@@ -8316,6 +8296,7 @@ class LifeKeepApp {
 
     if (!email) {
       alert(this.currentLang === 'en' ? 'Please enter a Gmail address!' : 'Vui lòng nhập địa chỉ Gmail!');
+      if (emailInput) emailInput.focus();
       return;
     }
     if (!email.includes('@')) {
@@ -8325,11 +8306,14 @@ class LifeKeepApp {
       name = email.split('@')[0];
     }
     await this.selectGoogleAccount(email, name);
+    if (emailInput) emailInput.value = '';
+    if (nameInput) nameInput.value = '';
   }
 
   logoutAllGoogleAccounts() {
     localStorage.removeItem('lifekeep_auth_session');
     sessionStorage.removeItem('lifekeep_auth_session');
+    localStorage.removeItem('lifekeep_last_google_email');
     this.currentUser = null;
     const modal = document.getElementById('google-auth-modal');
     if (modal) {

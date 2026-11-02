@@ -1739,7 +1739,7 @@
                 <div id="settings-user-name" class="font-bold text-sm text-purple-950 truncate">Tài khoản LifeKeep</div>
                 <button type="button" onclick="app.editUserName()" class="text-purple-600 hover:text-purple-800 p-0.5 rounded transition text-[11px]" title="Đổi tên hiển thị" data-i18n-title="settings_edit_name_title">✏️</button>
               </div>
-              <div id="settings-user-email" class="text-[11px] text-slate-500 truncate">user@gmail.com</div>
+              <div id="settings-user-email" class="text-[11px] text-slate-500 truncate">--</div>
               <div id="settings-user-badge" class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full mt-0.5">
                 <span>🛡️</span> <span data-i18n="settings_secured">Đã bảo mật</span>
               </div>
@@ -2614,155 +2614,95 @@
     </div>
   </div>
 
-  <!-- Google / Gmail Authentication Modal (Matches Google Account Chooser Bottom Sheet) -->
+  <!-- Google / Gmail Authentication Modal -->
   <div id="google-auth-modal" class="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 overflow-y-auto" onclick="if(event.target === this) toggleModal('google-auth-modal')">
-    <div class="bg-[#f0f4f9] border border-slate-200/90 w-full max-w-[360px] rounded-[28px] p-4 sm:p-5 shadow-2xl animate-in zoom-in-95 text-slate-800 relative my-auto select-none">
+    <div class="bg-white border border-slate-200/90 w-full max-w-[370px] rounded-[28px] p-5 shadow-2xl animate-in zoom-in-95 text-slate-800 relative my-auto select-none">
       
-      <!-- Top Close Button -->
-      <div class="flex justify-end pb-1.5">
+      <!-- Top Bar: Google Logo and Close Button -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+          <div>
+            <div class="font-bold text-slate-800 text-sm leading-tight" data-i18n="gmail_modal_title">Đăng nhập qua Gmail</div>
+            <div class="text-[11px] text-slate-500 leading-tight" data-i18n="gmail_modal_sub">Bảo mật dữ liệu LifeKeep bằng tài khoản Google</div>
+          </div>
+        </div>
         <button 
           type="button" 
           onclick="toggleModal('google-auth-modal')" 
-          class="w-8 h-8 rounded-full hover:bg-slate-200/70 text-slate-700 flex items-center justify-center transition active:scale-95 cursor-pointer text-lg leading-none"
+          class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 flex items-center justify-center transition active:scale-95 cursor-pointer text-base leading-none"
           title="Đóng"
         >
           ✕
         </button>
       </div>
 
-      <!-- Main Account Chooser White Card -->
-      <div class="bg-white rounded-[24px] border border-slate-200/70 shadow-xs overflow-hidden">
-        
-        <!-- Primary / Featured Top Account: Do Thanh Long -->
-        <div 
-          onclick="app.selectGoogleAccount('longdt.vncb@gmail.com', 'Do Thanh Long')"
-          class="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer group"
-        >
-          <div class="flex items-center gap-3 min-w-0">
-            <!-- Waves Avatar with Ring & Pencil -->
-            <div class="relative w-12 h-12 shrink-0">
-              <div class="w-12 h-12 rounded-full p-0.5 ring-2 ring-blue-500 overflow-hidden shadow-xs">
-                <svg class="w-full h-full rounded-full" viewBox="0 0 100 100" fill="none">
-                  <circle cx="50" cy="50" r="50" fill="url(#wave-grad)"/>
-                  <path d="M0 55 C30 45 45 65 70 52 C85 45 95 58 100 55 L100 100 L0 100 Z" fill="#1d4ed8" opacity="0.9"/>
-                  <path d="M0 68 C25 60 50 74 75 66 C88 62 95 68 100 66 L100 100 L0 100 Z" fill="#172554"/>
-                  <defs>
-                    <linearGradient id="wave-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#38bdf8"/>
-                      <stop offset="50%" stop-color="#2563eb"/>
-                      <stop offset="100%" stop-color="#1d4ed8"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-              <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-xs">
-                <svg class="w-2.5 h-2.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              </div>
+      <!-- Section A: Saved Accounts on this Device (Shown if user has previously used Google accounts here) -->
+      <div id="google-saved-accounts-section" class="mt-4 hidden">
+        <div class="text-xs font-semibold text-slate-700 mb-2 px-1" data-i18n="gmail_device_accounts">Tài khoản Google trên thiết bị:</div>
+        <div class="bg-slate-50 rounded-2xl border border-slate-200/80 overflow-hidden divide-y divide-slate-100">
+          <div id="google-device-accounts-list" class="divide-y divide-slate-100">
+            <!-- Populated dynamically by app.renderGoogleAccountChooser() -->
+          </div>
+          <!-- Add Another Account Row -->
+          <div 
+            onclick="app.showGoogleDirectSignin()" 
+            class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-100 transition cursor-pointer group"
+          >
+            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
             </div>
-
-            <!-- Name, Email, Pro badge -->
-            <div class="min-w-0 flex-1">
-              <div class="font-semibold text-slate-800 text-[14px] leading-tight truncate">Do Thanh Long</div>
-              <div class="text-slate-500 text-[12px] leading-tight truncate mt-0.5">longdt.vncb@gmail.com</div>
-              <div class="mt-1">
-                <span class="inline-block bg-[#e8f0fe] text-[#1a73e8] text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-200/80 leading-none">Pro</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Chevron Up Icon -->
-          <div class="w-7 h-7 rounded-full bg-[#f0f4f9] group-hover:bg-slate-200/80 flex items-center justify-center text-slate-600 shrink-0 ml-2 transition">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+            <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_add_account">Thêm tài khoản khác</span>
           </div>
         </div>
+      </div>
 
-        <div class="border-b border-slate-100"></div>
-
-        <!-- Dynamic Device Accounts List (Item 2, 3, 4, 5, etc.) -->
-        <div id="google-device-accounts-list" class="divide-y divide-slate-100">
-          <!-- Populated dynamically by app.renderGoogleAccountChooser() -->
-        </div>
-
-        <div class="border-b border-slate-100"></div>
-
-        <!-- Add Another Account Row -->
-        <div 
-          onclick="app.toggleAddGoogleAccountInline()" 
-          class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-50 transition cursor-pointer group"
-        >
-          <div class="w-8 h-8 rounded-full bg-[#ebf2fc] text-[#1a73e8] flex items-center justify-center shrink-0 group-hover:scale-105 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-          </div>
-          <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_add_account">Thêm tài khoản khác</span>
-        </div>
-
-        <!-- Inline Form for adding another account (hidden by default) -->
-        <div id="google-add-account-inline" class="hidden p-3.5 bg-slate-50 border-t border-slate-100 space-y-2">
+      <!-- Section B: Direct Sign-In Form (Shown for fresh installs or when adding an account) -->
+      <div id="google-direct-signin" class="mt-4 space-y-3.5">
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700" data-i18n-html="gmail_address_label_html">Địa chỉ Gmail của bạn <span class="text-rose-500">*</span></label>
           <input 
             type="email" 
             id="google-custom-email-input" 
             onkeydown="if(event.key==='Enter') app.submitCustomGoogleAccount()"
             placeholder="ví dụ: tenban@gmail.com" 
             data-i18n-placeholder="gmail_address_placeholder"
-            class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500 shadow-xs"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition shadow-2xs"
           />
+        </div>
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700" data-i18n="gmail_name_label">Họ và tên hiển thị của bạn</label>
           <input 
             type="text" 
             id="google-custom-name-input" 
             onkeydown="if(event.key==='Enter') app.submitCustomGoogleAccount()"
-            placeholder="Họ tên hiển thị (tùy chọn)" 
+            placeholder="Nhập họ tên của bạn (hoặc để trống)" 
             data-i18n-placeholder="gmail_name_placeholder"
-            class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500 shadow-xs"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition shadow-2xs"
           />
+        </div>
+        <div class="pt-1 flex items-center gap-2">
+          <button 
+            type="button" 
+            id="google-back-to-accounts-btn"
+            onclick="app.showGoogleSavedAccounts()" 
+            class="hidden px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-semibold text-xs rounded-xl transition cursor-pointer"
+          >
+            ← Quay lại
+          </button>
           <button 
             type="button" 
             onclick="app.submitCustomGoogleAccount()"
-            class="w-full py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
-            data-i18n="gmail_btn_signin"
+            class="flex-1 py-2.5 bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-xs rounded-xl transition shadow-xs cursor-pointer flex items-center justify-center gap-2"
           >
-            Đăng nhập qua Gmail này
+            <span data-i18n="gmail_btn_signin">Đăng nhập qua Gmail này</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
         </div>
-
-        <div class="border-b border-slate-100"></div>
-
-        <!-- Sign Out Of All Accounts Row -->
-        <div 
-          onclick="app.logoutAllGoogleAccounts()" 
-          class="px-4 py-3 flex items-center gap-3.5 hover:bg-slate-50 transition cursor-pointer group"
-        >
-          <div class="w-8 h-8 flex items-center justify-center shrink-0 text-slate-600 group-hover:scale-105 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-          </div>
-          <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_logout_all">Đăng xuất khỏi tất cả các tài khoản</span>
-        </div>
-
       </div>
 
-      <!-- Action Button 1: Manage Google Account -->
-      <button 
-        type="button" 
-        onclick="app.openExternalGoogleAccount()" 
-        class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 rounded-full py-2.5 px-4 flex items-center gap-3 shadow-xs transition mt-3 text-left cursor-pointer active:scale-[0.99]"
-      >
-        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-        <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_manage_account">Quản lý Tài khoản Google của bạn</span>
-      </button>
-
-      <!-- Action Button 2: Upgrade to Google AI Ultra -->
-      <button 
-        type="button" 
-        onclick="app.openGoogleAIUltra()" 
-        class="w-full bg-white hover:bg-slate-50 border border-slate-200/80 rounded-full py-2.5 px-4 flex items-center gap-3 shadow-xs transition mt-2 text-left cursor-pointer active:scale-[0.99]"
-      >
-        <svg class="w-5 h-5 text-slate-800 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/>
-        </svg>
-        <span class="text-[13px] font-medium text-slate-800" data-i18n="gmail_upgrade_ultra">Nâng cấp lên Google AI Ultra</span>
-      </button>
-
       <!-- Footer Policy Links -->
-      <div class="text-[11px] text-slate-500 font-normal mt-3 text-center flex items-center justify-center gap-2">
+      <div class="text-[11px] text-slate-400 font-normal mt-4 pt-3 border-t border-slate-100 text-center flex items-center justify-center gap-2">
         <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-500" data-i18n="gmail_privacy">Chính sách quyền riêng tư</a>
         <span>•</span>
         <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-500" data-i18n="gmail_terms">Điều khoản dịch vụ</a>
@@ -2772,7 +2712,7 @@
   </div>
 
   <!-- Scripts -->
-  <script src="./app.js?v=34"></script>
+  <script src="./app.js?v=35"></script>
   <script>
     // Modal toggle helper
     function toggleModal(modalId) {
@@ -2790,7 +2730,7 @@
     // Register Service Worker with auto-update and automatic reload on controller change
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=34')
+        navigator.serviceWorker.register('./sw.js?v=35')
           .then(reg => {
             reg.update();
             console.log('LifeKeep PWA Service Worker Registered & Updated!');
