@@ -2665,21 +2665,22 @@ class LifeKeepApp {
   }
 
   async start() {
-    // Auto-clean stale service worker cache if upgraded to v38
+    // Auto-clean stale service worker cache if upgraded to v39
     try {
       const currentUiVersion = localStorage.getItem('lifekeep_ui_version');
-      if (currentUiVersion !== 'v38') {
-        localStorage.setItem('lifekeep_ui_version', 'v38');
+      if (currentUiVersion !== 'v39') {
+        localStorage.setItem('lifekeep_ui_version', 'v39');
         if ('caches' in window) {
           caches.keys().then(keys => {
             keys.forEach(k => {
-              if (k !== 'lifekeep-v38') caches.delete(k);
+              if (k !== 'lifekeep-v39') caches.delete(k);
             });
           });
         }
       }
     } catch (e) {}
 
+    this.initFirebase();
     this.initEventListeners();
     this.initAuth();
     try {
@@ -8144,15 +8145,86 @@ class LifeKeepApp {
     }
   }
 
-  loginWithGoogle() {
+  initFirebase() {
+    if (typeof firebase === 'undefined') {
+      return false;
+    }
+    if (!firebase.apps || !firebase.apps.length) {
+      const firebaseConfig = {
+        apiKey: "AIzaSyBp4oq92sUlffRq2jTuvzWEMIy-09hxaRk",
+        authDomain: "lifekeep-assistant.firebaseapp.com",
+        projectId: "lifekeep-assistant",
+        storageBucket: "lifekeep-assistant.firebasestorage.app",
+        messagingSenderId: "372218094020",
+        appId: "1:372218094020:web:7c6c570c971305fc638491",
+        measurementId: "G-K0HEYHVS34"
+      };
+      try {
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase initialized successfully for LifeKeep');
+      } catch (e) {
+        console.warn('Firebase init error:', e);
+      }
+    }
+    return true;
+  }
+
+  async loginWithGoogle() {
+    this.initFirebase();
+
+    // If online and Firebase auth is available, directly trigger Google OAuth popup!
+    if (navigator.onLine && typeof firebase !== 'undefined' && firebase.auth) {
+      await this.triggerFirebaseGoogleSignIn();
+      return;
+    }
+
+    // Otherwise show modal with saved accounts / direct input
     this.renderGoogleAccountChooser();
-    
-    // Always open the Google Account Chooser modal so user can choose their Gmail account
     const modal = document.getElementById('google-auth-modal');
     if (modal) {
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       modal.style.display = 'flex';
+    }
+  }
+
+  async triggerFirebaseGoogleSignIn() {
+    this.initFirebase();
+
+    if (typeof firebase === 'undefined' || !firebase.auth) {
+      this.showToast(this.currentLang === 'en' ? '⚠️ Offline / Firebase not ready' : '⚠️ Ngoại tuyến hoặc Firebase chưa sẵn sàng');
+      return;
+    }
+
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      this.showToast(this.currentLang === 'en' ? '⏳ Opening Google Sign-In...' : '⏳ Đang mở cửa sổ đăng nhập Google...');
+
+      const result = await firebase.auth().signInWithPopup(provider);
+      const user = result.user;
+      if (user && user.email) {
+        await this.handleGoogleOAuthSuccess({
+          sub: user.uid,
+          email: user.email,
+          name: user.displayName || user.email.split('@')[0],
+          picture: user.photoURL || '',
+          email_verified: user.emailVerified
+        });
+      }
+    } catch (error) {
+      console.warn('Firebase Google Sign-In error:', error);
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        return;
+      }
+      if (error.code === 'auth/unauthorized-domain') {
+        alert('⚠️ Tên miền chưa được cấp phép trong Firebase!\n\nVui lòng mở Firebase Console -> Authentication -> Settings -> Authorized domains và thêm tên miền của bạn (ví dụ: lifekeep-khaki.vercel.app).');
+      } else if (error.code === 'auth/operation-not-allowed') {
+        alert('⚠️ Đăng nhập Google chưa được kích hoạt trong Firebase!\n\nVui lòng vào Firebase Console -> Authentication -> Sign-in method -> Bật mục Google sang Enable.');
+      } else {
+        alert(`Lỗi đăng nhập Google (${error.code}): ${error.message}`);
+      }
     }
   }
 
@@ -8236,6 +8308,185 @@ class LifeKeepApp {
     const directSignin = document.getElementById('google-direct-signin');
     if (accountsContainer) accountsContainer.classList.remove('hidden');
     if (directSignin) directSignin.classList.add('hidden');
+  }
+
+  getGoogleClientId() {
+    return localStorage.getItem('lifekeep_google_client_id') || window.LIFEKEEP_GOOGLE_CLIENT_ID || '';
+  }
+
+  toggleGoogleConfigBanner() {
+    const banner = document.getElementById('google-oauth-config-banner');
+    if (!banner) return;
+    const isHidden = banner.classList.contains('hidden');
+    if (isHidden) {
+      banner.classList.remove('hidden');
+      const input = document.getElementById('google-client-id-input');
+      if (input) {
+        input.value = this.getGoogleClientId();
+        input.focus();
+      }
+    } else {
+      banner.classList.add('hidden');
+    }
+  }
+
+  saveGoogleClientIdFromInput() {
+    const input = document.getElementById('google-client-id-input');
+    const val = (input ? input.value : '').trim();
+    if (!val) {
+      alert(this.currentLang === 'en' ? 'Please enter a Google OAuth Client ID!' : 'Vui lòng nhập Google OAuth Client ID!');
+      return;
+    }
+    localStorage.setItem('lifekeep_google_client_id', val);
+    this.toggleGoogleConfigBanner();
+    this.initGoogleIdentityServices();
+    this.showToast(this.currentLang === 'en' ? '✅ Google OAuth Client ID saved!' : '✅ Đã lưu Google OAuth Client ID thành công!');
+  }
+
+  initGoogleIdentityServices() {
+    const clientId = this.getGoogleClientId();
+    const btnContainer = document.getElementById('google-official-btn-container');
+    const officialSection = document.getElementById('google-official-oauth-section');
+    const divider = document.getElementById('google-divider-or');
+
+    if (!clientId) {
+      if (officialSection) officialSection.classList.add('hidden');
+      if (divider) divider.classList.add('hidden');
+      return;
+    }
+
+    if (officialSection) officialSection.classList.remove('hidden');
+    if (divider) divider.classList.remove('hidden');
+
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: (response) => {
+            if (response && response.credential) {
+              const payload = this.decodeJwtResponse(response.credential);
+              if (payload) {
+                this.handleGoogleOAuthSuccess(payload);
+              }
+            }
+          },
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+
+        if (btnContainer) {
+          btnContainer.innerHTML = '';
+          window.google.accounts.id.renderButton(btnContainer, {
+            theme: 'outline',
+            size: 'large',
+            type: 'standard',
+            text: 'continue_with',
+            shape: 'pill',
+            logo_alignment: 'left',
+            width: 280
+          });
+        }
+      } catch (e) {
+        console.warn('GIS initialize error:', e);
+      }
+    } else {
+      // Retry when GIS script loads
+      setTimeout(() => this.initGoogleIdentityServices(), 300);
+    }
+  }
+
+  decodeJwtResponse(token) {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error('Failed to decode JWT response:', e);
+      return null;
+    }
+  }
+
+  async handleGoogleOAuthSuccess(payload) {
+    const email = (payload.email || '').trim().toLowerCase();
+    const sub = payload.sub || '';
+    const name = (payload.name || payload.given_name || email.split('@')[0]).trim();
+    const picture = payload.picture || '';
+
+    if (!email) {
+      alert(this.currentLang === 'en' ? 'Unable to retrieve email from Google!' : 'Không nhận diện được email từ Google. Vui lòng thử lại!');
+      return;
+    }
+
+    // Google User Object - permanently identified by sub
+    const googleUser = {
+      id: 'google_' + (sub || btoa(email).replace(/=/g, '')),
+      sub: sub,
+      name: name,
+      email: email,
+      avatar: picture || 'google',
+      picture: picture,
+      provider: 'google',
+      emailVerified: payload.email_verified || true,
+      loggedAt: new Date().toISOString()
+    };
+
+    // Auto-provisioning: Check if this user already exists
+    const accounts = this.getRegisteredAccounts();
+    const existingIndex = accounts.findIndex(a => 
+      (a.sub && a.sub === googleUser.sub) || 
+      (a.email && a.email.toLowerCase() === googleUser.email)
+    );
+
+    let isNewAccount = false;
+    if (existingIndex >= 0) {
+      // Existing user: Update info & sub
+      accounts[existingIndex].name = googleUser.name;
+      accounts[existingIndex].sub = googleUser.sub;
+      accounts[existingIndex].avatar = googleUser.avatar;
+      accounts[existingIndex].picture = googleUser.picture;
+      accounts[existingIndex].provider = 'google';
+      this.currentUser = accounts[existingIndex];
+    } else {
+      // NEW USER: Auto-provision account in LifeKeep!
+      accounts.push(googleUser);
+      this.currentUser = googleUser;
+      isNewAccount = true;
+    }
+
+    this.saveRegisteredAccounts(accounts);
+    localStorage.setItem('lifekeep_last_google_email', this.currentUser.email);
+
+    // Save active auth session
+    this.setAuthSession(this.currentUser, true);
+
+    // Close Google modal
+    const modal = document.getElementById('google-auth-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      modal.style.display = 'none';
+    }
+
+    // Switch to isolated IndexedDB partition
+    this.hideAuthScreen();
+    await this.switchUserAccount(this.currentUser);
+
+    // Welcoming notification
+    if (isNewAccount) {
+      this.showToast(this.currentLang === 'en' 
+        ? `🎉 Welcome! New LifeKeep account created for ${this.currentUser.email}` 
+        : `🎉 Chào mừng bạn! Đã tự động tạo tài khoản LifeKeep mới cho ${this.currentUser.email}!`);
+    } else {
+      this.showToast(this.currentLang === 'en' 
+        ? `✅ Welcome back, ${this.currentUser.name}!` 
+        : `✅ Chào mừng bạn quay trở lại, ${this.currentUser.name}!`);
+    }
   }
 
   async selectGoogleAccount(email, name) {
