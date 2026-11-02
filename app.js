@@ -1569,20 +1569,17 @@ const I18N = {
     auth_btn_google: 'Tiếp tục với Google / Gmail',
     auth_no_account: 'Chưa có tài khoản?',
     auth_register_now: 'Đăng ký ngay',
-    gmail_modal_title: 'Đăng nhập qua Gmail',
-    gmail_modal_sub: 'Bảo mật dữ liệu LifeKeep bằng tài khoản Google',
-    gmail_device_accounts: 'Tài khoản Google trên thiết bị:',
+    gmail_modal_title: 'Đăng nhập bằng Google / Gmail',
+    gmail_modal_sub: 'Tạo tài khoản & đăng nhập trực tiếp vào LifeKeep',
+    gmail_device_accounts: 'Tài khoản Google đã lưu trên thiết bị này:',
     gmail_or_other: 'Hoặc đăng nhập với Gmail khác',
     gmail_address_label_html: 'Địa chỉ Gmail của bạn <span class="text-rose-500">*</span>',
-    gmail_address_placeholder: 'ví dụ: tenban@gmail.com',
-    gmail_name_label: 'Họ và tên hiển thị của bạn',
+    gmail_address_placeholder: 'ví dụ: yourname@gmail.com',
+    gmail_name_label: 'Họ và tên hiển thị (tùy chọn)',
     gmail_name_placeholder: 'Nhập họ tên của bạn (hoặc để trống)',
-    gmail_btn_signin: 'Đăng nhập qua Gmail này',
-    gmail_btn_open_official: 'Mở cửa sổ đăng nhập Google chính thức',
-    gmail_or_enter_manually: 'Hoặc kết nối bằng địa chỉ Gmail',
-    gmail_btn_enter_app: 'Đăng nhập vào LifeKeep',
-    gmail_open_account: 'Mở trang tài khoản Google (accounts.google.com)',
-    gmail_add_account: 'Thêm tài khoản khác',
+    gmail_btn_create_login: 'Tạo tài khoản & Đăng nhập ngay',
+    gmail_btn_signin: 'Tạo tài khoản & Đăng nhập ngay',
+    gmail_add_account: 'Đăng nhập tài khoản Gmail mới',
     gmail_logout_all: 'Đăng xuất khỏi tất cả các tài khoản',
     gmail_manage_account: 'Quản lý Tài khoản Google của bạn',
     gmail_upgrade_ultra: 'Nâng cấp lên Google AI Ultra',
@@ -2193,20 +2190,17 @@ const I18N = {
     auth_btn_google: 'Continue with Google / Gmail',
     auth_no_account: "Don't have an account?",
     auth_register_now: 'Register now',
-    gmail_modal_title: 'Sign in with Gmail',
-    gmail_modal_sub: 'Secure LifeKeep data with your Google account',
+    gmail_modal_title: 'Sign in with Google / Gmail',
+    gmail_modal_sub: 'Create account & sign in directly to LifeKeep',
     gmail_device_accounts: 'Google accounts on device:',
     gmail_or_other: 'Or sign in with another Gmail',
     gmail_address_label_html: 'Your Gmail address <span class="text-rose-500">*</span>',
     gmail_address_placeholder: 'e.g. yourname@gmail.com',
-    gmail_name_label: 'Display name',
+    gmail_name_label: 'Display name (optional)',
     gmail_name_placeholder: 'Enter your name (or leave blank)',
-    gmail_btn_signin: 'Sign in with this Gmail',
-    gmail_btn_open_official: 'Open official Google Sign-in window',
-    gmail_or_enter_manually: 'Or connect with Gmail address',
-    gmail_btn_enter_app: 'Sign in to LifeKeep',
-    gmail_open_account: 'Open Google Account (accounts.google.com)',
-    gmail_add_account: 'Add another account',
+    gmail_btn_create_login: 'Create Account & Sign In Now',
+    gmail_btn_signin: 'Create Account & Sign In Now',
+    gmail_add_account: 'Sign in with another Gmail',
     gmail_logout_all: 'Sign out of all accounts',
     gmail_manage_account: 'Manage your Google Account',
     gmail_upgrade_ultra: 'Upgrade to Google AI Ultra',
@@ -2671,15 +2665,15 @@ class LifeKeepApp {
   }
 
   async start() {
-    // Auto-clean stale service worker cache if upgraded to v37
+    // Auto-clean stale service worker cache if upgraded to v38
     try {
       const currentUiVersion = localStorage.getItem('lifekeep_ui_version');
-      if (currentUiVersion !== 'v37') {
-        localStorage.setItem('lifekeep_ui_version', 'v37');
+      if (currentUiVersion !== 'v38') {
+        localStorage.setItem('lifekeep_ui_version', 'v38');
         if ('caches' in window) {
           caches.keys().then(keys => {
             keys.forEach(k => {
-              if (k !== 'lifekeep-v37') caches.delete(k);
+              if (k !== 'lifekeep-v38') caches.delete(k);
             });
           });
         }
@@ -8296,7 +8290,7 @@ class LifeKeepApp {
     // Hide login screen and switch to this user's data
     this.hideAuthScreen();
     await this.switchUserAccount(googleUser);
-    this.showToast(this.currentLang === 'en' ? `✅ Signed in with Google: ${googleUser.email}!` : `✅ Đã đăng nhập bằng Google: ${googleUser.email}!`);
+    this.showToast(this.currentLang === 'en' ? `✅ Account ready & signed in: ${googleUser.email}!` : `✅ Đã tạo tài khoản & đăng nhập thành công: ${googleUser.email}!`);
   }
 
   async submitCustomGoogleAccount() {
@@ -8335,39 +8329,6 @@ class LifeKeepApp {
     this.showAuthScreen();
     this.updateUserUI();
     this.showToast(this.currentLang === 'en' ? '🚪 Signed out of all accounts' : '🚪 Đã đăng xuất khỏi tất cả các tài khoản');
-  }
-
-  openExternalGoogleAccount() {
-    window.open('https://myaccount.google.com/', '_blank');
-  }
-
-  openGoogleAIUltra() {
-    window.open('https://one.google.com/explore-plan/gemini-advanced', '_blank');
-  }
-
-  openExternalGoogleLogin() {
-    const width = 520;
-    const height = 650;
-    const left = window.screen.width ? (window.screen.width - width) / 2 : 100;
-    const top = window.screen.height ? (window.screen.height - height) / 2 : 100;
-    const lang = this.currentLang === 'en' ? 'en' : 'vi';
-    // AddSession guarantees Google ALWAYS displays the Email/Password sign-in form,
-    // avoiding redirect to myaccount.google.com when Chrome already has a session!
-    const targetUrl = `https://accounts.google.com/AddSession?hl=${lang}`;
-    
-    try {
-      const win = window.open(
-        targetUrl,
-        'GoogleSignInWindow',
-        `width=${width},height=${height},top=${top},left=${left},status=yes,toolbar=no,menubar=no,location=yes,resizable=yes`
-      );
-      if (!win) {
-        window.open(targetUrl, '_blank');
-      }
-    } catch (e) {
-      console.warn('Popup blocked, fallback to _blank:', e);
-      window.open(targetUrl, '_blank');
-    }
   }
 
   async handleGoogleAuthSubmit(event) {
