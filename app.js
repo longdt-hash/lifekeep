@@ -2665,15 +2665,15 @@ class LifeKeepApp {
   }
 
   async start() {
-    // Auto-clean stale service worker cache if upgraded to v40
+    // Auto-clean stale service worker cache if upgraded to v41
     try {
       const currentUiVersion = localStorage.getItem('lifekeep_ui_version');
-      if (currentUiVersion !== 'v40') {
-        localStorage.setItem('lifekeep_ui_version', 'v40');
+      if (currentUiVersion !== 'v41') {
+        localStorage.setItem('lifekeep_ui_version', 'v41');
         if ('caches' in window) {
           caches.keys().then(keys => {
             keys.forEach(k => {
-              if (k !== 'lifekeep-v40') caches.delete(k);
+              if (k !== 'lifekeep-v41') caches.delete(k);
             });
           });
         }
@@ -7853,6 +7853,9 @@ class LifeKeepApp {
 
   checkAuthSession() {
     try {
+      if (localStorage.getItem('lifekeep_logged_out') === 'true') {
+        return null;
+      }
       const sessionStr = localStorage.getItem('lifekeep_auth_session') || sessionStorage.getItem('lifekeep_auth_session');
       if (!sessionStr) return null;
       const user = JSON.parse(sessionStr);
@@ -8114,6 +8117,7 @@ class LifeKeepApp {
 
   setAuthSession(user, rememberMe = true) {
     if (!user) return;
+    localStorage.removeItem('lifekeep_logged_out');
     const safeUser = { ...user };
     delete safeUser.passwordHash;
     const sessionData = JSON.stringify(safeUser);
@@ -8146,6 +8150,9 @@ class LifeKeepApp {
 
         // Keep Firebase session synced across refreshes
         firebase.auth().onAuthStateChanged(async (fbUser) => {
+          if (localStorage.getItem('lifekeep_logged_out') === 'true') {
+            return;
+          }
           if (fbUser && !this.currentUser) {
             console.log('Auto-restoring session from Firebase Auth:', fbUser.email);
             const userObj = {
@@ -8573,11 +8580,21 @@ class LifeKeepApp {
     if (nameInput) nameInput.value = '';
   }
 
-  logoutAllGoogleAccounts() {
+  async logoutAllGoogleAccounts() {
+    localStorage.setItem('lifekeep_logged_out', 'true');
     localStorage.removeItem('lifekeep_auth_session');
     sessionStorage.removeItem('lifekeep_auth_session');
     localStorage.removeItem('lifekeep_last_google_email');
     this.currentUser = null;
+
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      try {
+        await firebase.auth().signOut();
+      } catch (e) {
+        console.warn('Firebase signOut error:', e);
+      }
+    }
+
     const modal = document.getElementById('google-auth-modal');
     if (modal) {
       modal.classList.add('hidden');
@@ -8651,9 +8668,19 @@ class LifeKeepApp {
 
   async logout() {
     if (!confirm(this.t('auth_confirm_logout') || 'Bạn có chắc chắn muốn đăng xuất khỏi LifeKeep?')) return;
+    localStorage.setItem('lifekeep_logged_out', 'true');
     localStorage.removeItem('lifekeep_auth_session');
     sessionStorage.removeItem('lifekeep_auth_session');
+    localStorage.removeItem('lifekeep_last_google_email');
     this.currentUser = null;
+
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      try {
+        await firebase.auth().signOut();
+      } catch (e) {
+        console.warn('Firebase signOut error:', e);
+      }
+    }
     
     // Clear all in-memory user data so nothing leaks on the lock screen
     this.items = [];

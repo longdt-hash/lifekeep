@@ -1,9 +1,9 @@
 // Service Worker for LifeKeep PWA - Network First Strategy
-const CACHE_NAME = 'lifekeep-v40';
+const CACHE_NAME = 'lifekeep-v41';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
-  './app.js?v=40',
+  './app.js?v=41',
   './manifest.json',
   './logo.png',
   './icon-192.png',
