@@ -323,3 +323,20 @@ AI sẽ đọc file này và tiếp tục hỗ trợ bạn một cách chính x�
 
 
 
+
+
+---
+
+## 12. TỰ ĐỘNG HÓA GITHUB CI/CD & BỘ CHỌN CHI TIÊU THEO THÁNG (PHIÊN BẢN v35)
+
+1. **Kết nối Git & GitHub Tự Động Hóa 100% (CI/CD Pipeline):**
+   - **Kho GitHub**: `longdt-hash/lifekeep` (nhánh `main`).
+   - **Tự động triển khai (Auto-deploy)**: Khi có commit trên GitHub, Vercel tự động build và xuất bản bản mới lên `https://lifekeep-khaki.vercel.app` trong ~10 giây.
+   - **Khắc phục Git Windows Portable**: Vô hiệu hóa `helper-selector` bị treo trong môi trường không tương tác và tắt kiểm tra thu hồi chứng chỉ `schannelCheckRevoke = false`.
+   - **Quy tắc `.gitignore` chuẩn**: Tự động loại trừ các gói nén lớn (`*.zip`), thư mục `.idea/`, thư mục build `Chplay/` và ảnh tạm.
+
+2. **Nâng cấp Bộ chọn Tổng chi tiêu theo Tháng (Hero Monthly Spending Selector):**
+   - **Mặc định theo tháng thực tế**: Khi mở ứng dụng, màn hình chính luôn mặc định hiển thị **Tổng chi tiêu của Tháng hiện tại** (ví dụ: `TỔNG CHI TIÊU THÁNG NÀY (T11/2026)`), tính tổng tiền chi tiêu thực tế của đúng tháng đó.
+   - **Menu chọn tháng linh hoạt**: Nút bấm trên cùng tích hợp dropdown cho phép chọn bất kỳ tháng nào trong quá khứ/tương lai (Tháng 11, Tháng 10, Tháng 9... và cả năm).
+   - **Đồng bộ toàn diện**: Tự động đồng bộ số tiền lớn `#hero-total-balance` và thẻ thống kê `#metric-cost` ngay khi người dùng chuyển tháng.
+   - **Service Worker v35**: Đẩy cache mới `lifekeep-v35` để mọi thiết bị di động và máy tính tự động cập nhật ngay lập tức.
