@@ -1,14 +1,16 @@
 // Service Worker for LifeKeep PWA - Network First Strategy
-const CACHE_NAME = 'lifekeep-v41';
+const CACHE_NAME = 'lifekeep-v35';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
-  './app.js?v=41',
+  './firebase-config.js?v=35',
+  './app.js?v=35',
   './manifest.json',
   './logo.png',
   './icon-192.png',
   './favicon.png',
-  './apple-touch-icon.png'
+  './apple-touch-icon.png',
+  './privacy.html'
 ];
 
 self.addEventListener('install', (event) => {
@@ -57,9 +59,6 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Only process HTTP and HTTPS requests, ignore unsupported schemes (e.g., chrome-extension)
-  if (!event.request.url.startsWith('http')) return;
-
   // Always fetch fresh HTML from network for navigations
   if (event.request.mode === 'navigate') {
     event.respondWith(
