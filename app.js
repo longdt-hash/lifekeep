@@ -769,6 +769,116 @@ const PRESET_TEMPLATES = [
   }
 ];
 
+// Preset English Templates for One-Tap Filling
+const PRESET_TEMPLATES_EN = [
+  {
+    name: "Vehicle Inspection & Registration",
+    category: "vehicle",
+    cycleMonths: 12,
+    provider: "Motor Vehicle Inspection Center",
+    notes: "Bring original vehicle registration, valid civil liability insurance, and check traffic fines beforehand.",
+    icon: "🚗",
+    subItems: [
+      { name: "Safety & emissions inspection fee", cost: 35 },
+      { name: "Registration certificate sticker fee", cost: 15 },
+      { name: "Road maintenance fee (1 year)", cost: 100 }
+    ]
+  },
+  {
+    name: "Auto / Motorcycle Insurance",
+    category: "vehicle",
+    cycleMonths: 12,
+    provider: "Geico / Progressive / State Farm",
+    notes: "Save digital insurance card with QR code on phone for roadside checks.",
+    icon: "🛡️",
+    subItems: [
+      { name: "Mandatory liability insurance policy", cost: 60 }
+    ]
+  },
+  {
+    name: "Oil Change & Routine Service",
+    category: "vehicle",
+    cycleMonths: 6,
+    provider: "Auto Service Center / Dealership",
+    notes: "Change engine oil every 5,000 miles or 6 months. Check air filter and coolant.",
+    icon: "🔧",
+    subItems: [
+      { name: "Synthetic motor oil", cost: 50 },
+      { name: "New oil filter replacement", cost: 15 },
+      { name: "Labor and multi-point inspection", cost: 35 }
+    ]
+  },
+  {
+    name: "Air Conditioner Cleaning & Service",
+    category: "home",
+    cycleMonths: 6,
+    provider: "HVAC Technician",
+    notes: "Clean filters and outdoor condenser before summer heat to reduce energy bills.",
+    icon: "❄️",
+    subItems: [
+      { name: "AC coil & blower deep cleaning", cost: 80 },
+      { name: "Refrigerant top-up check", cost: 40 }
+    ]
+  },
+  {
+    name: "Water Filter Replacement",
+    category: "home",
+    cycleMonths: 6,
+    provider: "Water Filtration Dealer",
+    notes: "Stage 1 (Sediment): 3-6 mos. Stage 2 (Carbon block): 6-9 mos. Stage 3 (Reverse Osmosis): 12 mos.",
+    icon: "💧",
+    subItems: [
+      { name: "Sediment filter cartridge", cost: 15 },
+      { name: "Carbon block filter cartridge", cost: 20 },
+      { name: "Post-carbon / RO filter replacement", cost: 25 }
+    ]
+  },
+  {
+    name: "Apartment / House Lease",
+    category: "home",
+    cycleMonths: 12,
+    provider: "Landlord / Property Management",
+    notes: "Notify 30-45 days before lease expiration if renewing or moving out to receive security deposit.",
+    icon: "🏠",
+    subItems: [
+      { name: "Monthly / Periodic rent payment", cost: 1200 }
+    ]
+  },
+  {
+    name: "Passport / ID Card Renewal",
+    category: "identity",
+    cycleMonths: 120,
+    provider: "Passport Agency / Civil Registry",
+    notes: "Renew at least 6 months before expiry date, as most countries require 6 months validity.",
+    icon: "🛂",
+    subItems: [
+      { name: "Passport renewal application fee", cost: 130 }
+    ]
+  },
+  {
+    name: "Health & Medical Insurance",
+    category: "identity",
+    cycleMonths: 12,
+    provider: "Blue Cross / Aetna / UnitedHealthcare",
+    notes: "Pay renewal premium on time to maintain continuous coverage and avoid waiting periods.",
+    icon: "🏥",
+    subItems: [
+      { name: "Annual health insurance renewal premium", cost: 350 }
+    ]
+  },
+  {
+    name: "Laptop / Phone Warranty Extension",
+    category: "tech",
+    cycleMonths: 12,
+    provider: "AppleCare / Official Tech Support",
+    notes: "Keep original receipt or invoice for warranty claims.",
+    icon: "💻",
+    subItems: [
+      { name: "AppleCare+ / Extended warranty package", cost: 150 }
+    ]
+  }
+];
+
 // Sample Initial Seed Data with cost and sub-items breakdown
 const INITIAL_SEED_ITEMS = [
   {
@@ -1200,7 +1310,88 @@ const I18N = {
     tx_alert_invalid_amount: 'Vui lòng nhập số tiền hợp lệ!',
     budget_alert_invalid_amount: 'Vui lòng nhập số tiền ngân sách hợp lệ!',
     cat_alert_empty_name: 'Vui lòng nhập tên danh mục!',
-    cat_confirm_delete: 'Bạn có chắc muốn xóa danh mục tùy chỉnh này?'
+    cat_confirm_delete: 'Bạn có chắc muốn xóa danh mục tùy chỉnh này?',
+
+    // Item Modal (Thêm / Chỉnh sửa nhắc việc & chi phí)
+    item_modal_title_add: 'Thêm giấy tờ / Thiết bị mới',
+    item_modal_title_edit: 'Chỉnh sửa mục & Chi phí',
+    item_template_hint: '⚡ Chọn nhanh mẫu thông dụng:',
+    item_name_label: 'Tên mục / Tài sản',
+    item_name_placeholder: 'Ví dụ: Đăng kiểm xe CX5, Máy lọc nước Karofi...',
+    item_category_label: 'Danh mục',
+    cat_vehicle_opt: '🚗 Phương tiện (Xe)',
+    cat_home_opt: '🏠 Gia dụng & Nhà',
+    cat_identity_opt: '🪪 Giấy tờ cá nhân',
+    cat_tech_opt: '💻 Đồ công nghệ',
+    cat_other_opt: '📌 Khác',
+    item_due_date_label: 'Ngày đến hạn',
+    item_due_time_label: 'Giờ thông báo',
+    item_reminder_time_hint: '⏰ Giờ nhắc',
+    item_cycle_label: 'Chu kỳ lặp lại (tháng)',
+    item_cycle_placeholder: 'Ví dụ: 6, 12, 24',
+    item_alarm_title: 'Chuông thông báo của thiết bị',
+    item_alarm_desc: 'Tự động nhận chuông cài trên máy, rung & hiện thông báo khi đến hạn (Không cần tải file)',
+    item_phone_label: 'Số hotline / Thợ quen',
+    item_phone_placeholder: '0908...',
+    item_provider_label: 'Đơn vị / Nơi làm',
+    item_provider_placeholder: 'Gara, Trung tâm, Thợ...',
+    item_cost_sub_title: '💰 Chi phí & Bóc tách các khoản con:',
+    item_btn_add_sub_cost: '+ Thêm khoản con',
+    item_cost_sub_desc: 'Điền số tiền hoặc bóc tách từng món con (ví dụ: Thay nhớt, lọc gió, tiền công...) để thống kê vào biểu đồ chi tiêu.',
+    item_sub_name_placeholder: 'Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)',
+    item_sub_cost_placeholder: 'Số tiền ₫',
+    item_sub_delete_title: 'Xóa khoản này',
+    item_main_cost_label: 'Chi phí chính',
+    item_total_cost_label: 'Tổng chi phí:',
+    item_notes_label: 'Ghi chú & Lưu ý',
+    item_notes_placeholder: 'Ví dụ: Vị trí cất sổ gốc, số hợp đồng, phụ kiện cần thay...',
+    item_reminder_before_label: '🔔 Nhắc nhở trước thời hạn:',
+    item_reminder_before_hint: 'Chọn các mốc báo trước',
+    item_remind_30d: '30 ngày',
+    item_remind_7d: '7 ngày',
+    item_remind_3d: '3 ngày',
+    item_remind_1d: '1 ngày',
+    item_remind_0d: 'Đúng ngày',
+    item_save_template_cb: '⭐ Lưu mục này thành mẫu riêng (hiện trên thanh chọn nhanh)',
+    item_photo_label: 'Ảnh giấy tờ / Phiếu bảo hành',
+    item_photo_snap_title: 'Chụp ảnh',
+    item_photo_snap_desc: 'Mở camera',
+    item_photo_upload_title: 'Chọn từ máy',
+    item_photo_upload_desc: 'File / Bộ sưu tập',
+    item_btn_delete: 'Xóa mục',
+    item_btn_save: 'Lưu thông tin',
+
+    // Detail Modal
+    detail_due_label: 'Hạn thực hiện:',
+    detail_cycle_label: 'Chu kỳ lặp:',
+    detail_time_label: 'Giờ & Chuông máy:',
+    detail_provider_label: 'Nơi thực hiện / Đơn vị:',
+    detail_cost_title: 'Chi phí & Bóc tách chi phí con:',
+    detail_alarm_title: 'Chuông thông báo của máy',
+    detail_alarm_desc: 'Tự động nhận chuông cài trên thiết bị, không cần tải file',
+    detail_notes_label: 'Ghi chú & Hướng dẫn:',
+    detail_photos_label: 'Ảnh giấy tờ / Biên nhận:',
+    detail_history_label: 'Lịch sử bảo dưỡng / chi phí:',
+    detail_btn_complete: 'Ghi nhận bảo dưỡng & Chi phí',
+
+    // Complete Modal
+    complete_modal_title: 'Ghi nhận hoàn thành & Chi phí',
+    complete_date_label: 'Ngày thực hiện',
+    complete_provider_label: 'Gara / Thợ / Nơi làm',
+    complete_provider_placeholder: 'Gara Thành Phát, Thợ Tuấn...',
+    complete_sub_title: 'Bóc tách các khoản chi phí con:',
+    complete_btn_add_sub: '+ Thêm dòng',
+    complete_sub_desc: 'Ví dụ: Thay nhớt, Lọc dầu, Tiền công... để sau này tra cứu chi tiết từng món.',
+    complete_total_label: 'Tổng chi phí lần này:',
+    complete_notes_label: 'Ghi chú lần này (Km xe, bảo hành thợ...)',
+    complete_notes_placeholder: 'Ví dụ: Thay lúc 45.000km, thợ bảo hành 3 tháng...',
+    complete_photo_label: 'Ảnh hóa đơn / Biên nhận (Tùy chọn)',
+    complete_after_label: 'Sau khi lưu hoàn thành:',
+    complete_action_repeat_title: '🔄 Lặp lại định kỳ',
+    complete_action_repeat_desc: 'Tự dời ngày theo chu kỳ',
+    complete_action_finish_title: '🏁 Xong hoàn toàn',
+    complete_action_finish_desc: 'Lưu vào Nhật ký (Đã xong)',
+    complete_btn_confirm: 'Xác nhận hoàn thành'
   },
   en: {
     // App & Header
@@ -1428,8 +1619,8 @@ const I18N = {
     tx_type_label: 'Transaction Type',
     tx_type_expense: '🔴 Expense',
     tx_type_income: '🟢 Income',
-    tx_amount_label: 'Amount (₫)',
-    tx_amount_placeholder: 'e.g. 150.000',
+    tx_amount_label: 'Amount ($)',
+    tx_amount_placeholder: 'e.g. 50',
     tx_cat_label: 'Category',
     tx_manage_cat: '⚙️ Manage Categories',
     tx_date_label: 'Date',
@@ -1441,7 +1632,7 @@ const I18N = {
     sb_modal_title: 'Set Initial Starting Balance',
     sb_modal_subtitle: 'Track spending against your initial capital',
     sb_modal_desc: '💡 <strong>Starting Balance</strong> is the total money you had when you began using LifeKeep. From this amount, the app calculates <strong>what percentage you have spent</strong> and <strong>how much original money remains</strong>.',
-    sb_input_label: 'Enter Initial Starting Balance (₫):',
+    sb_input_label: 'Enter Initial Starting Balance ($):',
     sb_quick_suggestions: '⚡ Quick amount suggestions:',
     sb_save_btn: 'Save Starting Balance',
     sb_cancel_btn: 'Cancel',
@@ -1449,7 +1640,7 @@ const I18N = {
     // Budget Modal
     budget_modal_title: 'Set Monthly Budget Limit',
     budget_applied_month: 'Target Month',
-    budget_max_limit_label: 'Maximum Spending Limit (₫)',
+    budget_max_limit_label: 'Maximum Spending Limit ($)',
     budget_default_checkbox: 'Set as default budget for all future months',
     budget_save_btn: 'Save Budget Limit',
     budget_delete_btn: 'Delete',
@@ -1470,9 +1661,9 @@ const I18N = {
     // Unit & Quick Chips
     unit_million: 'M',
     quick_amount_suggestions: '⚡ Quick amount suggestions:',
-    budget_placeholder: 'e.g. 15,000,000',
+    budget_placeholder: 'e.g. 1,000',
     budget_delete_title: 'Delete budget for this month',
-    sb_input_placeholder: 'e.g. 10,000,000',
+    sb_input_placeholder: 'e.g. 5,000',
 
     // Excel Export Modal
     export_csv_modal_title: 'Export Excel Report (CSV)',
@@ -1496,7 +1687,88 @@ const I18N = {
     tx_alert_invalid_amount: 'Please enter a valid amount!',
     budget_alert_invalid_amount: 'Please enter a valid budget amount!',
     cat_alert_empty_name: 'Please enter a category name!',
-    cat_confirm_delete: 'Are you sure you want to delete this custom category?'
+    cat_confirm_delete: 'Are you sure you want to delete this custom category?',
+
+    // Item Modal (Add / Edit Reminder & Expenses)
+    item_modal_title_add: 'Add Reminder / Asset',
+    item_modal_title_edit: 'Edit Item & Expenses',
+    item_template_hint: '⚡ Quick Templates:',
+    item_name_label: 'Item / Asset Name',
+    item_name_placeholder: 'e.g. Car Inspection, AC Maintenance Karofi...',
+    item_category_label: 'Category',
+    cat_vehicle_opt: '🚗 Vehicle (Car/Motorbike)',
+    cat_home_opt: '🏠 Home & Appliances',
+    cat_identity_opt: '🪪 Personal Documents',
+    cat_tech_opt: '💻 Technology & Devices',
+    cat_other_opt: '📌 Other',
+    item_due_date_label: 'Due Date',
+    item_due_time_label: 'Alert Time',
+    item_reminder_time_hint: '⏰ Alarm Time',
+    item_cycle_label: 'Repeat Cycle (months)',
+    item_cycle_placeholder: 'e.g. 6, 12, 24',
+    item_alarm_title: 'Device Native Alarm',
+    item_alarm_desc: 'Uses device notification ringtone, vibration & alert at due time (No download needed)',
+    item_phone_label: 'Phone / Service Hotline',
+    item_phone_placeholder: 'e.g. +1 555-0199',
+    item_provider_label: 'Service Provider / Shop',
+    item_provider_placeholder: 'e.g. Service Center, Shop, Mechanic...',
+    item_cost_sub_title: '💰 Itemized Expenses & Sub-costs:',
+    item_btn_add_sub_cost: '+ Add Sub-cost',
+    item_cost_sub_desc: 'Enter total or break down sub-costs (e.g. oil, parts, labor) for spending analytics.',
+    item_sub_name_placeholder: 'Sub-item name (e.g. Oil change, filter...)',
+    item_sub_cost_placeholder: 'Amount ($)',
+    item_sub_delete_title: 'Remove this cost',
+    item_main_cost_label: 'Main Cost',
+    item_total_cost_label: 'Total Cost:',
+    item_notes_label: 'Notes & Instructions',
+    item_notes_placeholder: 'e.g. Policy number, invoice location, parts required...',
+    item_reminder_before_label: '🔔 Advance Reminders:',
+    item_reminder_before_hint: 'Select reminder checkpoints',
+    item_remind_30d: '30 days',
+    item_remind_7d: '7 days',
+    item_remind_3d: '3 days',
+    item_remind_1d: '1 day',
+    item_remind_0d: 'On due day',
+    item_save_template_cb: '⭐ Save as custom template (shows on quick bar)',
+    item_photo_label: 'Document / Warranty Photo',
+    item_photo_snap_title: 'Take Photo',
+    item_photo_snap_desc: 'Open camera',
+    item_photo_upload_title: 'Choose File',
+    item_photo_upload_desc: 'Gallery / Files',
+    item_btn_delete: 'Delete Item',
+    item_btn_save: 'Save Item',
+
+    // Detail Modal
+    detail_due_label: 'Due Date:',
+    detail_cycle_label: 'Repeat Cycle:',
+    detail_time_label: 'Time & Alarm:',
+    detail_provider_label: 'Service Provider / Shop:',
+    detail_cost_title: 'Itemized Expenses & Sub-costs:',
+    detail_alarm_title: 'Device Native Alarm',
+    detail_alarm_desc: 'Uses device notification ringtone & vibration at due time',
+    detail_notes_label: 'Notes & Instructions:',
+    detail_photos_label: 'Photos & Receipts:',
+    detail_history_label: 'Maintenance & Expense History:',
+    detail_btn_complete: 'Complete & Log Expenses',
+
+    // Complete Modal
+    complete_modal_title: 'Complete & Log Expenses',
+    complete_date_label: 'Date Completed',
+    complete_provider_label: 'Service Provider / Shop',
+    complete_provider_placeholder: 'e.g. Official Dealer, Auto Care...',
+    complete_sub_title: 'Itemized Expense Breakdown:',
+    complete_btn_add_sub: '+ Add Row',
+    complete_sub_desc: 'e.g. Oil change, filter, labor... to track exact itemized costs.',
+    complete_total_label: 'Total Cost This Time:',
+    complete_notes_label: 'Notes (Mileage, warranty...)',
+    complete_notes_placeholder: 'e.g. Replaced at 45k miles, 3 months warranty...',
+    complete_photo_label: 'Receipt / Invoice Photo (Optional)',
+    complete_after_label: 'After completion:',
+    complete_action_repeat_title: '🔄 Recurring Schedule',
+    complete_action_repeat_desc: 'Auto-reschedule by cycle',
+    complete_action_finish_title: '🏁 Mark Finished',
+    complete_action_finish_desc: 'Archive to history logs',
+    complete_btn_confirm: 'Confirm & Complete'
   }
 };
 
@@ -1667,7 +1939,62 @@ class LifeKeepApp {
         }
       }
     }
+
+    // 8. Dynamic quick amount chips & currency symbol
+    this.renderQuickAmountChips();
+
+    // 9. Refresh preset template chips in Add Item modal
+    this.renderTemplates();
+
+    // 10. If analytics modal is visible, re-render analytics charts
+    const analyticsModal = document.getElementById('analytics-modal');
+    if (analyticsModal && !analyticsModal.classList.contains('hidden')) {
+      this.renderAnalytics();
+    }
+
+    // 11. Refresh total cost display in Add Item modal if open
+    const itemModal = document.getElementById('item-modal');
+    if (itemModal && !itemModal.classList.contains('hidden')) {
+      this.calculateItemTotalCost();
+    }
+
     this.updateNotificationBadge();
+  }
+
+  getPresetTemplates() {
+    return this.currentLang === 'en' ? PRESET_TEMPLATES_EN : PRESET_TEMPLATES;
+  }
+
+  renderQuickAmountChips() {
+    const isEn = this.currentLang === 'en';
+
+    // Starting Balance chips
+    const sbContainer = document.getElementById('sb-quick-suggestions-chips');
+    if (sbContainer) {
+      const sbAmounts = isEn 
+        ? [ { label: '$500', val: 500 }, { label: '$1,000', val: 1000 }, { label: '$2,000', val: 2000 }, { label: '$5,000', val: 5000 }, { label: '$10,000', val: 10000 } ]
+        : [ { label: '5 triệu', val: 5000000 }, { label: '10 triệu', val: 10000000 }, { label: '20 triệu', val: 20000000 }, { label: '50 triệu', val: 50000000 }, { label: '100 triệu', val: 100000000 } ];
+      sbContainer.innerHTML = sbAmounts.map(a => `
+        <button type="button" onclick="app.setQuickStartingBalance(${a.val})" class="px-2.5 py-1 bg-slate-100 hover:bg-amber-100 hover:text-amber-900 rounded-lg text-[11px] font-semibold transition border border-slate-200">${a.label}</button>
+      `).join('');
+    }
+
+    // Budget chips
+    const budgetContainer = document.getElementById('budget-quick-suggestions-chips');
+    if (budgetContainer) {
+      const bAmounts = isEn
+        ? [ { label: '$200', val: 200 }, { label: '$500', val: 500 }, { label: '$1,000', val: 1000 }, { label: '$2,000', val: 2000 }, { label: '$3,000', val: 3000 } ]
+        : [ { label: '5 triệu', val: 5000000 }, { label: '10 triệu', val: 10000000 }, { label: '15 triệu', val: 15000000 }, { label: '20 triệu', val: 20000000 }, { label: '30 triệu', val: 30000000 } ];
+      budgetContainer.innerHTML = bAmounts.map(a => `
+        <button type="button" onclick="app.setFormattedAmount('budget-amount-input', ${a.val})" class="px-2.5 py-1 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300 rounded-lg text-slate-700 text-xs transition border border-slate-200">${a.label}</button>
+      `).join('');
+    }
+
+    // SB currency symbol
+    const sbSymbol = document.getElementById('sb-currency-symbol');
+    if (sbSymbol) {
+      sbSymbol.textContent = isEn ? '$' : '₫';
+    }
   }
 
   // ================= UTILITY & INPUT FORMATTERS =================
@@ -1713,7 +2040,7 @@ class LifeKeepApp {
     }, 2200);
   }
 
-  // Format currency with distinct dot (.) thousand separators (e.g. 150000 -> 150.000)
+  // Format currency with distinct thousand separators (. for VI, , for EN)
   formatCurrencyInput(input) {
     if (!input) return;
     const originalValue = input.value || '';
@@ -1727,8 +2054,8 @@ class LifeKeepApp {
       return;
     }
 
-    // Format with dots as thousands separator: 150000 -> 150.000 (100% reliable across all browsers & OS)
-    const formatted = cleanDigits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const separator = this.currentLang === 'en' ? ',' : '.';
+    const formatted = cleanDigits.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
     input.value = formatted;
 
     // Reposition cursor smoothly
@@ -1757,7 +2084,8 @@ class LifeKeepApp {
     if (val === null || val === undefined || val === '') return '';
     const clean = String(val).replace(/\D/g, '');
     if (!clean) return '';
-    return clean.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const separator = this.currentLang === 'en' ? ',' : '.';
+    return clean.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
   }
 
   setFormattedAmount(target, amount) {
@@ -1896,15 +2224,15 @@ class LifeKeepApp {
   }
 
   async start() {
-    // Auto-clean stale service worker cache if upgraded to v29
+    // Auto-clean stale service worker cache if upgraded to v36
     try {
       const currentUiVersion = localStorage.getItem('lifekeep_ui_version');
-      if (currentUiVersion !== 'v29') {
-        localStorage.setItem('lifekeep_ui_version', 'v29');
+      if (currentUiVersion !== 'v36') {
+        localStorage.setItem('lifekeep_ui_version', 'v36');
         if ('caches' in window) {
           caches.keys().then(keys => {
             keys.forEach(k => {
-              if (k !== 'lifekeep-v29') caches.delete(k);
+              if (k !== 'lifekeep-v36') caches.delete(k);
             });
           });
         }
@@ -3195,7 +3523,15 @@ class LifeKeepApp {
   }
 
   formatMoney(num) {
-    if (!num) return '0 ₫';
+    if (!num) return this.currentLang === 'en' ? '$0' : '0 ₫';
+    if (this.currentLang === 'en') {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: num % 1 !== 0 ? 2 : 0,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
   }
 
@@ -3746,7 +4082,7 @@ class LifeKeepApp {
     }
 
     // Default presets
-    html += PRESET_TEMPLATES.map((tmpl, idx) => `
+    html += this.getPresetTemplates().map((tmpl, idx) => `
       <button 
         type="button" 
         onclick="app.applyTemplate(${idx})" 
@@ -3760,7 +4096,7 @@ class LifeKeepApp {
   }
 
   applyTemplate(idx) {
-    const tmpl = PRESET_TEMPLATES[idx];
+    const tmpl = this.getPresetTemplates()[idx];
     if (!tmpl) return;
 
     document.getElementById('input-name').value = tmpl.name;
@@ -3781,7 +4117,7 @@ class LifeKeepApp {
       if (tmpl.subItems && tmpl.subItems.length > 0) {
         tmpl.subItems.forEach(s => this.addItemSubCostRow(s.name, s.cost));
       } else {
-        this.addItemSubCostRow('Chi phí chính', '');
+        this.addItemSubCostRow(this.t('item_main_cost_label'), '');
       }
       this.calculateItemTotalCost();
     }
@@ -3809,9 +4145,9 @@ class LifeKeepApp {
       if (tmpl.subItems && tmpl.subItems.length > 0) {
         tmpl.subItems.forEach(s => this.addItemSubCostRow(s.name, s.cost));
       } else if (tmpl.cost) {
-        this.addItemSubCostRow('Chi phí chính', tmpl.cost);
+        this.addItemSubCostRow(this.t('item_main_cost_label'), tmpl.cost);
       } else {
-        this.addItemSubCostRow('Chi phí chính', '');
+        this.addItemSubCostRow(this.t('item_main_cost_label'), '');
       }
       this.calculateItemTotalCost();
     }
@@ -3839,14 +4175,14 @@ class LifeKeepApp {
     row.innerHTML = `
       <input 
         type="text" 
-        placeholder="Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)" 
+        placeholder="${this.t('item_sub_name_placeholder')}" 
         value="${this.escapeHtml(name)}" 
         class="item-sub-name flex-1 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white" 
       />
       <input 
         type="text" 
         inputmode="numeric" 
-        placeholder="Số tiền ₫" 
+        placeholder="${this.t('item_sub_cost_placeholder')}" 
         value="${this.formatMoneyString(cost)}" 
         oninput="app.formatCurrencyInput(this); app.calculateItemTotalCost();" 
         onkeyup="app.formatCurrencyInput(this); app.calculateItemTotalCost();" 
@@ -3857,7 +4193,7 @@ class LifeKeepApp {
         type="button" 
         onclick="this.parentElement.remove(); app.calculateItemTotalCost();" 
         class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg text-sm transition" 
-        title="Xóa khoản này"
+        title="${this.t('item_sub_delete_title')}"
       >✕</button>
     `;
     container.appendChild(row);
@@ -3892,7 +4228,7 @@ class LifeKeepApp {
     });
 
     if (itemToEdit) {
-      title.textContent = 'Chỉnh sửa mục & Chi phí';
+      title.textContent = this.t('item_modal_title_edit');
       const deleteBtn = document.getElementById('item-delete-btn');
       if (deleteBtn) deleteBtn.classList.remove('hidden');
       document.getElementById('item-id').value = itemToEdit.id;
@@ -3929,13 +4265,13 @@ class LifeKeepApp {
           populated = true;
         } else if (itemToEdit.cost > 0 || (existingLogs.length > 0 && (existingLogs[0].totalCost || existingLogs[0].cost))) {
           const costVal = itemToEdit.cost || existingLogs[0].totalCost || existingLogs[0].cost;
-          this.addItemSubCostRow('Chi phí chính', costVal);
+          this.addItemSubCostRow(this.t('item_main_cost_label'), costVal);
           populated = true;
         }
       }
 
       if (!populated) {
-        this.addItemSubCostRow('Chi phí chính', '');
+        this.addItemSubCostRow(this.t('item_main_cost_label'), '');
       }
 
       this.calculateItemTotalCost();
@@ -3953,7 +4289,7 @@ class LifeKeepApp {
         `;
       }
     } else {
-      title.textContent = 'Thêm giấy tờ / Thiết bị mới';
+      title.textContent = this.t('item_modal_title_add');
       const deleteBtn = document.getElementById('item-delete-btn');
       if (deleteBtn) deleteBtn.classList.add('hidden');
       document.getElementById('item-id').value = '';
@@ -3970,7 +4306,7 @@ class LifeKeepApp {
       }
 
       // Add 1 initial cost row for adding new item
-      this.addItemSubCostRow('Chi phí chính', '');
+      this.addItemSubCostRow(this.t('item_main_cost_label'), '');
       this.calculateItemTotalCost();
     }
 
@@ -4556,20 +4892,22 @@ class LifeKeepApp {
     }
     const cycleEl = document.getElementById('detail-cycle');
     if (cycleEl) {
-      cycleEl.textContent = item.cycleMonths ? `${item.cycleMonths} tháng` : 'Không lặp định kỳ';
+      cycleEl.textContent = item.cycleMonths 
+        ? (this.currentLang === 'en' ? `${item.cycleMonths} months` : `${item.cycleMonths} tháng`) 
+        : (this.currentLang === 'en' ? 'No repeat' : 'Không lặp định kỳ');
     }
-    document.getElementById('detail-provider').textContent = item.provider || 'Chưa cập nhật';
+    document.getElementById('detail-provider').textContent = item.provider || (this.currentLang === 'en' ? 'Not updated' : 'Chưa cập nhật');
 
     // Phone / Hotline button
     const phoneBtnContainer = document.getElementById('detail-phone-container');
     if (item.phone) {
       phoneBtnContainer.innerHTML = `
         <a href="tel:${item.phone}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-medium transition">
-          📞 Gọi ${item.phone}
+          📞 ${this.currentLang === 'en' ? 'Call' : 'Gọi'} ${item.phone}
         </a>
       `;
     } else {
-      phoneBtnContainer.innerHTML = `<span class="text-slate-500 text-xs">Chưa có số</span>`;
+      phoneBtnContainer.innerHTML = `<span class="text-slate-500 text-xs">${this.currentLang === 'en' ? 'No phone' : 'Chưa có số'}</span>`;
     }
 
     // Render Cost & Sub-items Section in detail modal
@@ -4593,23 +4931,23 @@ class LifeKeepApp {
       } else if (totalCost > 0) {
         subcostsEl.innerHTML = `
           <div class="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="text-slate-600">Tổng chi phí</span>
+            <span class="text-slate-600">${this.currentLang === 'en' ? 'Total Cost' : 'Tổng chi phí'}</span>
             <span class="font-bold text-emerald-700">${this.formatMoney(totalCost)}</span>
           </div>
         `;
       } else {
         subcostsEl.innerHTML = `
           <div class="text-[11px] text-slate-500 flex items-center justify-between py-1">
-            <span>Chưa điền chi phí cho mục này</span>
+            <span>${this.currentLang === 'en' ? 'No costs entered for this item' : 'Chưa điền chi phí cho mục này'}</span>
             <button type="button" onclick="app.editSelectedItem()" class="text-purple-600 font-bold hover:underline flex items-center gap-1">
-              <span>✏️</span> Điền chi phí
+              <span>✏️</span> ${this.currentLang === 'en' ? 'Enter cost' : 'Điền chi phí'}
             </button>
           </div>
         `;
       }
     }
 
-    document.getElementById('detail-notes').textContent = item.notes || 'Không có ghi chú thêm.';
+    document.getElementById('detail-notes').textContent = item.notes || (this.currentLang === 'en' ? 'No extra notes.' : 'Không có ghi chú thêm.');
 
     // Device Alarm status & toggle button in detail modal
     const isAlarmOn = item.notifyPhone !== false;
@@ -4622,20 +4960,28 @@ class LifeKeepApp {
     if (alarmBtn && alarmBtnText) {
       if (isAlarmOn) {
         alarmBtn.className = 'px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold transition text-xs shrink-0 flex items-center gap-1 shadow-md shadow-purple-600/20 active:scale-95';
-        alarmBtnText.textContent = 'Đang bật 🔔';
+        alarmBtnText.textContent = this.currentLang === 'en' ? 'Enabled 🔔' : 'Đang bật 🔔';
         if (alarmIcon) {
           alarmIcon.className = 'w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-bold border border-purple-200 shrink-0';
           alarmIcon.textContent = '🔔';
         }
-        if (alarmDesc) alarmDesc.textContent = `Chuông máy sẽ reo lúc ${item.dueTime || '08:00'} ngày ${this.formatDateVN(item.dueDate)}`;
+        if (alarmDesc) {
+          alarmDesc.textContent = this.currentLang === 'en'
+            ? `Device alarm will ring at ${item.dueTime || '08:00'} on ${this.formatDateVN(item.dueDate)}`
+            : `Chuông máy sẽ reo lúc ${item.dueTime || '08:00'} ngày ${this.formatDateVN(item.dueDate)}`;
+        }
       } else {
         alarmBtn.className = 'px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-semibold transition text-xs shrink-0 flex items-center gap-1 border border-slate-200 active:scale-95';
-        alarmBtnText.textContent = 'Đang tắt 🔕';
+        alarmBtnText.textContent = this.currentLang === 'en' ? 'Disabled 🔕' : 'Đang tắt 🔕';
         if (alarmIcon) {
           alarmIcon.className = 'w-8 h-8 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center text-sm font-bold border border-slate-200 shrink-0';
           alarmIcon.textContent = '🔕';
         }
-        if (alarmDesc) alarmDesc.textContent = 'Chuông báo của thiết bị đang tắt cho mục này';
+        if (alarmDesc) {
+          alarmDesc.textContent = this.currentLang === 'en'
+            ? 'Device notification alarm is turned off for this item'
+            : 'Chuông báo của thiết bị đang tắt cho mục này';
+        }
       }
     }
     if (smallAlarmBtn) {
@@ -4643,7 +4989,9 @@ class LifeKeepApp {
       smallAlarmBtn.className = isAlarmOn 
         ? 'p-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-[10px] font-bold border border-purple-200 flex items-center justify-center shadow-xs'
         : 'p-1 bg-slate-50 hover:bg-slate-100 text-slate-400 rounded-lg text-[10px] font-bold border border-slate-200 flex items-center justify-center shadow-xs';
-      smallAlarmBtn.title = isAlarmOn ? 'Chuông báo máy: Đang BẬT (Bấm để tắt)' : 'Chuông báo máy: Đang TẮT (Bấm để bật)';
+      smallAlarmBtn.title = isAlarmOn 
+        ? (this.currentLang === 'en' ? 'Alarm: ON (Tap to mute)' : 'Chuông báo máy: Đang BẬT (Bấm để tắt)') 
+        : (this.currentLang === 'en' ? 'Alarm: OFF (Tap to unmute)' : 'Chuông báo máy: Đang TẮT (Bấm để bật)');
     }
 
     // Photos
@@ -4655,26 +5003,26 @@ class LifeKeepApp {
             <img src="${item.photos[0]}" alt="${this.escapeHtml(item.name)}" class="max-h-60 max-w-full object-contain rounded-xl transition duration-200" />
             <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition rounded-2xl">
               <span class="bg-black/75 text-white text-xs px-3.5 py-1.5 rounded-full font-semibold backdrop-blur-sm flex items-center gap-1.5 shadow-lg">
-                🔍 Chạm để phóng to
+                🔍 ${this.currentLang === 'en' ? 'Tap to view fullscreen' : 'Chạm để phóng to'}
               </span>
             </div>
           </div>
           <div class="flex items-center justify-between mt-2 px-1">
-            <span class="text-[11px] text-slate-500">Chạm ảnh để xem toàn màn hình</span>
+            <span class="text-[11px] text-slate-500">${this.currentLang === 'en' ? 'Tap photo to zoom & pan' : 'Chạm ảnh để xem toàn màn hình'}</span>
             <button type="button" onclick="app.openItemPhoto()" class="text-xs text-purple-600 font-bold hover:underline flex items-center gap-1">
-              <span>🔍 Phóng to</span>
+              <span>🔍 ${this.currentLang === 'en' ? 'Fullscreen' : 'Phóng to'}</span>
             </button>
           </div>
         </div>
       `;
     } else {
-      photoSection.innerHTML = `<p class="text-xs text-slate-400 italic mt-1">Chưa đính kèm ảnh giấy tờ/hóa đơn.</p>`;
+      photoSection.innerHTML = `<p class="text-xs text-slate-400 italic mt-1">${this.currentLang === 'en' ? 'No photos or receipts attached.' : 'Chưa đính kèm ảnh giấy tờ/hóa đơn.'}</p>`;
     }
 
     // Maintenance Logs
     const logList = document.getElementById('detail-log-list');
     if (logs.length === 0) {
-      logList.innerHTML = `<p class="text-xs text-slate-400 italic">Chưa có lịch sử bảo dưỡng nào.</p>`;
+      logList.innerHTML = `<p class="text-xs text-slate-400 italic">${this.currentLang === 'en' ? 'No maintenance logs recorded yet.' : 'Chưa có lịch sử bảo dưỡng nào.'}</p>`;
     } else {
       logList.innerHTML = logs.map(l => {
         const subCount = l.subItems ? l.subItems.length : 0;
@@ -4683,13 +5031,13 @@ class LifeKeepApp {
             <div>
               <div class="font-bold text-slate-800 flex items-center gap-1.5">
                 <span>${this.formatDateVN(l.date)}</span>
-                ${subCount > 0 ? `<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">${subCount} khoản con</span>` : ''}
+                ${subCount > 0 ? `<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-semibold">${subCount} ${this.currentLang === 'en' ? 'items' : 'khoản con'}</span>` : ''}
               </div>
-              <div class="text-slate-500 text-[11px] truncate max-w-[200px] mt-0.5">${this.escapeHtml(l.notes || 'Hoàn thành định kỳ')}</div>
+              <div class="text-slate-500 text-[11px] truncate max-w-[200px] mt-0.5">${this.escapeHtml(l.notes || (this.currentLang === 'en' ? 'Routine service' : 'Hoàn thành định kỳ'))}</div>
             </div>
             <div class="text-right">
               <span class="text-emerald-700 font-black text-sm block">${this.formatMoney(l.totalCost || l.cost)}</span>
-              <span class="text-[10px] text-purple-600 font-semibold">Xem chi tiết ➜</span>
+              <span class="text-[10px] text-purple-600 font-semibold">${this.currentLang === 'en' ? 'View details ➜' : 'Xem chi tiết ➜'}</span>
             </div>
           </div>
         `;
@@ -4715,7 +5063,10 @@ class LifeKeepApp {
     this.completePhotoBase64 = null;
     this.resetCompletePhotoInputs();
     document.getElementById('complete-item-id').value = item.id;
-    document.getElementById('complete-item-name').textContent = item.name + (item.cycleMonths ? ` (Chu kỳ: ${item.cycleMonths} tháng)` : '');
+    const cycleSuffix = item.cycleMonths 
+      ? (this.currentLang === 'en' ? ` (Cycle: ${item.cycleMonths} mos)` : ` (Chu kỳ: ${item.cycleMonths} tháng)`)
+      : '';
+    document.getElementById('complete-item-name').textContent = item.name + cycleSuffix;
     document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
     document.getElementById('complete-provider').value = item.provider || '';
     document.getElementById('complete-notes').value = '';
@@ -4725,14 +5076,26 @@ class LifeKeepApp {
     container.innerHTML = '';
 
     // Add 2 initial rows based on item category
-    if (item.category === 'vehicle') {
-      this.addSubItemRow('Thay dầu nhớt động cơ', '');
-      this.addSubItemRow('Lọc nhớt / Tiền công', '');
-    } else if (item.category === 'home') {
-      this.addSubItemRow('Vệ sinh / Thay thế linh kiện', '');
-      this.addSubItemRow('Tiền công thợ', '');
+    if (this.currentLang === 'en') {
+      if (item.category === 'vehicle') {
+        this.addSubItemRow('Engine Oil Change', '');
+        this.addSubItemRow('Oil Filter / Labor', '');
+      } else if (item.category === 'home') {
+        this.addSubItemRow('Cleaning & Parts', '');
+        this.addSubItemRow('Service / Labor Fee', '');
+      } else {
+        this.addSubItemRow(this.t('item_main_cost_label'), '');
+      }
     } else {
-      this.addSubItemRow('Chi phí chính', '');
+      if (item.category === 'vehicle') {
+        this.addSubItemRow('Thay dầu nhớt động cơ', '');
+        this.addSubItemRow('Lọc nhớt / Tiền công', '');
+      } else if (item.category === 'home') {
+        this.addSubItemRow('Vệ sinh / Thay thế linh kiện', '');
+        this.addSubItemRow('Tiền công thợ', '');
+      } else {
+        this.addSubItemRow('Chi phí chính', '');
+      }
     }
 
     // Reset choice to repeat by default
@@ -4748,9 +5111,9 @@ class LifeKeepApp {
     const row = document.createElement('div');
     row.className = 'sub-item-row flex items-center gap-2';
     row.innerHTML = `
-      <input type="text" placeholder="Tên khoản chi con (ví dụ: Thay nhớt, lọc gió...)" value="${this.escapeHtml(name)}" class="sub-name flex-1 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white" />
-      <input type="text" inputmode="numeric" placeholder="Số tiền ₫" value="${this.formatMoneyString(cost)}" oninput="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onkeyup="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onblur="app.formatCurrencyInput(this); app.calculateCompleteTotal();" class="sub-cost w-32 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white font-bold text-purple-700" />
-      <button type="button" onclick="this.parentElement.remove(); app.calculateCompleteTotal();" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg text-sm transition" title="Xóa dòng này">✕</button>
+      <input type="text" placeholder="${this.t('item_sub_name_placeholder')}" value="${this.escapeHtml(name)}" class="sub-name flex-1 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white" />
+      <input type="text" inputmode="numeric" placeholder="${this.t('item_sub_cost_placeholder')}" value="${this.formatMoneyString(cost)}" oninput="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onkeyup="app.formatCurrencyInput(this); app.calculateCompleteTotal();" onblur="app.formatCurrencyInput(this); app.calculateCompleteTotal();" class="sub-cost w-32 bg-slate-50 text-xs text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-600 focus:bg-white font-bold text-purple-700" />
+      <button type="button" onclick="this.parentElement.remove(); app.calculateCompleteTotal();" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg text-sm transition" title="${this.t('item_sub_delete_title')}">✕</button>
     `;
     container.appendChild(row);
   }
@@ -5254,7 +5617,7 @@ class LifeKeepApp {
 
       const barChartTitle = document.getElementById('analytics-barchart-title');
       if (barChartTitle) {
-        barChartTitle.textContent = `Chi phí 12 tháng năm ${chartYear}`;
+        barChartTitle.textContent = this.currentLang === 'en' ? `Expenses 12 Months (${chartYear})` : `Chi phí 12 tháng năm ${chartYear}`;
       }
 
       const monthlyData = new Array(12).fill(0);
@@ -5277,12 +5640,14 @@ class LifeKeepApp {
       this.barChart = new Chart(ctxBar, {
         type: 'bar',
         data: {
-          labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+          labels: this.currentLang === 'en'
+            ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            : ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
           datasets: [{
-            label: `Chi tiêu (${chartYear})`,
+            label: this.currentLang === 'en' ? `Expenses (${chartYear})` : `Chi tiêu (${chartYear})`,
             data: monthlyData,
-            backgroundColor: 'rgba(124, 58, 237, 0.75)',
-            hoverBackgroundColor: 'rgba(124, 58, 237, 0.95)',
+            backgroundColor: 'rgba(239, 68, 68, 0.85)',
+            hoverBackgroundColor: 'rgba(225, 29, 72, 0.95)',
             borderRadius: 6
           }]
         },
@@ -5294,7 +5659,9 @@ class LifeKeepApp {
               beginAtZero: true,
               ticks: {
                 color: '#64748b',
-                callback: (v) => v >= 1000000 ? (v / 1000000) + 'tr' : (v >= 1000 ? (v / 1000) + 'k' : v)
+                callback: (v) => this.currentLang === 'en' 
+                  ? (v >= 1000000 ? (v / 1000000) + 'M' : (v >= 1000 ? (v / 1000) + 'k' : '$' + v))
+                  : (v >= 1000000 ? (v / 1000000) + 'tr' : (v >= 1000 ? (v / 1000) + 'k' : v))
               },
               grid: { color: 'rgba(0, 0, 0, 0.05)' }
             },
@@ -5307,7 +5674,7 @@ class LifeKeepApp {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (ctx) => ' ' + new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(ctx.raw || 0)
+                label: (ctx) => ' ' + this.formatMoney(ctx.raw || 0)
               }
             }
           }
@@ -5318,8 +5685,11 @@ class LifeKeepApp {
 
   async deleteItemById(id) {
     const item = this.items.find(i => i.id === id);
-    const itemName = item ? item.name : 'mục này';
-    if (!confirm(`Bạn có chắc chắn muốn xóa "${itemName}" không? Tất cả nhắc nhở và thông tin liên quan sẽ bị xóa.`)) {
+    const itemName = item ? item.name : (this.currentLang === 'en' ? 'this item' : 'mục này');
+    const confirmMsg = this.currentLang === 'en'
+      ? `Are you sure you want to delete "${itemName}"? All associated reminders and data will be removed.`
+      : `Bạn có chắc chắn muốn xóa "${itemName}" không? Tất cả nhắc nhở và thông tin liên quan sẽ bị xóa.`;
+    if (!confirm(confirmMsg)) {
       return;
     }
 
@@ -5336,10 +5706,10 @@ class LifeKeepApp {
       if (detailModal && detailModal.classList.contains('flex')) {
         this.closeDetailModal();
       }
-      this.showToast(`🗑️ Đã xóa "${itemName}"!`);
+      this.showToast(this.currentLang === 'en' ? `🗑️ Deleted "${itemName}"!` : `🗑️ Đã xóa "${itemName}"!`);
     } catch (err) {
       console.error('Lỗi khi xóa mục:', err);
-      alert('Không thể xóa mục: ' + (err.message || err));
+      alert((this.currentLang === 'en' ? 'Unable to delete item: ' : 'Không thể xóa mục: ') + (err.message || err));
     }
   }
 
@@ -6118,7 +6488,7 @@ class LifeKeepApp {
       let expenseData = [];
 
       if (this.financePeriod === 'week') {
-        labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        labels = this.currentLang === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
         incomeData = new Array(7).fill(0);
         expenseData = new Array(7).fill(0);
 
@@ -6147,7 +6517,7 @@ class LifeKeepApp {
           if (dayIndex >= 0 && dayIndex < 7) expenseData[dayIndex] += Number(l.totalCost || l.cost) || 0;
         });
       } else if (this.financePeriod === 'month') {
-        labels = ['Tuần 1 (1-7)', 'Tuần 2 (8-14)', 'Tuần 3 (15-21)', 'Tuần 4 (22-cuối)'];
+        labels = this.currentLang === 'en' ? ['Week 1 (1-7)', 'Week 2 (8-14)', 'Week 3 (15-21)', 'Week 4 (22-end)'] : ['Tuần 1 (1-7)', 'Tuần 2 (8-14)', 'Tuần 3 (15-21)', 'Tuần 4 (22-cuối)'];
         incomeData = new Array(4).fill(0);
         expenseData = new Array(4).fill(0);
 
@@ -6193,7 +6563,7 @@ class LifeKeepApp {
           }
         } else if (diffDays <= 60) {
           const numWeeks = Math.ceil(diffDays / 7);
-          labels = Array.from({ length: numWeeks }, (_, i) => `Tuần ${i + 1}`);
+          labels = Array.from({ length: numWeeks }, (_, i) => this.currentLang === 'en' ? `Week ${i + 1}` : `Tuần ${i + 1}`);
           incomeData = new Array(numWeeks).fill(0);
           expenseData = new Array(numWeeks).fill(0);
 
@@ -6210,7 +6580,7 @@ class LifeKeepApp {
           const monthMap = new Map();
           const cur = new Date(start);
           while (cur <= end || (cur.getMonth() === end.getMonth() && cur.getFullYear() === end.getFullYear())) {
-            const key = `T${cur.getMonth() + 1}/${cur.getFullYear()}`;
+            const key = this.currentLang === 'en' ? `M${cur.getMonth() + 1}/${cur.getFullYear()}` : `T${cur.getMonth() + 1}/${cur.getFullYear()}`;
             if (!monthMap.has(key)) {
               monthMap.set(key, { inc: 0, exp: 0 });
             }
@@ -6219,17 +6589,17 @@ class LifeKeepApp {
 
           filteredIncomes.forEach(t => {
             const d = new Date(t.date);
-            const key = `T${d.getMonth() + 1}/${d.getFullYear()}`;
+            const key = this.currentLang === 'en' ? `M${d.getMonth() + 1}/${d.getFullYear()}` : `T${d.getMonth() + 1}/${d.getFullYear()}`;
             if (monthMap.has(key)) monthMap.get(key).inc += Number(t.amount) || 0;
           });
           filteredDailyExpenses.forEach(t => {
             const d = new Date(t.date);
-            const key = `T${d.getMonth() + 1}/${d.getFullYear()}`;
+            const key = this.currentLang === 'en' ? `M${d.getMonth() + 1}/${d.getFullYear()}` : `T${d.getMonth() + 1}/${d.getFullYear()}`;
             if (monthMap.has(key)) monthMap.get(key).exp += Number(t.amount) || 0;
           });
           filteredMaintLogs.forEach(l => {
             const d = new Date(l.date);
-            const key = `T${d.getMonth() + 1}/${d.getFullYear()}`;
+            const key = this.currentLang === 'en' ? `M${d.getMonth() + 1}/${d.getFullYear()}` : `T${d.getMonth() + 1}/${d.getFullYear()}`;
             if (monthMap.has(key)) monthMap.get(key).exp += Number(l.totalCost || l.cost) || 0;
           });
 
@@ -6260,12 +6630,14 @@ class LifeKeepApp {
             if (yearMap.has(y)) yearMap.get(y).exp += Number(l.totalCost || l.cost) || 0;
           });
 
-          labels = Array.from(yearMap.keys()).map(y => `Năm ${y}`);
+          labels = Array.from(yearMap.keys()).map(y => this.currentLang === 'en' ? `Year ${y}` : `Năm ${y}`);
           incomeData = Array.from(yearMap.values()).map(v => v.inc);
           expenseData = Array.from(yearMap.values()).map(v => v.exp);
         } else {
           // 12 Months of the selected year (this.financeSelectedYear)
-          labels = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+          labels = this.currentLang === 'en'
+            ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            : ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
           incomeData = new Array(12).fill(0);
           expenseData = new Array(12).fill(0);
 
@@ -6297,13 +6669,13 @@ class LifeKeepApp {
       const chartTitleEl = document.getElementById('finance-comparison-title');
       if (chartTitleEl) {
         if (this.financePeriod === 'year') {
-          chartTitleEl.textContent = `Diễn biến Thu & Chi năm ${this.financeSelectedYear}`;
+          chartTitleEl.textContent = this.currentLang === 'en' ? `Income & Expense Trend (${this.financeSelectedYear})` : `Diễn biến Thu & Chi năm ${this.financeSelectedYear}`;
         } else if (this.financePeriod === 'month') {
-          chartTitleEl.textContent = `Diễn biến Tháng ${this.financeSelectedMonth}/${this.financeSelectedYear}`;
+          chartTitleEl.textContent = this.currentLang === 'en' ? `Trend for Month ${this.financeSelectedMonth}/${this.financeSelectedYear}` : `Diễn biến Tháng ${this.financeSelectedMonth}/${this.financeSelectedYear}`;
         } else if (this.financePeriod === 'all') {
-          chartTitleEl.textContent = 'Diễn biến So sánh các Năm';
+          chartTitleEl.textContent = this.currentLang === 'en' ? 'Multi-Year Comparison Trend' : 'Diễn biến So sánh các Năm';
         } else {
-          chartTitleEl.textContent = 'Diễn biến Thu nhập & Chi tiêu';
+          chartTitleEl.textContent = this.currentLang === 'en' ? 'Income & Expense Trend' : 'Diễn biến Thu nhập & Chi tiêu';
         }
       }
 
@@ -6313,15 +6685,16 @@ class LifeKeepApp {
           labels,
           datasets: [
             {
-              label: 'Thu nhập',
+              label: this.currentLang === 'en' ? 'Income' : 'Thu nhập',
               data: incomeData,
               backgroundColor: 'rgba(16, 185, 129, 0.85)',
               borderRadius: 6
             },
             {
-              label: 'Chi tiêu',
+              label: this.currentLang === 'en' ? 'Expenses' : 'Chi tiêu',
               data: expenseData,
-              backgroundColor: 'rgba(124, 58, 237, 0.85)',
+              backgroundColor: 'rgba(239, 68, 68, 0.85)',
+              hoverBackgroundColor: 'rgba(225, 29, 72, 0.95)',
               borderRadius: 6
             }
           ]
@@ -6334,7 +6707,9 @@ class LifeKeepApp {
               beginAtZero: true,
               ticks: {
                 color: '#64748b',
-                callback: (v) => v >= 1000000 ? (v / 1000000) + 'tr' : (v >= 1000 ? (v / 1000) + 'k' : v)
+                callback: (v) => this.currentLang === 'en' 
+                  ? (v >= 1000000 ? (v / 1000000) + 'M' : (v >= 1000 ? (v / 1000) + 'k' : '$' + v))
+                  : (v >= 1000000 ? (v / 1000000) + 'tr' : (v >= 1000 ? (v / 1000) + 'k' : v))
               },
               grid: { color: 'rgba(0, 0, 0, 0.05)' }
             },
@@ -6347,7 +6722,7 @@ class LifeKeepApp {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (ctx) => ` ${ctx.dataset.label}: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(ctx.raw || 0)}`
+                label: (ctx) => ` ${ctx.dataset.label}: ${this.formatMoney(ctx.raw || 0)}`
               }
             }
           }

@@ -804,14 +804,14 @@
       
       <!-- Modal Header -->
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h2 id="modal-title" class="font-bold text-base text-slate-900">Thêm giấy tờ / Thiết bị</h2>
+        <h2 id="modal-title" class="font-bold text-base text-slate-900" data-i18n="item_modal_title_add">Thêm giấy tờ / Thiết bị</h2>
         <button type="button" onclick="app.closeModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">✕</button>
       </div>
 
       <!-- Quick Template Selector -->
       <div class="px-5 pt-3 pb-2 bg-slate-50 border-b border-slate-100">
         <div class="text-[11px] text-slate-500 font-semibold mb-1.5 flex items-center gap-1">
-          <span>⚡ Chọn nhanh mẫu thông dụng:</span>
+          <span data-i18n="item_template_hint">⚡ Chọn nhanh mẫu thông dụng:</span>
         </div>
         <div id="template-chips" class="flex gap-1.5 overflow-x-auto hide-scrollbar pb-1">
           <!-- Templates injected here -->
@@ -823,29 +823,30 @@
         <input type="hidden" id="item-id" />
 
         <div>
-          <label class="block text-slate-700 font-medium mb-1">Tên mục / Tài sản <span class="text-rose-500">*</span></label>
+          <label class="block text-slate-700 font-medium mb-1"><span data-i18n="item_name_label">Tên mục / Tài sản</span> <span class="text-rose-500">*</span></label>
           <input 
             type="text" 
             id="input-name" 
             required 
             placeholder="Ví dụ: Đăng kiểm xe CX5, Máy lọc nước Karofi..." 
+            data-i18n-placeholder="item_name_placeholder"
             class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-500/20"
           />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-700 font-medium mb-1">Danh mục</label>
+            <label class="block text-slate-700 font-medium mb-1" data-i18n="item_category_label">Danh mục</label>
             <select id="input-category" class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600 font-medium">
-              <option value="vehicle">🚗 Phương tiện (Xe)</option>
-              <option value="home">🏠 Gia dụng & Nhà</option>
-              <option value="identity">🪪 Giấy tờ cá nhân</option>
-              <option value="tech">💻 Đồ công nghệ</option>
-              <option value="other">📌 Khác</option>
+              <option value="vehicle" data-i18n="cat_vehicle_opt">🚗 Phương tiện (Xe)</option>
+              <option value="home" data-i18n="cat_home_opt">🏠 Gia dụng & Nhà</option>
+              <option value="identity" data-i18n="cat_identity_opt">🪪 Giấy tờ cá nhân</option>
+              <option value="tech" data-i18n="cat_tech_opt">💻 Đồ công nghệ</option>
+              <option value="other" data-i18n="cat_other_opt">📌 Khác</option>
             </select>
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1">Ngày đến hạn <span class="text-rose-500">*</span></label>
+            <label class="block text-slate-700 font-medium mb-1"><span data-i18n="item_due_date_label">Ngày đến hạn</span> <span class="text-rose-500">*</span></label>
             <input 
               type="date" 
               id="input-date" 
@@ -858,8 +859,8 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-slate-700 font-medium mb-1 flex items-center justify-between">
-              <span>Giờ thông báo</span>
-              <span class="text-[10px] text-purple-600 font-semibold">⏰ Giờ nhắc</span>
+              <span data-i18n="item_due_time_label">Giờ thông báo</span>
+              <span class="text-[10px] text-purple-600 font-semibold" data-i18n="item_reminder_time_hint">⏰ Giờ nhắc</span>
             </label>
             <input 
               type="time" 
@@ -869,11 +870,12 @@
             />
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1">Chu kỳ lặp lại (tháng)</label>
+            <label class="block text-slate-700 font-medium mb-1" data-i18n="item_cycle_label">Chu kỳ lặp lại (tháng)</label>
             <input 
               type="number" 
               id="input-cycle" 
               placeholder="Ví dụ: 6, 12, 24" 
+              data-i18n-placeholder="item_cycle_placeholder"
               min="1" 
               class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
             />
@@ -887,8 +889,8 @@
               🔔
             </div>
             <div>
-              <div class="text-xs font-bold text-slate-800">Chuông thông báo của thiết bị</div>
-              <div class="text-[10px] text-slate-500">Tự động nhận chuông cài trên máy, rung & hiện thông báo khi đến hạn (Không cần tải file)</div>
+              <div class="text-xs font-bold text-slate-800" data-i18n="item_alarm_title">Chuông thông báo của thiết bị</div>
+              <div class="text-[10px] text-slate-500" data-i18n="item_alarm_desc">Tự động nhận chuông cài trên máy, rung & hiện thông báo khi đến hạn (Không cần tải file)</div>
             </div>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
@@ -899,20 +901,22 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-700 font-medium mb-1">Số hotline / Thợ quen</label>
+            <label class="block text-slate-700 font-medium mb-1" data-i18n="item_phone_label">Số hotline / Thợ quen</label>
             <input 
               type="tel" 
               id="input-phone" 
               placeholder="0908..." 
+              data-i18n-placeholder="item_phone_placeholder"
               class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
             />
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1">Đơn vị / Nơi làm</label>
+            <label class="block text-slate-700 font-medium mb-1" data-i18n="item_provider_label">Đơn vị / Nơi làm</label>
             <input 
               type="text" 
               id="input-provider" 
               placeholder="Gara, Trung tâm, Thợ..." 
+              data-i18n-placeholder="item_provider_placeholder"
               class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
             />
           </div>
@@ -922,17 +926,17 @@
         <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-slate-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>💰</span> Chi phí & Bóc tách các khoản con:
+              <span>💰</span> <span data-i18n="item_cost_sub_title">Chi phí & Bóc tách các khoản con:</span>
             </span>
             <button 
               type="button" 
               onclick="app.addItemSubCostRow()" 
               class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-medium transition text-[11px] flex items-center gap-1 border border-purple-200"
             >
-              <span>+</span> Thêm khoản con
+              <span>+</span> <span data-i18n="item_btn_add_sub_cost">Thêm khoản con</span>
             </button>
           </div>
-          <p class="text-[11px] text-slate-500">
+          <p class="text-[11px] text-slate-500" data-i18n="item_cost_sub_desc">
             Điền số tiền hoặc bóc tách từng món con (ví dụ: Thay nhớt, lọc gió, tiền công...) để thống kê vào biểu đồ chi tiêu.
           </p>
 
@@ -943,17 +947,18 @@
 
           <!-- Total Cost Display -->
           <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
-            <span class="text-slate-700 font-semibold">Tổng chi phí:</span>
+            <span class="text-slate-700 font-semibold" data-i18n="item_total_cost_label">Tổng chi phí:</span>
             <span id="item-total-cost-display" class="text-base font-black text-purple-700">0 ₫</span>
           </div>
         </div>
 
         <div>
-          <label class="block text-slate-700 font-medium mb-1">Ghi chú & Lưu ý</label>
+          <label class="block text-slate-700 font-medium mb-1" data-i18n="item_notes_label">Ghi chú & Lưu ý</label>
           <textarea 
             id="input-notes" 
             rows="2" 
             placeholder="Ví dụ: Vị trí cất sổ gốc, số hợp đồng, phụ kiện cần thay..." 
+            data-i18n-placeholder="item_notes_placeholder"
             class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"
           ></textarea>
         </div>
@@ -961,29 +966,29 @@
         <!-- Reminder Customization -->
         <div>
           <label class="block text-slate-700 font-medium mb-1.5 flex items-center justify-between">
-            <span>🔔 Nhắc nhở trước thời hạn:</span>
-            <span class="text-[10px] text-slate-500">Chọn các mốc báo trước</span>
+            <span data-i18n="item_reminder_before_label">🔔 Nhắc nhở trước thời hạn:</span>
+            <span class="text-[10px] text-slate-500" data-i18n="item_reminder_before_hint">Chọn các mốc báo trước</span>
           </label>
           <div class="grid grid-cols-5 gap-1.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="30" class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-600 text-[11px]">30 ngày</span>
+              <span class="text-slate-600 text-[11px]" data-i18n="item_remind_30d">30 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="7" checked class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-800 font-medium text-[11px]">7 ngày</span>
+              <span class="text-slate-800 font-medium text-[11px]" data-i18n="item_remind_7d">7 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="3" class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-600 text-[11px]">3 ngày</span>
+              <span class="text-slate-600 text-[11px]" data-i18n="item_remind_3d">3 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="1" checked class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-800 font-medium text-[11px]">1 ngày</span>
+              <span class="text-slate-800 font-medium text-[11px]" data-i18n="item_remind_1d">1 ngày</span>
             </label>
             <label class="flex flex-col items-center gap-1 cursor-pointer">
               <input type="checkbox" value="0" class="reminder-cb rounded text-purple-600 focus:ring-0 bg-white border-slate-300" />
-              <span class="text-slate-600 text-[11px]">Đúng ngày</span>
+              <span class="text-slate-600 text-[11px]" data-i18n="item_remind_0d">Đúng ngày</span>
             </label>
           </div>
         </div>
@@ -992,20 +997,20 @@
         <div class="pt-1">
           <label class="flex items-center gap-2 p-2.5 bg-amber-50 hover:bg-amber-100/70 rounded-xl border border-amber-200 cursor-pointer transition">
             <input type="checkbox" id="cb-save-template" class="rounded text-amber-600 focus:ring-0 bg-white border-amber-300" />
-            <span class="text-amber-800 text-xs font-medium">⭐ Lưu mục này thành mẫu riêng (hiện trên thanh chọn nhanh)</span>
+            <span class="text-amber-800 text-xs font-medium" data-i18n="item_save_template_cb">⭐ Lưu mục này thành mẫu riêng (hiện trên thanh chọn nhanh)</span>
           </label>
         </div>
 
         <!-- Camera & Photo Capture -->
         <div>
-          <label class="block text-slate-700 font-medium mb-1">Ảnh giấy tờ / Phiếu bảo hành</label>
+          <label class="block text-slate-700 font-medium mb-1" data-i18n="item_photo_label">Ảnh giấy tờ / Phiếu bảo hành</label>
           <div class="grid grid-cols-2 gap-2">
             <!-- Option 1: Chụp ảnh ngay (Camera) -->
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-purple-200 hover:border-purple-500 rounded-xl cursor-pointer bg-purple-50/40 hover:bg-purple-50 transition text-center group">
               <svg class="w-5 h-5 text-purple-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="4" stroke-width="2"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight">Chụp ảnh</div>
-                <div class="text-[10px] text-slate-500">Mở camera</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="item_photo_snap_title">Chụp ảnh</div>
+                <div class="text-[10px] text-slate-500" data-i18n="item_photo_snap_desc">Mở camera</div>
               </div>
               <input type="file" id="photo-camera-input" accept="image/*" capture="environment" class="hidden" />
             </label>
@@ -1014,8 +1019,8 @@
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-slate-200 hover:border-purple-500 rounded-xl cursor-pointer bg-slate-50 hover:bg-purple-50 transition text-center group">
               <svg class="w-5 h-5 text-indigo-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight">Chọn từ máy</div>
-                <div class="text-[10px] text-slate-500">File / Bộ sưu tập</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="item_photo_upload_title">Chọn từ máy</div>
+                <div class="text-[10px] text-slate-500" data-i18n="item_photo_upload_desc">File / Bộ sưu tập</div>
               </div>
               <input type="file" id="photo-file-input" accept="image/*" class="hidden" />
             </label>
@@ -1032,9 +1037,9 @@
             class="hidden py-3 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold rounded-xl text-sm transition border border-rose-200 flex items-center justify-center gap-1.5 shrink-0" 
             title="Xóa mục này"
           >
-            <span>🗑️</span> Xóa mục
+            <span>🗑️</span> <span data-i18n="item_btn_delete">Xóa mục</span>
           </button>
-          <button type="submit" id="item-submit-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30">
+          <button type="submit" id="item-submit-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30" data-i18n="item_btn_save">
             Lưu thông tin
           </button>
         </div>
@@ -1061,15 +1066,15 @@
           <h2 id="detail-title" class="text-lg font-bold text-slate-900"></h2>
           <div class="mt-3 grid grid-cols-3 gap-2 text-slate-700">
             <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-              <span class="text-slate-500 block text-[10px]">Hạn thực hiện:</span>
+              <span class="text-slate-500 block text-[10px]" data-i18n="detail_due_label">Hạn thực hiện:</span>
               <strong id="detail-due-date" class="text-xs text-slate-900 font-bold mt-0.5 block truncate"></strong>
             </div>
             <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-              <span class="text-slate-500 block text-[10px]">Chu kỳ lặp:</span>
+              <span class="text-slate-500 block text-[10px]" data-i18n="detail_cycle_label">Chu kỳ lặp:</span>
               <strong id="detail-cycle" class="text-xs text-purple-700 font-bold mt-0.5 block truncate"></strong>
             </div>
             <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-              <span class="text-slate-500 block text-[10px]">Giờ & Chuông máy:</span>
+              <span class="text-slate-500 block text-[10px]" data-i18n="detail_time_label">Giờ & Chuông máy:</span>
               <div class="flex items-center justify-between mt-0.5">
                 <strong id="detail-due-time" class="text-xs text-purple-700 font-bold">--:--</strong>
                 <button 
@@ -1088,7 +1093,7 @@
 
         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex items-center justify-between">
           <div>
-            <span class="text-slate-500 block text-[11px]">Nơi thực hiện / Đơn vị:</span>
+            <span class="text-slate-500 block text-[11px]" data-i18n="detail_provider_label">Nơi thực hiện / Đơn vị:</span>
             <span id="detail-provider" class="text-slate-800 font-semibold"></span>
           </div>
           <div id="detail-phone-container"></div>
@@ -1098,7 +1103,7 @@
         <div id="detail-cost-card" class="bg-purple-50/70 border border-purple-200 p-3.5 rounded-2xl space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-purple-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>💰</span> Chi phí & Bóc tách chi phí con:
+              <span>💰</span> <span data-i18n="detail_cost_title">Chi phí & Bóc tách chi phí con:</span>
             </span>
             <span id="detail-item-cost" class="text-base font-black text-purple-700">0 ₫</span>
           </div>
@@ -1114,8 +1119,8 @@
               🔔
             </div>
             <div>
-              <div class="text-xs font-bold text-slate-800">Chuông thông báo của máy</div>
-              <p id="detail-alarm-desc" class="text-[11px] text-slate-500 mt-0.5">Tự động nhận chuông cài trên thiết bị, không cần tải file</p>
+              <div class="text-xs font-bold text-slate-800" data-i18n="detail_alarm_title">Chuông thông báo của máy</div>
+              <p id="detail-alarm-desc" class="text-[11px] text-slate-500 mt-0.5" data-i18n="detail_alarm_desc">Tự động nhận chuông cài trên thiết bị, không cần tải file</p>
             </div>
           </div>
           <button 
@@ -1129,13 +1134,13 @@
         </div>
 
         <div>
-          <span class="text-slate-600 block text-[11px] mb-1 font-semibold">Ghi chú & Hướng dẫn:</span>
+          <span class="text-slate-600 block text-[11px] mb-1 font-semibold" data-i18n="detail_notes_label">Ghi chú & Hướng dẫn:</span>
           <p id="detail-notes" class="p-3 bg-slate-50 rounded-xl text-slate-700 leading-relaxed border border-slate-200"></p>
         </div>
 
         <!-- Photos preview -->
         <div>
-          <span class="text-slate-600 block text-[11px] font-semibold">Ảnh giấy tờ / Biên nhận:</span>
+          <span class="text-slate-600 block text-[11px] font-semibold" data-i18n="detail_photos_label">Ảnh giấy tờ / Biên nhận:</span>
           <div id="detail-photos"></div>
         </div>
 
@@ -1143,7 +1148,7 @@
         <div>
           <div class="flex items-center justify-between mb-2">
             <span class="text-slate-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>🧾</span> Lịch sử bảo dưỡng / chi phí:
+              <span>🧾</span> <span data-i18n="detail_history_label">Lịch sử bảo dưỡng / chi phí:</span>
             </span>
           </div>
           <div id="detail-log-list" class="space-y-2">
@@ -1155,7 +1160,7 @@
       <!-- Modal Footer Actions -->
       <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center gap-2">
         <button onclick="const id = app.selectedItem?.id; app.closeDetailModal(); app.openCompleteModal(id)" class="flex-1 py-2.5 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-lg shadow-purple-600/30">
-          <span>✓</span> Ghi nhận bảo dưỡng & Chi phí
+          <span>✓</span> <span data-i18n="detail_btn_complete">Ghi nhận bảo dưỡng & Chi phí</span>
         </button>
         <button onclick="app.editSelectedItem()" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition border border-slate-200" title="Sửa thông tin">
           ✏️
@@ -1985,7 +1990,7 @@
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-purple-600/10 via-transparent to-transparent">
         <div>
           <h2 class="font-bold text-base text-slate-900 flex items-center gap-2">
-            <span>✅</span> Ghi nhận hoàn thành & Chi phí
+            <span>✅</span> <span data-i18n="complete_modal_title">Ghi nhận hoàn thành & Chi phí</span>
           </h2>
           <p id="complete-item-name" class="text-xs text-purple-700 font-semibold mt-0.5"></p>
         </div>
@@ -1997,12 +2002,12 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-700 font-medium mb-1">Ngày thực hiện <span class="text-rose-500">*</span></label>
+            <label class="block text-slate-700 font-medium mb-1"><span data-i18n="complete_date_label">Ngày thực hiện</span> <span class="text-rose-500">*</span></label>
             <input type="date" id="complete-date" required class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600" />
           </div>
           <div>
-            <label class="block text-slate-700 font-medium mb-1">Gara / Thợ / Nơi làm</label>
-            <input type="text" id="complete-provider" placeholder="Gara Thành Phát, Thợ Tuấn..." class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600" />
+            <label class="block text-slate-700 font-medium mb-1" data-i18n="complete_provider_label">Gara / Thợ / Nơi làm</label>
+            <input type="text" id="complete-provider" placeholder="Gara Thành Phát, Thợ Tuấn..." data-i18n-placeholder="complete_provider_placeholder" class="w-full bg-slate-50 text-sm text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600" />
           </div>
         </div>
 
@@ -2010,13 +2015,13 @@
         <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-slate-800 font-semibold text-xs flex items-center gap-1.5">
-              <span>🧾</span> Bóc tách các khoản chi phí con:
+              <span>🧾</span> <span data-i18n="complete_sub_title">Bóc tách các khoản chi phí con:</span>
             </span>
             <button type="button" onclick="app.addSubItemRow()" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg font-medium transition text-[11px] flex items-center gap-1 border border-purple-200">
-              <span>+</span> Thêm dòng
+              <span>+</span> <span data-i18n="complete_btn_add_sub">Thêm dòng</span>
             </button>
           </div>
-          <p class="text-[11px] text-slate-500">Ví dụ: Thay nhớt, Lọc dầu, Tiền công... để sau này tra cứu chi tiết từng món.</p>
+          <p class="text-[11px] text-slate-500" data-i18n="complete_sub_desc">Ví dụ: Thay nhớt, Lọc dầu, Tiền công... để sau này tra cứu chi tiết từng món.</p>
 
           <div id="sub-items-container" class="space-y-2">
             <!-- Dynamic Sub-item Rows injected here -->
@@ -2024,26 +2029,26 @@
 
           <!-- Total Cost Display -->
           <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
-            <span class="text-slate-700 font-semibold">Tổng chi phí lần này:</span>
+            <span class="text-slate-700 font-semibold" data-i18n="complete_total_label">Tổng chi phí lần này:</span>
             <span id="complete-total-display" class="text-base font-black text-purple-700">0 ₫</span>
           </div>
         </div>
 
         <div>
-          <label class="block text-slate-700 font-medium mb-1">Ghi chú lần này (Km xe, bảo hành thợ...)</label>
-          <textarea id="complete-notes" rows="2" placeholder="Ví dụ: Thay lúc 45.000km, thợ bảo hành 3 tháng..." class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"></textarea>
+          <label class="block text-slate-700 font-medium mb-1" data-i18n="complete_notes_label">Ghi chú lần này (Km xe, bảo hành thợ...)</label>
+          <textarea id="complete-notes" rows="2" placeholder="Ví dụ: Thay lúc 45.000km, thợ bảo hành 3 tháng..." data-i18n-placeholder="complete_notes_placeholder" class="w-full bg-slate-50 text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:bg-white focus:outline-none focus:border-purple-600"></textarea>
         </div>
 
         <!-- Receipt / Bill Photo -->
         <div>
-          <label class="block text-slate-700 font-medium mb-1">Ảnh hóa đơn / Biên nhận (Tùy chọn)</label>
+          <label class="block text-slate-700 font-medium mb-1" data-i18n="complete_photo_label">Ảnh hóa đơn / Biên nhận (Tùy chọn)</label>
           <div class="grid grid-cols-2 gap-2">
             <!-- Option 1: Chụp ảnh ngay (Camera) -->
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-purple-200 hover:border-purple-500 rounded-xl cursor-pointer bg-purple-50/40 hover:bg-purple-50 transition text-center group">
               <svg class="w-4 h-4 text-purple-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="4" stroke-width="2"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight">Chụp ảnh</div>
-                <div class="text-[10px] text-slate-500">Mở camera</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="item_photo_snap_title">Chụp ảnh</div>
+                <div class="text-[10px] text-slate-500" data-i18n="item_photo_snap_desc">Mở camera</div>
               </div>
               <input type="file" id="complete-photo-camera-input" accept="image/*" capture="environment" class="hidden" />
             </label>
@@ -2052,8 +2057,8 @@
             <label class="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-slate-200 hover:border-purple-500 rounded-xl cursor-pointer bg-slate-50 hover:bg-purple-50 transition text-center group">
               <svg class="w-4 h-4 text-indigo-600 group-hover:scale-110 transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               <div class="text-left">
-                <div class="text-slate-800 text-xs font-bold leading-tight">Chọn từ máy</div>
-                <div class="text-[10px] text-slate-500">File / Bộ sưu tập</div>
+                <div class="text-slate-800 text-xs font-bold leading-tight" data-i18n="item_photo_upload_title">Chọn từ máy</div>
+                <div class="text-[10px] text-slate-500" data-i18n="item_photo_upload_desc">File / Bộ sưu tập</div>
               </div>
               <input type="file" id="complete-photo-file-input" accept="image/*" class="hidden" />
             </label>
@@ -2063,32 +2068,36 @@
 
         <!-- Option: Lặp lại theo chu kỳ hay Xong hoàn toàn -->
         <div class="p-3.5 bg-purple-50/80 rounded-2xl border border-purple-200 space-y-2">
-          <label class="block text-slate-800 font-bold text-xs">
+          <label class="block text-slate-800 font-bold text-xs" data-i18n="complete_after_label">
             Sau khi lưu hoàn thành:
           </label>
           <div class="grid grid-cols-2 gap-2">
             <label class="flex items-start gap-2 p-2.5 rounded-xl border border-purple-300 bg-white cursor-pointer hover:bg-purple-50/50 transition shadow-2xs">
               <input type="radio" name="complete-action-type" id="complete-action-repeat" value="repeat" checked class="mt-0.5 text-purple-600 focus:ring-purple-500 cursor-pointer" />
               <div>
-                <span class="font-bold text-xs text-purple-950 block">🔄 Lặp lại định kỳ</span>
-                <span class="text-[10px] text-slate-500 block">Tự dời ngày theo chu kỳ</span>
+                <span class="font-bold text-xs text-purple-950 block" data-i18n="complete_action_repeat_title">🔄 Lặp lại định kỳ</span>
+                <span class="text-[10px] text-slate-500 block" data-i18n="complete_action_repeat_desc">Tự dời ngày theo chu kỳ</span>
               </div>
             </label>
             <label class="flex items-start gap-2 p-2.5 rounded-xl border border-slate-200 bg-white cursor-pointer hover:bg-emerald-50/50 hover:border-emerald-300 transition shadow-2xs">
               <input type="radio" name="complete-action-type" id="complete-action-finish" value="finish" class="mt-0.5 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
               <div>
-                <span class="font-bold text-xs text-emerald-900 block">🏁 Xong hoàn toàn</span>
-                <span class="text-[10px] text-slate-500 block">Lưu vào Nhật ký (Đã xong)</span>
+                <span class="font-bold text-xs text-emerald-900 block" data-i18n="complete_action_finish_title">🏁 Xong hoàn toàn</span>
+                <span class="text-[10px] text-slate-500 block" data-i18n="complete_action_finish_desc">Lưu vào Nhật ký (Đã xong)</span>
               </div>
             </label>
           </div>
         </div>
 
         <div class="pt-2">
-          <button type="submit" id="complete-submit-btn" class="w-full py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30">
+          <button type="submit" id="complete-submit-btn" class="w-full py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-purple-600/30" data-i18n="complete_btn_confirm">
             Xác nhận hoàn thành
           </button>
         </div>
+      </form>
+
+    </div>
+  </div>
       </form>
 
     </div>
@@ -2257,12 +2266,8 @@
         </div>
         <div>
           <span class="block text-slate-500 text-[11px] mb-1.5 font-medium" data-i18n="quick_amount_suggestions">Gợi ý nhanh số tiền:</span>
-          <div class="flex flex-wrap gap-1.5">
-            <button type="button" onclick="app.setFormattedAmount('budget-amount-input', 5000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300 rounded-lg text-slate-700 text-xs transition border border-slate-200">5 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setFormattedAmount('budget-amount-input', 10000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300 rounded-lg text-slate-700 text-xs transition border border-slate-200">10 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setFormattedAmount('budget-amount-input', 15000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300 rounded-lg text-slate-700 text-xs transition border border-slate-200">15 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setFormattedAmount('budget-amount-input', 20000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300 rounded-lg text-slate-700 text-xs transition border border-slate-200">20 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setFormattedAmount('budget-amount-input', 30000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300 rounded-lg text-slate-700 text-xs transition border border-slate-200">30 <span data-i18n="unit_million">triệu</span></button>
+          <div id="budget-quick-suggestions-chips" class="flex flex-wrap gap-1.5">
+            <!-- Injected by app.renderQuickAmountChips() -->
           </div>
         </div>
         <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
@@ -2492,19 +2497,15 @@
               oninput="app.formatCurrencyInput(this)" 
               class="w-full bg-slate-50 text-slate-900 pl-4 pr-10 py-3 rounded-xl border-2 border-amber-400 focus:outline-none focus:border-amber-600 font-black text-lg"
             />
-            <span class="absolute right-3.5 top-3.5 text-slate-400 font-bold text-sm">₫</span>
+            <span id="sb-currency-symbol" class="absolute right-3.5 top-3.5 text-slate-400 font-bold text-sm">₫</span>
           </div>
         </div>
 
         <!-- Quick Suggestion Buttons -->
         <div>
           <span class="text-[10px] text-slate-500 font-semibold mb-1.5 block" data-i18n="sb_quick_suggestions">⚡ Gợi ý số tiền nhanh:</span>
-          <div class="flex flex-wrap gap-1.5">
-            <button type="button" onclick="app.setQuickStartingBalance(5000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-amber-100 hover:text-amber-900 rounded-lg text-[11px] font-semibold transition border border-slate-200">5 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setQuickStartingBalance(10000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-amber-100 hover:text-amber-900 rounded-lg text-[11px] font-semibold transition border border-slate-200">10 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setQuickStartingBalance(20000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-amber-100 hover:text-amber-900 rounded-lg text-[11px] font-semibold transition border border-slate-200">20 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setQuickStartingBalance(50000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-amber-100 hover:text-amber-900 rounded-lg text-[11px] font-semibold transition border border-slate-200">50 <span data-i18n="unit_million">triệu</span></button>
-            <button type="button" onclick="app.setQuickStartingBalance(100000000)" class="px-2.5 py-1 bg-slate-100 hover:bg-amber-100 hover:text-amber-900 rounded-lg text-[11px] font-semibold transition border border-slate-200">100 <span data-i18n="unit_million">triệu</span></button>
+          <div id="sb-quick-suggestions-chips" class="flex flex-wrap gap-1.5">
+            <!-- Injected by app.renderQuickAmountChips() -->
           </div>
         </div>
 
@@ -2939,10 +2940,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
-  <script src="./firebase-config.js?v=35"></script>
+  <script src="./firebase-config.js?v=36"></script>
 
   <!-- Scripts -->
-  <script src="./app.js?v=35"></script>
+  <script src="./app.js?v=36"></script>
   <script>
     // Modal toggle helper
     function toggleModal(modalId) {
@@ -2960,10 +2961,10 @@
     // Register Service Worker with auto-update and automatic reload on controller change
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=35')
+        navigator.serviceWorker.register('./sw.js?v=36')
           .then(reg => {
             reg.update();
-            console.log('LifeKeep PWA Service Worker Registered & Updated (v35)!');
+            console.log('LifeKeep PWA Service Worker Registered & Updated (v36)!');
           })
           .catch(err => console.log('SW registration failed:', err));
       });

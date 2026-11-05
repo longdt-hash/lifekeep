@@ -1,10 +1,10 @@
 // Service Worker for LifeKeep PWA - Network First Strategy
-const CACHE_NAME = 'lifekeep-v35';
+const CACHE_NAME = 'lifekeep-v36';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
-  './firebase-config.js?v=35',
-  './app.js?v=35',
+  './firebase-config.js?v=36',
+  './app.js?v=36',
   './manifest.json',
   './logo.png',
   './icon-192.png',
